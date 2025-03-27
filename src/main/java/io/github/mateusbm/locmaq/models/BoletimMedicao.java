@@ -12,7 +12,6 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-
 public class BoletimMedicao {
 
     @Id
@@ -20,8 +19,6 @@ public class BoletimMedicao {
     @GeneratedValue
     private Long id;
 
-    @Column
-    private ContratoLocacao contratoLocacao;
 
     @Column
     private Date dataMedicao;

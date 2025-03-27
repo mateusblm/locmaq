@@ -13,17 +13,10 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 public class ContratoLocacao {
-
     @Id
     @Column
     @GeneratedValue
     private Long id;
-
-    @Column
-    private Cliente cliente;
-
-    @Column
-    private Equipamento equipamento;
 
     @Column
     private Date dataInicio;
@@ -33,10 +26,4 @@ public class ContratoLocacao {
 
     @Column
     private Double valorTotal;
-
-    private enum status {
-        ATIVO,
-        INATIVO,
-        CONCLUIDO
-    }
 }
