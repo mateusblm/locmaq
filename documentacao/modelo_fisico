@@ -1,1 +1,109 @@
+USE locmaq;
+CREATE TABLE USUARIO (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    telefone VARCHAR(15),
+    endereco TEXT,
+    email VARCHAR(100) UNIQUE
+);
 
+CREATE TABLE GESTAO (
+    id_gestor INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNIQUE NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario)
+);
+
+CREATE TABLE PLANEJADOR (
+    id_planejador INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNIQUE NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario)
+);
+
+CREATE TABLE LOGISTICA (
+    id_logistica INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNIQUE NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario)
+);
+
+CREATE TABLE EQUIPAMENTO (
+    id_equipamento INT AUTO_INCREMENT PRIMARY KEY,
+    modelo VARCHAR(50) NOT NULL,
+    placa VARCHAR(20) UNIQUE NOT NULL,
+    ano INT,
+    chassi VARCHAR(50),
+    marca VARCHAR(50),
+    dono VARCHAR(100)
+);
+
+CREATE TABLE CONTRATO (
+    id_contrato INT AUTO_INCREMENT PRIMARY KEY,
+    valor DECIMAL(10, 2) NOT NULL,
+    periodo VARCHAR(50),
+    local VARCHAR(100),
+    situacao VARCHAR(50),
+    id_logistica INT NOT NULL,
+    FOREIGN KEY (id_logistica) REFERENCES LOGISTICA(id_logistica)
+);
+
+CREATE TABLE MANTEM_CONTRATO (
+    id_logistica INT NOT NULL,
+    id_contrato INT NOT NULL,
+    PRIMARY KEY (id_logistica, id_contrato),
+    FOREIGN KEY (id_logistica) REFERENCES LOGISTICA(id_logistica),
+    FOREIGN KEY (id_contrato) REFERENCES CONTRATO(id_contrato)
+);
+
+CREATE TABLE BOLETIM_DE_MEDICAO (
+    id_boletim INT AUTO_INCREMENT PRIMARY KEY,
+    situacao VARCHAR(50),
+    periodo VARCHAR(50),
+    id_planejador INT NOT NULL,
+    FOREIGN KEY (id_planejador) REFERENCES PLANEJADOR(id_planejador)
+);
+
+CREATE TABLE RELATORIOS (
+    id_relatorio INT AUTO_INCREMENT PRIMARY KEY,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    descricao TEXT
+);
+
+CREATE TABLE ASSINA (
+    id_boletim INT NOT NULL,
+    id_gestor INT NOT NULL,
+    PRIMARY KEY (id_boletim, id_gestor),
+    FOREIGN KEY (id_boletim) REFERENCES BOLETIM_DE_MEDICAO(id_boletim),
+    FOREIGN KEY (id_gestor) REFERENCES GESTAO(id_gestor)
+);
+
+CREATE TABLE RELATORIOS_ACESSO (
+    id_gestor INT NOT NULL,
+    id_relatorio INT NOT NULL,
+    PRIMARY KEY (id_gestor, id_relatorio),
+    FOREIGN KEY (id_gestor) REFERENCES GESTAO(id_gestor),
+    FOREIGN KEY (id_relatorio) REFERENCES RELATORIOS(id_relatorio)
+);
+
+CREATE TABLE ENVIA (
+    id_planejador INT NOT NULL,
+    id_relatorio INT NOT NULL,
+    PRIMARY KEY (id_planejador, id_relatorio),
+    FOREIGN KEY (id_planejador) REFERENCES PLANEJADOR(id_planejador),
+    FOREIGN KEY (id_relatorio) REFERENCES RELATORIOS(id_relatorio)
+);
+
+CREATE TABLE CADASTRA_BOLETIM (
+    id_planejador INT NOT NULL,
+    id_boletim INT NOT NULL,
+    PRIMARY KEY (id_planejador, id_boletim),
+    FOREIGN KEY (id_planejador) REFERENCES PLANEJADOR(id_planejador),
+    FOREIGN KEY (id_boletim) REFERENCES BOLETIM_DE_MEDICAO(id_boletim)
+);
+
+CREATE TABLE CADASTRA_EQUIPAMENTO (
+    id_logistica INT NOT NULL,
+    id_equipamento INT NOT NULL,
+    PRIMARY KEY (id_logistica, id_equipamento),
+    FOREIGN KEY (id_logistica) REFERENCES LOGISTICA(id_logistica),
+    FOREIGN KEY (id_equipamento) REFERENCES EQUIPAMENTO(id_equipamento)
+);
