@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Equipamentos</title>
+    <link rel="stylesheet" href="/src/main/resources/static/css/equipamento.css">
+</head>
+<body>
+    <header>
+        <h1>Gerenciar Equipamentos</h1>
+    </header>
+    
+    <main>
+        <div class="container">
+            <h2>Manter Equipamento para Locação</h2>
+            
+            <form id="equipamentoForm">
+                <input type="hidden" id="id" name="id">
+    
+                <label for="nome">Nome do Equipamento:</label>
+                <input type="text" id="nome" name="nome" required>
+    
+                <label for="categoria">Categoria:</label>
+                <input type="text" id="categoria" name="categoria" required>
+    
+                <label for="placa">Placa:</label>
+                <input type="text" id="placa" name="placa">
+    
+                <label for="marca">Marca:</label>
+                <input type="text" id="marca" name="marca" required>
+    
+                <label for="modelo">Modelo:</label>
+                <input type="text" id="modelo" name="modelo" required>
+    
+                <label for="ano">Ano:</label>
+                <input type="number" id="ano" name="ano" required>
+    
+                <label for="serie">Série/Chassi:</label>
+                <input type="text" id="serie" name="serie" required>
+    
+                <label for="horimetro">Horímetro/Km:</label>
+                <input type="number" id="horimetro" name="horimetro" required>
+    
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="Disponível">Disponível</option>
+                    <option value="Locado">Locado</option>
+                    <option value="Em Manutenção">Em Manutenção</option>
+                </select>
+    
+                <label for="proprietario">Proprietário:</label>
+                <input type="text" id="proprietario" name="proprietario" required>
+    
+                <div class="buttons">
+                    <button type="submit">Salvar</button>
+                    <button type="reset">Limpar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="container">
+            <h3>Lista de Equipamentos</h3>
+            <table id="equipamentoTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Placa</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Ano</th>
+                        <th>Série/Chassi</th>
+                        <th>Horímetro/Km</th>
+                        <th>Status</th>
+                        <th>Proprietário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os equipamentos serão carregados do banco -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
