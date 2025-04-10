@@ -19,12 +19,11 @@ header {
 }
 
 .logo {
-  color: #007bff; /* azul */
+  color: #007bff;
   font-size: 24px;
   font-weight: bold;
 }
 
-/* Formulário */
 main {
   display: flex;
   justify-content: center;
