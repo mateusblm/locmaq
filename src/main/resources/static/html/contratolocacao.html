@@ -7,21 +7,45 @@
   <link rel="stylesheet" href="../css/contratolocacao.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">LocMac</div>
-  </header>
+<header>
+  <div class="logo">LocMac</div>
+</header>
 
-  <main>
-    <div class="form-container">
-      <h2>Contrato de Locação</h2>
-      <form>
-        <input type="text" placeholder="Valor" required />
-        <input type="text" placeholder="Pedido" required />
-        <input type="text" placeholder="Local" required />
-        <input type="text" placeholder="Situação" required />
-        <button type="submit">Cadastrar</button>
-      </form>
-    </div>
-  </main>
+<main>
+  <div class="form-container">
+    <h2>Contrato de Locação</h2>
+    <form>
+      <input type="text" placeholder="Valor" required />
+      <input type="text" placeholder="Pedido" required />
+      <input type="text" placeholder="Local" required />
+      <input type="text" placeholder="Situação" required />
+      <label for="equipamentos">Equipamentos:</label>
+      <select id="equipamentos" name="equipamentos[]" multiple required>
+      </select>
+      <small>Segure Ctrl (ou Cmd no Mac) para selecionar vários equipamentos.</small>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+</main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const equipamentosSelect = document.getElementById('equipamentos');
+
+    const equipamentos = [
+      { id: 1, nome: 'Retroescavadeira - CAT' },
+      { id: 2, nome: 'Escavadeira - Komatsu' },
+      { id: 3, nome: 'Caminhão Basculante - Volvo' }
+    ];
+
+    equipamentos.forEach(equip => {
+      const option = document.createElement('option');
+      option.value = equip.id;
+      option.textContent = equip.nome;
+      equipamentosSelect.appendChild(option);
+    });
+  });
+</script>
 </body>
 </html>
