@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastrar Usuário</title>
+    <link rel="stylesheet" href="../css/cadastrarusuario.css">
+    <script>
+        function showSuccessPopup() {
+            alert("Usuário cadastrado com sucesso!");
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+            const form = event.target;
+
+            fetch(form.action, {
+                method: form.method,
+                body: new URLSearchParams(new FormData(form))
+            })
+            .then(response => {
+                if (response.ok) {
+                    showSuccessPopup();
+                    form.reset(); // Limpar o formulário após o sucesso
+                } else {
+                    alert("Erro ao cadastrar o usuário.");
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<h2>Cadastrar novo usuario</h2>
+<form method="post" action="/gestor/cadastrar">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required><br>
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" name="senha" required><br>
+    <label for="tipoUsuario">Tipo de Usuario:</label>
+    <select id="tipoUsuario" name="tipoUsuario">
+        <option value="PLANEJADOR">Planejador</option>
+        <option value="LOGISTICA">Logistica</option>
+    </select><br>
+    <button type="submit">Cadastrar</button>
+</form>
+</body>
+</html>
