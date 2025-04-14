@@ -2,29 +2,47 @@ package io.github.mateusbm.locmaq.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
-@Getter
-@Setter
 @AllArgsConstructor
+@Data
 public class Usuario {
-
     @Id
-    @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Getter
+    @Setter
+    @Column(nullable = false, unique = true)
     private String nome;
 
-    @Column
+    @Getter
+    @Column(nullable = false)
     private String senha;
 
-    private enum tipo {PLANEJADOR, LOGISTICA, GESTOR}
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING) // Certifique-se de que o enum seja mapeado como STRING
+    @Column(nullable = false)
+    private TipoUsuario tipo;
 
+    public Usuario(String nome, String senha, TipoUsuario tipo) {
+        this.nome = nome;
+        this.senha = senha;
+        this.tipo = tipo;
+    }
+
+    public TipoUsuario getTipoUsuario() {
+        return tipo;
+    }
+
+    public Usuario() {
+    }
 
 
 }
+
