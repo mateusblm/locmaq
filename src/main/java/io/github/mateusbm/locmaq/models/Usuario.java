@@ -10,22 +10,19 @@ import lombok.Setter;
 @Table
 @AllArgsConstructor
 @Data
+@Getter
+@Setter
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @Getter
     @Column(nullable = false)
     private String senha;
 
-    @Getter
-    @Setter
     @Enumerated(EnumType.STRING) // Certifique-se de que o enum seja mapeado como STRING
     @Column(nullable = false)
     private TipoUsuario tipo;
@@ -43,6 +40,8 @@ public class Usuario {
     public Usuario() {
     }
 
-
+    public String getSenha() {
+        return senha;
+    }
 }
 
