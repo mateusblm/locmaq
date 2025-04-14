@@ -4,7 +4,6 @@ package io.github.mateusbm.locmaq.services;
 import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
