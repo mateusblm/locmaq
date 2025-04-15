@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table
 @Getter
@@ -17,7 +19,7 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String nome;
 
     @Column(nullable = false)
@@ -31,4 +33,8 @@ public class Cliente {
 
     @Column(nullable = false)
     private String telefone;
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Equipamento> equipamentos;
+
 }
