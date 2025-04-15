@@ -57,7 +57,13 @@ main {
 
 .login-box .buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+}
+
+.div-botao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .login-box .buttons.single {
