@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -16,16 +17,16 @@ public class BoletimMedicao {
 
     @Id
     @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
-    @Column
-    private Date dataMedicao;
+    @Column(nullable = false)
+    private LocalDate dataMedicao;
 
-    @Column
+    @Column(nullable = false)
     private double valorMedido;
 
-    @Column
+    @Column(length = 250)
     private String observacoes;
 }

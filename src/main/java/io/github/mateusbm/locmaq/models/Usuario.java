@@ -17,13 +17,13 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String nome;
 
     @Column(nullable = false)
     private String senha;
 
-    @Enumerated(EnumType.STRING) // Certifique-se de que o enum seja mapeado como STRING
+    @Enumerated(EnumType.STRING) // Certifique de que o enum seja mapeado como STRING
     @Column(nullable = false)
     private TipoUsuario tipo;
 

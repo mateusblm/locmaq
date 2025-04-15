@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,15 +17,15 @@ import java.util.Date;
 public class ContratoLocacao {
     @Id
     @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Date dataInicio;
+    @Column(nullable = false)
+    private LocalDate dataInicio;
 
-    @Column
-    private Date dataFim;
+    @Column(nullable = false)
+    private LocalDate dataFim;
 
-    @Column
-    private Double valorTotal;
+    @Column(nullable = false, precision = 18, scale = 2)
+    private BigDecimal valorTotal;
 }

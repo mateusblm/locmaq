@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table
 @Getter
@@ -14,18 +16,18 @@ public class Equipamento {
 
     @Id
     @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String nome;
 
-    @Column
+    @Column(length = 250)
     private String descricao;
 
-    @Column
-    private double valorLocacao;
+    @Column(nullable = false, precision = 18, scale = 2)
+    private BigDecimal valorLocacao;
 
-    @Column
+    @Column(nullable = false)
     private boolean disponibilidade;
 }

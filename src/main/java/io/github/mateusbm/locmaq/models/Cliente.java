@@ -14,21 +14,21 @@ public class Cliente {
 
     @Id
     @Column
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, length = 100)
     private String nome;
 
-    @Column
+    @Column(nullable = false)
     private String cnpj;
 
-    @Column
+    @Column(nullable = false)
     private String endereco;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String telefone;
 }
