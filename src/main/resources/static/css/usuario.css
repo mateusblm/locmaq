@@ -1,0 +1,115 @@
+/* Reset e base */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #263238;
+    color: white;
+    padding: 15px 30px;
+}
+
+.logo {
+    font-size: 24px;
+    margin: 0;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.link-planejador {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Container do usuário */
+.user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Cartão do usuário */
+.user-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 30px;
+}
+
+.user-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+}
+
+.user-name {
+    margin: 10px 0 5px;
+    font-size: 22px;
+}
+
+.user-email, .user-role {
+    color: #666;
+    margin: 5px 0;
+}
+
+.edit-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #009688;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+    background-color: #00796b;
+}
+
+/* Informações adicionais */
+.user-info {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.user-info h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.user-info ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.user-info li {
+    margin-bottom: 8px;
+}
