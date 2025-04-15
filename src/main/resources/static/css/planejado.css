@@ -21,9 +21,8 @@ body {
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #2563eb;
+ font-size: 24px;
+     margin: 0;
 }
 
 .user-area {
@@ -40,11 +39,11 @@ body {
 }
 
 .link-planejador {
-  font-size: 16px;
-  color: #6b7280;
-  text-decoration: underline;
+
+  color: white;
   cursor: pointer;
-  transition: color 0.3s ease;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .link-planejador:hover {
@@ -63,13 +62,13 @@ body {
 .card {
   background-color: #fff;
   border: 1px solid #e5e7eb;
-  padding: 24px;
+  padding: 60px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   width: calc(25% - 24px);
-  min-width: 260px;
+  min-width: 200px;
   min-height: 360px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
@@ -83,7 +82,7 @@ body {
 }
 
 .card-image {
-  width: 100%;
+  width: 30%;
   height: auto;
   margin-bottom: 16px;
   object-fit: contain;
@@ -103,7 +102,7 @@ body {
 }
 
 .card-button {
-  background-color: #dc2626;
+  background-color: #009688;
   color: white;
   text-align: center;
   padding: 10px;
