@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class EquipamentoService {
 
     @Autowired
-    private EquipamentoRepository
+    private EquipamentoRepository equipamentoRepository;
 
     public void cadastrarEquipamento(){
     }
