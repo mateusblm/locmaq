@@ -10,18 +10,20 @@ body {
 }
 
 /* Header */
-header {
-  background-color: #ffffff;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #263238;
+    color: white;
+    padding: 15px 30px;
 }
 
 .logo {
-  color: #007bff;
-  font-size: 24px;
-  font-weight: bold;
+    font-size: 24px;
+    margin: 0;
+    font-family:"Roboto", sans-serif;
+    font-weight: 700;
 }
 
 main {
@@ -73,7 +75,7 @@ main {
 .form-container button {
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #009688;
   color: white;
   border: none;
   font-size: 16px;
@@ -83,5 +85,5 @@ main {
 }
 
 .form-container button:hover {
-  background-color: #0056b3;
+  background-color: #00796b;
 }
