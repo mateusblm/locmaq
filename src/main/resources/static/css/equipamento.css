@@ -1,160 +1,97 @@
-* {
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  
-  body {
-    background-color: white;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #263238;
-      color: white;
-      padding: 15px 30px;
-      font-size: 12px;
-  }
-  
-
-  
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 15px;
-  }
-  
-  .container {
-    width: 90%;
-    max-width: 600px;
-    background: white;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .container h2 {
-    text-align: center;
-    margin-bottom: 15px;
-    color: ;
-    font-size: 18px;
-  }
-  
-  form label {
-    font-weight: bold;
-    display: block;
-    margin-top: 8px;
-    font-size: 14px;
-  }
-  
-  form input, form select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 4px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 12px;
-  }
-  
-  .buttons.single {
-    justify-content: center;
-  }
-  
-  button {
-    width: 48%;
-    padding: 8px;
-    border: none;
-    border-radius: 5px;
-    background-color: #009688;
+}
+.header {
+    background: #34495e;
     color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  
-  .buttons.single button {
+    padding: 1rem;
+    text-align: center;
+}
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+    margin: 25px;
+    padding: 25px;
+    min-width: 400px;
+    max-width: 600px;
     width: 100%;
-  }
-  
-  button:hover {
-    background-color: #00796b;
-  }
-  
-  table {
+}
+form label {
+    display: block;
+    margin-top: 10px;
+    color: #48505e;
+}
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+form .buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+form button {
+    flex: 1;
+    padding: 10px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+form button#reset-btn {
+    background-color: #888;
+}
+form button:disabled {
+    background-color: #bdc3c7;
+    cursor: default;
+}
+form button:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
-    font-size: 14px;
-  }
-  
-  th, td {
-    border: 1px solid #ddd;
-    padding: 6px;
-    text-align: center;
-  }
-  
-  th {
-    background-color: #007bff;
+    margin-top: 10px;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background: #2980b9;
     color: white;
-  }
-  
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-  }
-  
-  .action-buttons button {
-    width: auto;
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  
-  button.edit {
-    background: orange;
-  }
-  
-  button.delete {
-    background: red;
-  }
-  
-  button.edit:hover {
-    background: #cc8400;
-  }
-  
-  button.delete:hover {
-    background: darkred;
-  }
-  
-  @media (max-width: 768px) {
-    .container {
-      max-width: 90%;
-      padding: 15px;
-    }
-    button {
-      width: 100%;
-      margin-bottom: 5px;
-    }
-    .buttons {
-      flex-direction: column;
-    }
-    .action-buttons {
-      flex-direction: column;
-    }
-  }
-  
+    font-weight: bold;
+}
+tr:nth-child(even) {
+    background: #f0f6fb;
+}
+.action-btn {
+    background: none;
+    border: none;
+    margin: 0 3px;
+    cursor: pointer;
+    color: #2980b9;
+    font-size: 1em;
+}
+.action-btn.delete {
+    color: #e74c3c;
+}
+.action-btn:disabled {
+    color: #ccc;
+    cursor: default;
+}

@@ -7,84 +7,67 @@
     <link rel="stylesheet" href="../css/equipamento.css">
 </head>
 <body>
-    <header class = "header">
-        <h1>Gerenciar Equipamentos</h1>
-    </header>
-    
-    <main>
-        <div class="container">
-            <h2>Manter Equipamento para Locação</h2>
-            
-            <form id="equipamentoForm">
-                <input type="hidden" id="id" name="id">
-    
-                <label for="nome">Nome do Equipamento:</label>
-                <input type="text" id="nome" name="nome" required>
-    
-                <label for="categoria">Categoria:</label>
-                <input type="text" id="categoria" name="categoria" required>
-    
-                <label for="placa">Placa:</label>
-                <input type="text" id="placa" name="placa">
-    
-                <label for="marca">Marca:</label>
-                <input type="text" id="marca" name="marca" required>
-    
-                <label for="modelo">Modelo:</label>
-                <input type="text" id="modelo" name="modelo" required>
-    
-                <label for="ano">Ano:</label>
-                <input type="number" id="ano" name="ano" required>
-    
-                <label for="serie">Série/Chassi:</label>
-                <input type="text" id="serie" name="serie" required>
-    
-                <label for="horimetro">Horímetro/Km:</label>
-                <input type="number" id="horimetro" name="horimetro" required>
-    
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                    <option value="Disponível">Disponível</option>
-                    <option value="Locado">Locado</option>
-                    <option value="Em Manutenção">Em Manutenção</option>
-                </select>
-    
-                <label for="proprietario">Proprietário:</label>
-                <input type="text" id="proprietario" name="proprietario" required>
-    
-                <div class="buttons">
-                    <button type="submit">Salvar</button>
-                    <button type="reset">Limpar</button>
-                </div>
-            </form>
-        </div>
+<header class="header">
+    <h1>Gerenciar Equipamentos</h1>
+</header>
 
-<!--        <div class="container">-->
-<!--            <h3>Lista de Equipamentos</h3>-->
-<!--            <table id="equipamentoTable">-->
-<!--                <thead>-->
-<!--                    <tr>-->
-<!--                        <th>ID</th>-->
-<!--                        <th>Nome</th>-->
-<!--                        <th>Categoria</th>-->
-<!--                        <th>Placa</th>-->
-<!--                        <th>Marca</th>-->
-<!--                        <th>Modelo</th>-->
-<!--                        <th>Ano</th>-->
-<!--                        <th>Série/Chassi</th>-->
-<!--                        <th>Horímetro/Km</th>-->
-<!--                        <th>Status</th>-->
-<!--                        <th>Proprietário</th>-->
-<!--                        <th>Ações</th>-->
-<!--                    </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                    &lt;!&ndash; Os equipamentos serão carregados do banco &ndash;&gt;-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
-    </main>
-    
-    <script src="../../js/equipamento.js"></script>
+<main>
+    <div class="container">
+        <h2 id="form-title">Cadastrar Equipamento para Locação</h2>
+        <form id="equipamentoForm">
+            <input type="hidden" id="id" name="id">
+
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" name="descricao">
+
+            <label for="valorLocacao">Valor Locação:</label>
+            <input type="number" id="valorLocacao" name="valorLocacao" step="0.01" required>
+
+            <label for="disponibilidade">Disponível?</label>
+            <select id="disponibilidade" name="disponibilidade">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            </select>
+
+            <label for="cliente">Cliente (Locatário):</label>
+            <select id="cliente" name="cliente" required>
+                <option value="">Carregando...</option>
+            </select>
+
+            <label for="dono">Dono (Proprietário):</label>
+            <select id="dono" name="dono" required>
+                <option value="">Carregando...</option>
+            </select>
+
+            <div class="buttons">
+                <button type="submit" id="submit-btn">Salvar</button>
+                <button type="reset" id="reset-btn">Limpar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <h3>Lista de Equipamentos</h3>
+        <table id="equipamentoTable">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Valor Locação</th>
+                <th>Disponível?</th>
+                <th>Cliente</th>
+                <th>Dono</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="../js/equipamento.js"></script>
 </body>
 </html>
