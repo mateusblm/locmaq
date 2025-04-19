@@ -35,6 +35,10 @@ public class Cliente {
     private String telefone;
 
     @OneToMany(mappedBy = "cliente")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Equipamento> equipamentos;
 
+    public Cliente() {
+
+    }
 }
