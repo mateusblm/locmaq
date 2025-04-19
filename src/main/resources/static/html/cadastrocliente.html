@@ -1,27 +1,158 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro de Cliente</title>
-  <link rel="stylesheet" href="../css/cadastroclient.css" />
+  <meta charset="UTF-8">
+  <title>Clientes</title>
+  <link rel="stylesheet" href="../css/cadastroclient.css">
 </head>
 <body>
-  <header class="header">
-    <div class="logo">LocMac</div>
-  </header>
-
-  <main>
+<header class="header">
+  <div class="logo">LocMac</div>
+</header>
+<main>
+  <div class="crud-center">
     <div class="form-container">
-      <h2>Cadastrar Cliente</h2>
-      <form>
-        <input type="text" placeholder="Nome" required />
-        <input type="text" placeholder="Sobrenome" required />
-        <input type="email" placeholder="Email" required />
-        <input type="text" placeholder="CPF/CNPJ" required />
-        <button type="submit">Cadastrar</button>
+      <h3 id="formTitle">Cadastrar Cliente</h3>
+      <form id="clienteForm">
+        <input type="hidden" id="id" />
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="text" id="endereco" placeholder="Endereço" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="text" id="cnpj" placeholder="CPF/CNPJ" required>
+        <input type="text" id="telefone" placeholder="Telefone" required>
+        <button type="submit" id="saveBtn">Cadastrar</button>
+        <button type="button" id="editBtn">Salvar Alterações</button>
+        <button type="button" id="cancelBtn">Cancelar</button>
       </form>
     </div>
-  </main>
+    <div class="tabela-container">
+      <h3>Lista de Clientes</h3>
+      <table id="tabelaClientes">
+        <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Endereço</th>
+          <th>Email</th>
+          <th>CPF/CNPJ</th>
+          <th>Telefone</th>
+          <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<script>
+  const API = "/api/clientes";
+  const form = document.getElementById("clienteForm");
+  const tabela = document.getElementById("tabelaClientes").querySelector("tbody");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+  const cancelBtn = document.getElementById("cancelBtn");
+  let editandoId = null;
+
+  function atualizarTabela() {
+    fetch(API)
+      .then(r => r.json())
+      .then(clientes => {
+        tabela.innerHTML = clientes.map(c => `
+          <tr>
+            <td>${c.nome}</td>
+            <td>${c.endereco}</td>
+            <td>${c.email}</td>
+            <td>${c.cnpj}</td>
+            <td>${c.telefone}</td>
+            <td>
+              <button class="acao-btn" onclick="editarCliente(${c.id})">Editar</button>
+              <button class="acao-btn delete" onclick="removerCliente(${c.id})">Remover</button>
+            </td>
+          </tr>
+        `).join('');
+      });
+  }
+
+  form.onsubmit = function(e) {
+    e.preventDefault();
+    const cliente = {
+      nome: form.nome.value,
+      endereco: form.endereco.value,
+      email: form.email.value,
+      cnpj: form.cnpj.value,
+      telefone: form.telefone.value
+    };
+    fetch(API, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cliente)
+    }).then(() => {
+      form.reset();
+      atualizarTabela();
+    });
+  };
+
+  window.editarCliente = function(id) {
+    fetch(API + "/" + id)
+      .then(r => r.json())
+      .then(c => {
+        form.id.value = c.id;
+        form.nome.value = c.nome;
+        form.endereco.value = c.endereco;
+        form.email.value = c.email;
+        form.cnpj.value = c.cnpj;
+        form.telefone.value = c.telefone;
+        editandoId = c.id;
+        saveBtn.style.display = "none";
+        editBtn.style.display = "inline";
+        cancelBtn.style.display = "inline";
+        document.getElementById("formTitle").innerText = "Editar Cliente";
+      });
+  };
+
+  editBtn.onclick = function() {
+    const cliente = {
+      id: form.id.value,
+      nome: form.nome.value,
+      endereco: form.endereco.value,
+      email: form.email.value,
+      cnpj: form.cnpj.value,
+      telefone: form.telefone.value
+    };
+    fetch(API + "/" + editandoId, {
+      method: "PUT",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cliente)
+    }).then(() => {
+      form.reset();
+      editandoId = null;
+      saveBtn.style.display = "inline";
+      editBtn.style.display = "none";
+      cancelBtn.style.display = "none";
+      document.getElementById("formTitle").innerText = "Cadastrar Cliente";
+      atualizarTabela();
+    });
+  };
+
+  cancelBtn.onclick = function() {
+    form.reset();
+    editandoId = null;
+    saveBtn.style.display = "inline";
+    editBtn.style.display = "none";
+    cancelBtn.style.display = "none";
+    document.getElementById("formTitle").innerText = "Cadastrar Cliente";
+  };
+
+  window.removerCliente = function(id) {
+    if (confirm("Deseja remover este cliente?")) {
+      fetch(API + "/" + id, { method: "DELETE" })
+        .then(() => atualizarTabela());
+    }
+  };
+
+  saveBtn.style.display = "inline";
+  editBtn.style.display = "none";
+  cancelBtn.style.display = "none";
+  atualizarTabela();
+</script>
 </body>
 </html>
