@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Donos</title>
+    <link rel="stylesheet" href="../css/cadastroclient.css">
+</head>
+<body>
+<header class="header">
+    <div class="logo">LocMac</div>
+</header>
+<main>
+    <div class="crud-center">
+        <div class="form-container">
+            <h3 id="formTitle">Cadastrar Dono</h3>
+            <form id="donoForm">
+                <input type="hidden" id="id" />
+                <input type="text" id="nome" placeholder="Nome" required>
+                <input type="text" id="endereco" placeholder="Endereço" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="text" id="cnpj" placeholder="CPF/CNPJ" required>
+                <input type="text" id="telefone" placeholder="Telefone" required>
+                <!-- Dados Bancários -->
+                <input type="text" id="banco" placeholder="Banco" required>
+                <input type="text" id="agencia" placeholder="Agência" required>
+                <input type="text" id="numeroConta" placeholder="Número da Conta" required>
+                <button type="submit" id="saveBtn">Cadastrar</button>
+                <button type="button" id="editBtn">Salvar Alterações</button>
+                <button type="button" id="cancelBtn">Cancelar</button>
+            </form>
+        </div>
+        <div class="tabela-container">
+            <h3>Lista de Donos</h3>
+            <table id="tabelaDonos">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Endereço</th>
+                    <th>Email</th>
+                    <th>CPF/CNPJ</th>
+                    <th>Telefone</th>
+                    <th>Banco</th>
+                    <th>Agência</th>
+                    <th>Nº Conta</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<script src="../js/cadastrodono.js"></script>
+</body>
+</html>
