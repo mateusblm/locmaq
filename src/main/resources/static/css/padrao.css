@@ -120,6 +120,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 .bloco-acao:hover, .dashboard-box:hover { background: #f3f4f6; color: #4b5563; }
 
