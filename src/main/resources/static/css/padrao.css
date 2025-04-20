@@ -1,4 +1,3 @@
-/* RESET BÁSICO */
 * {
   margin: 0;
   padding: 0;
@@ -7,11 +6,11 @@
 }
 
 body {
-  background: #f4f6f8;
+  background: #f3f4f6;
   min-height: 100vh;
 }
 
-/* HEADER E NAVEGAÇÃO */
+/* Header e navbar */
 .main-header {
   width: 100%;
   background-color: #263238;
@@ -20,7 +19,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 15px 30px;
-  box-shadow: 0 2px 8px #0001;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .logo {
@@ -28,7 +27,7 @@ body {
   font-family: "Roboto", Arial, sans-serif;
   font-weight: bold;
   letter-spacing: 2px;
-  color: #2196F3;
+  color: #fff;
 }
 .nav-links {
   flex: 1;
@@ -47,8 +46,8 @@ body {
 }
 .nav-links a.active,
 .nav-links a:hover {
-  color: #4FC3F7;
-  border-bottom: 2px solid #4FC3F7;
+  color: #4b5563;
+  border-bottom: 2px solid #4b5563;
 }
 .user-info {
   text-decoration: none;
@@ -56,17 +55,18 @@ body {
   align-items: center;
   gap: 10px;
 }
-
 .user-info a {
     text-decoration: none;
-    text-color: #FFFFFF;
+    color: #FFFFFF;
 }
 
 .user-image {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  object-fit: cover;
 }
+
 .logout-btn {
   background: #dc3545;
   color: #fff;
@@ -81,37 +81,37 @@ body {
 }
 .logout-btn:hover { background: #a00; }
 
-/* BLOCO PRINCIPAL DAS PÁGINAS */
+/* Bloco principal */
 main {
   padding: 32px 8px 0 8px;
   min-height: 80vh;
   max-width: 1080px;
   margin: auto;
 }
-h2 { color: #263238; font-size:2em; margin-bottom:26px; }
+h2 { color: #111827; font-size:2em; margin-bottom:26px; }
 h3 {
-  color: #2196F3;
+  color: #374151;
   margin-top:28px;
   margin-bottom:16px;
 }
 
-/* PAINEL DE DASHBOARD */
-.blocos-painel {
+/* Dashboard */
+.blocos-painel, .dashboard {
   display: flex;
   gap: 32px;
   flex-wrap: wrap;
   margin-top: 32px;
+  justify-content: center;
 }
-.bloco-acao {
+.bloco-acao, .dashboard-box {
   flex: 1;
   min-width: 220px;
   padding: 36px 18px;
   background: #fff;
-  color: #007bff;
-  text-decoration: none;
-  border: 1px solid #eee;
+  color: #111827;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,80,120, 0.07);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   font-size: 20px;
   font-weight: bold;
   text-align: center;
@@ -121,14 +121,30 @@ h3 {
   align-items: center;
   justify-content: center;
 }
-.bloco-acao:hover { background: #E3F2FD; color: #0056b3; }
+.bloco-acao:hover, .dashboard-box:hover { background: #f3f4f6; color: #4b5563; }
 
-/* FORMULÁRIOS GLOBAIS */
+.dashboard-box {
+  padding: 60px 40px;
+  min-height: 500px;
+}
+
+.dashboard-box h2 {
+  font-size: 18px;
+  color: #111827;
+  margin-bottom: 12px;
+}
+.dashboard-box p {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+/* Formularios */
 form {
   background: #fff;
   padding: 24px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px #0001;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   margin-bottom: 32px;
   max-width: 480px;
   margin-left: auto;
@@ -153,7 +169,7 @@ form input, form select, form textarea {
   background: #fafbfc;
 }
 form button[type="submit"], form button, .bloco-acao, .edit-button {
-  background: #2196F3;
+  background: #374151;
   color: #fff;
   border: none;
   border-radius: 7px;
@@ -163,26 +179,26 @@ form button[type="submit"], form button, .bloco-acao, .edit-button {
   font-weight: 600;
   margin-top: 10px;
   cursor: pointer;
-  box-shadow: 0 1px 4px #0001;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   transition: background .18s;
 }
 form button[type="submit"]:hover, form button:hover, .edit-button:hover {
-  background: #1565c0;
+  background: #698485;
 }
 
-/* TABELAS: LISTAGEM, HISTÓRICO, ETC */
+/* Tabelas: Listagem, historico etc */
 table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px #0001;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   margin: 0 0 35px 0;
 }
 th, td {
   padding: 12px 8px;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid #e5e7eb;
   text-align: center;
   font-size: 1em;
 }
@@ -196,10 +212,10 @@ tr:last-child td {
   border-bottom: none;
 }
 tbody tr:nth-child(even) {
-  background: #f9fafb;
+  background: #f3f4f6;
 }
 tbody tr:hover {
-  background: #f1f8ff;
+  background: #e5e7eb;
 }
 .acao-btn, .delete, .edit-button {
   color: #fff;
@@ -209,8 +225,8 @@ tbody tr:hover {
   padding: 6px 14px;
   margin: 0 2px;
   cursor: pointer;
-  background: #2196F3;
-  box-shadow: 0 1px 3px #0001;
+  background: #374151;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   transition: background .18s;
   font-size: 0.97em;
 }
@@ -221,16 +237,16 @@ tbody tr:hover {
   background: #B71C1C;
 }
 .edit-button:hover {
-  background: #007bff;
+  background: #4b5563;
 }
 
-/* CARD DE USUÁRIO (PERFIL) */
+/* Perfil Usuario */
 .user-card {
   background: #fff;
   padding: 36px;
   text-align: center;
   border-radius: 14px;
-  box-shadow: 0 2px 14px #0001;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.05);
   margin: 36px auto;
   max-width: 400px;
 }
@@ -241,9 +257,9 @@ tbody tr:hover {
   margin: 0 auto 14px auto;
 }
 .user-name {
-  text-decoration: none;
   font-size: 1.3em;
   font-weight: bold;
+  color: #374151;
   margin: 12px 0 2px 0;
 }
 .user-role, .user-email {
@@ -257,7 +273,7 @@ tbody tr:hover {
   margin: 60px auto 0 auto;
   padding: 36px 32px 22px 32px;
   border-radius: 12px;
-  box-shadow: 0 2px 14px #0002;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.08);
   text-align: center;
   position: relative;
 }
@@ -274,13 +290,13 @@ tbody tr:hover {
 }
 
 .login-box .forgot-password a {
-  color: #2196F3;
+  color: #374151;
   text-decoration: none;
   font-size: 0.97em;
   font-weight: 600;
   transition: color .2s;
 }
-.login-box .forgot-password a:hover { text-decoration: underline; color: #1565c0; }
+.login-box .forgot-password a:hover { text-decoration: underline; color: #4b5563; }
 
 #loginError {
   color: #c00;
@@ -289,10 +305,10 @@ tbody tr:hover {
   min-height: 18px;
 }
 h2, #form-title { text-align: center; }
-/* SUPORTE RESPONSIVO */
+/* Responsividade */
 @media (max-width: 900px) {
-  .blocos-painel { flex-direction: column; gap:18px; }
-  .bloco-acao { min-width: 100%; }
+  .blocos-painel, .dashboard { flex-direction: column; gap:18px; }
+  .bloco-acao, .dashboard-box { min-width: 100%; }
   .main-header { flex-direction:column; align-items:flex-start; gap:8px; }
   main { max-width: 96vw; }
   form { padding: 14px; }
@@ -307,4 +323,3 @@ h2, #form-title { text-align: center; }
   .logo { font-size: 22px; }
   main { padding-top:18px; }
 }
-
