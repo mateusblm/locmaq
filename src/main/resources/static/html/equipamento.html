@@ -2,61 +2,52 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Equipamentos</title>
-    <link rel="stylesheet" href="../css/equipamento.css">
+    <title>Equipamentos - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
-<header class="header">
-    <h1>Gerenciar Equipamentos</h1>
-</header>
-
-<main>
-    <div class="container">
-        <h2 id="form-title">Cadastrar Equipamento para Locação</h2>
-        <form id="equipamentoForm">
-            <input type="hidden" id="id" name="id">
-
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
-
-            <label for="descricao">Descrição:</label>
-            <input type="text" id="descricao" name="descricao">
-
-            <label for="valorLocacao">Valor Locação:</label>
-            <input type="number" id="valorLocacao" name="valorLocacao" step="0.01" required>
-
-            <label for="disponibilidade">Disponível?</label>
-            <select id="disponibilidade" name="disponibilidade">
-                <option value="true">Sim</option>
-                <option value="false">Não</option>
-            </select>
-
-            <label for="cliente">Cliente (Locatário):</label>
-            <select id="cliente" name="cliente" required>
-                <option value="">Carregando...</option>
-            </select>
-
-            <label for="dono">Dono (Proprietário):</label>
-            <select id="dono" name="dono" required>
-                <option value="">Carregando...</option>
-            </select>
-
-            <div class="buttons">
-                <button type="submit" id="submit-btn">Salvar</button>
-                <button type="reset" id="reset-btn">Limpar</button>
-            </div>
-        </form>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
     </div>
-
-    <div class="container">
+</header>
+<main>
+    <h2 id="form-title" style="text-align:center;">Cadastrar Equipamento para Locação</h2>
+    <form id="equipamentoForm">
+        <input type="hidden" id="id" name="id">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="descricao">Descrição:</label>
+        <input type="text" id="descricao" name="descricao">
+        <label for="valorLocacao">Valor da Locação (R$):</label>
+        <input type="number" id="valorLocacao" name="valorLocacao" step="0.01" required>
+        <label for="disponibilidade">Disponível?</label>
+        <select id="disponibilidade" name="disponibilidade">
+            <option value="true">Sim</option>
+            <option value="false">Não</option>
+        </select>
+        <label for="dono">Dono (Proprietário):</label>
+        <select id="dono" name="dono"></select>
+        <label for="cliente">Cliente (Locatário):</label>
+        <select id="cliente" name="cliente"></select>
+        <div style="text-align:right;">
+            <button id="submit-btn" type="submit" style="margin-top:12px;">Salvar</button>
+            <button id="reset-btn" type="reset" style="margin-top:12px;">Limpar</button>
+        </div>
+    </form>
+    <section style="margin-top:40px;">
         <h3>Lista de Equipamentos</h3>
-        <table id="equipamentoTable">
+        <table id="equipamentoTable" style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
             <thead>
             <tr>
                 <th>Nome</th>
                 <th>Descrição</th>
-                <th>Valor Locação</th>
+                <th>Valor (R$)</th>
                 <th>Disponível?</th>
                 <th>Cliente</th>
                 <th>Dono</th>
@@ -65,9 +56,9 @@
             </thead>
             <tbody></tbody>
         </table>
-    </div>
+    </section>
 </main>
-
+<script src="../js/menu.js"></script>
 <script src="../js/equipamento.js"></script>
 </body>
 </html>

@@ -1,52 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contrato de Locação</title>
-  <link rel="stylesheet" href="../css/contratolocacao.css" />
+  <meta charset="UTF-8">
+  <title>Contratos de Locação - LocMac</title>
+  <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
-<header class="header">
+<header class="main-header">
   <div class="logo">LocMac</div>
-</header>
-
-<main>
-  <div class="form-container">
-    <h2>Contrato de Locação</h2>
-    <form>
-      <input type="text" placeholder="Valor" required />
-      <input type="text" placeholder="Pedido" required />
-      <input type="text" placeholder="Local" required />
-      <input type="text" placeholder="Situação" required />
-      <label for="equipamentos">Equipamentos:</label>
-      <select id="equipamentos" name="equipamentos[]" multiple required>
-      </select>
-      <small>Segure Ctrl (ou Cmd no Mac) para selecionar vários equipamentos.</small>
-
-      <button type="submit">Cadastrar</button>
-    </form>
+  <nav class="nav-links"></nav>
+  <div class="user-info">
+    <span id="user-role"></span>
+    <img src="../imgs/images.png" class="user-image">
+    <a href="../html/usuario.html"><span id="user-name"></span></a>
+    <a href="/logout" class="logout-btn">Sair</a>
   </div>
+</header>
+<main>
+  <h2>Contratos de Locação</h2>
+  <form id="contratoForm" style="background:#fff;padding:24px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 2px 8px #0001;">
+    <label>Cliente:</label>
+    <select id="contratoCliente"></select>
+    <label>Equipamento:</label>
+    <select id="contratoEquipamento"></select>
+    <label>Período:</label>
+    <input type="text" id="contratoPeriodo" required placeholder="Ex: 01/04/2025 a 30/04/2025">
+    <label>Valor Total (R$):</label>
+    <input type="number" id="contratoValor" required>
+    <div style="text-align:right;">
+      <button type="submit" style="margin-top:12px;">Salvar Contrato</button>
+      <button type="reset" style="margin-top:12px;">Limpar</button>
+    </div>
+  </form>
+  <section style="margin-top:40px;">
+    <h3>Contratos Existentes</h3>
+    <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
+      <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Equipamento</th>
+        <th>Período</th>
+        <th>Valor Total</th>
+        <th>Ações</th>
+      </tr>
+      </thead>
+      <tbody id="contratosTable"></tbody>
+    </table>
+  </section>
 </main>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const equipamentosSelect = document.getElementById('equipamentos');
-
-    const equipamentos = [
-      { id: 1, nome: 'Retroescavadeira - CAT' },
-      { id: 2, nome: 'Escavadeira - Komatsu' },
-      { id: 3, nome: 'Caminhão Basculante - Volvo' }
-    ];
-
-    equipamentos.forEach(equip => {
-      const option = document.createElement('option');
-      option.value = equip.id;
-      option.textContent = equip.nome;
-      equipamentosSelect.appendChild(option);
-    });
-
-  });
-</script>
+<script src="../js/menu.js"></script>
+<script src="../js/contratolocacao.js"></script>
 </body>
 </html>

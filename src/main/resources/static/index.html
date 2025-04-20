@@ -3,29 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - LocMac</title>
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/padrao.css">
 </head>
 <body>
-
-<header>
-  <h1>LocMac</h1>
+<header class="main-header">
+  <div class="logo">LocMac</div>
 </header>
-
 <main>
   <div class="login-box">
     <h2>Login</h2>
-    <form method="post" action="/login">
+    <form id="loginForm">
       <label for="nome">Nome:</label>
-      <input type="text" id="nome" name="nome" required><br>
+      <input type="text" id="nome" name="nome" required>
       <label for="senha">Senha:</label>
-      <input type="password" id="senha" name="senha" required><br>
-      <div class="div-botao">      <button type="submit">Entrar</button>
+      <input type="password" id="senha" name="senha" required>
+      <div class="div-botao">
+        <button type="submit">Entrar</button>
       </div>
     </form>
     <div class="forgot-password">
-      <a href="html/forgetpassword.html">Forgot password?</a>
+      <a href="html/forgetpassword.html">Esqueci a senha?</a>
     </div>
+    <div id="loginError" style="color: #c00; text-align:center; margin-top: 10px;"></div>
   </div>
 </main>
+<script>
+  document.getElementById('loginForm').onsubmit = function(event) {
+    event.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const senha = document.getElementById('senha').value;
+    document.getElementById('loginError').innerText = "";
+
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ nome: nome, senha: senha })
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error(await res.text());
+        }
+      })
+      .then(data => {
+        sessionStorage.setItem('perfilLogado', data.tipoUsuario);
+        sessionStorage.setItem('nomeUsuario', data.nome);
+
+        // Redireciona para a tela certa pelo perfil do usuário
+        if (data.tipoUsuario === 'GESTOR') {
+          window.location.href = '/html/gestor.html';
+        } else if (data.tipoUsuario === 'PLANEJADOR') {
+          window.location.href = '/html/planejador.html';
+        } else if (data.tipoUsuario === 'LOGISTICA') {
+          window.location.href = '/html/logistica.html';
+        } else {
+          // fallback
+          window.location.href = '/html/usuario.html';
+        }
+      })
+      .catch(err => {
+        document.getElementById('loginError').innerText = "Usuário ou senha inválidos!";
+      });
+  };
+</script>
 </body>
 </html>

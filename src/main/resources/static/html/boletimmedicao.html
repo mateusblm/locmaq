@@ -1,46 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Boletim de Medição</title>
-    <link rel="stylesheet" href="../css/boletimmedicao.css"
+    <meta charset="UTF-8">
+    <title>Boletim de Medição - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
-<header>
+<header class="main-header">
     <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
 </header>
-
 <main>
-    <div class="relatorio-container">
-        <h2>Boletim de Medição</h2>
-
-        <section class="info-geral">
-            <label>Período de Medição:</label>
-            <input type="text" id="periodo" placeholder="Ex: 01/04/2025 a 15/04/2025" />
-
-            <label>Planejador:</label>
-            <input type="text" id="planejador" placeholder="Nome do responsável" />
-
-            <label>Situação do Boletim:</label>
-            <input type="text" id="situacao" placeholder="Ex: Em aprovação, Concluído..." />
-        </section>
-
-        <section class="tabela-locacoes">
-            <h3>Detalhes das Locações</h3>
-            <table>
-                <thead>
-                <tr>
-                    <th>Equipamento</th>
-                    <th>Modelo</th>
-                    <th>Dias Trabalhados</th>
-                    <th>Valor Diário (R$)</th>
-                    <th>Valor Total (R$)</th>
-                </tr>
-                </thead>
-                <tbody id="tabelaDados">
-                <tr>
-                    <td><input type="text" placeholder="Nome do equipamento" /></td>
-                    <td><input type="text" placeholder="Modelo" /></td>
-                    <td><input type="number" placeholder="0" /></td>
-                    <td><input type="number" placeholder="0.00" step="0.01
+    <h2>Boletim de Medição</h2>
+    <form id="boletimForm" style="background:#fff;padding:24px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 2px 8px #0001;">
+        <label>Período:</label>
+        <input type="text" id="periodo" required placeholder="Ex: 01/04/2025 a 15/04/2025">
+        <label>Planejador:</label>
+        <input type="text" id="planejador" required placeholder="Responsável">
+        <label>Situação:</label>
+        <input type="text" id="situacao" required>
+        <h3>Detalhes das Locações</h3>
+        <div id="locacao-itens"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+            <button type="button" onclick="addLocacaoItem()">+ Adicionar Equipamento</button>
+            <button type="submit">Salvar Boletim</button>
+        </div>
+    </form>
+    <section style="margin: 40px auto 0 auto;max-width:900px;">
+        <h3>Histórico de Boletins</h3>
+        <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
+            <thead>
+            <tr>
+                <th>Período</th>
+                <th>Planejador</th>
+                <th>Situação</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabelaBoletins"></tbody>
+        </table>
+    </section>
+</main>
+<script src="../js/menu.js"></script>
+<script src="../js/boletimmedicao.js"></script>
+</body>
+</html>

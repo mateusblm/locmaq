@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cadastrar Usuário</title>
-    <link rel="stylesheet" href="../css/cadastrarusuario.css">
+    <title>Cadastrar Usuario - LocMaq</title>
+    <link rel="stylesheet" href="../css/padrao.css">
     <script>
         function showSuccessPopup() {
             alert("Usuário cadastrado com sucesso!");
@@ -28,18 +28,35 @@
     </script>
 </head>
 <body>
-<h2>Cadastrar novo usuario</h2>
-<form method="post" action="/gestor/cadastrar">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" required><br>
-    <label for="senha">Senha:</label>
-    <input type="password" id="senha" name="senha" required><br>
-    <label for="tipoUsuario">Tipo de Usuario:</label>
-    <select id="tipoUsuario" name="tipoUsuario">
-        <option value="PLANEJADOR">Planejador</option>
-        <option value="LOGISTICA">Logistica</option>
-    </select><br>
-    <button type="submit">Cadastrar</button>
-</form>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="/html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main>
+    <form id="usuarioForm" style="background:#fff;padding:24px;border-radius:10px;max-width:400px;margin:auto;box-shadow:0 2px 8px #0001;">
+        <h2>Cadastrar Novo Usuario</h2>
+        <label>Nome:</label>
+        <input type="text" id="usuarioNome" required>
+        <label>Senha:</label>
+        <input type="password" id="usuarioSenha" required>
+        <label>Tipo de Usuario:</label>
+        <select id="usuarioTipo" required>
+            <option value="">Selecione...</option>
+            <option value="PLANEJADOR">Planejador</option>
+            <option value="LOGISTICA">Logistica</option>
+        </select>
+        <div style="text-align:right;">
+            <button type="submit" style="margin-top:12px;">Cadastrar</button>
+            <button type="reset" style="margin-top:12px;">Limpar</button>
+        </div>
+    </form>
+</main>
+<script src="../js/menu.js"></script>
 </body>
 </html>

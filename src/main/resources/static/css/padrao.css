@@ -1,0 +1,310 @@
+/* RESET BÁSICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+/* HEADER E NAVEGAÇÃO */
+.main-header {
+  width: 100%;
+  background-color: #263238;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.logo {
+  font-size: 26px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #2196F3;
+}
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 18px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color .2s;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+}
+.nav-links a.active,
+.nav-links a:hover {
+  color: #4FC3F7;
+  border-bottom: 2px solid #4FC3F7;
+}
+.user-info {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info a {
+    text-decoration: none;
+    text-color: #FFFFFF;
+}
+
+.user-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.logout-btn {
+  background: #dc3545;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-left: 10px;
+  font-size: 15px;
+  border: none;
+  transition: background .2s;
+  cursor: pointer;
+}
+.logout-btn:hover { background: #a00; }
+
+/* BLOCO PRINCIPAL DAS PÁGINAS */
+main {
+  padding: 32px 8px 0 8px;
+  min-height: 80vh;
+  max-width: 1080px;
+  margin: auto;
+}
+h2 { color: #263238; font-size:2em; margin-bottom:26px; }
+h3 {
+  color: #2196F3;
+  margin-top:28px;
+  margin-bottom:16px;
+}
+
+/* PAINEL DE DASHBOARD */
+.blocos-painel {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+.bloco-acao {
+  flex: 1;
+  min-width: 220px;
+  padding: 36px 18px;
+  background: #fff;
+  color: #007bff;
+  text-decoration: none;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,80,120, 0.07);
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bloco-acao:hover { background: #E3F2FD; color: #0056b3; }
+
+/* FORMULÁRIOS GLOBAIS */
+form {
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+  margin-bottom: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+form label {
+  display: block;
+  color: #263238;
+  font-weight: 600;
+  margin-bottom: 5px;
+  margin-top: 14px;
+}
+form input, form select, form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 1em;
+  background: #fafbfc;
+}
+form button[type="submit"], form button, .bloco-acao, .edit-button {
+  background: #2196F3;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 18px;
+  margin-left: 0;
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #0001;
+  transition: background .18s;
+}
+form button[type="submit"]:hover, form button:hover, .edit-button:hover {
+  background: #1565c0;
+}
+
+/* TABELAS: LISTAGEM, HISTÓRICO, ETC */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0001;
+  margin: 0 0 35px 0;
+}
+th, td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #ececec;
+  text-align: center;
+  font-size: 1em;
+}
+th {
+  background: #F0F4F8;
+  color: #263238;
+  font-size: 1.02em;
+  font-weight: 700;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+tbody tr:hover {
+  background: #f1f8ff;
+}
+.acao-btn, .delete, .edit-button {
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 14px;
+  margin: 0 2px;
+  cursor: pointer;
+  background: #2196F3;
+  box-shadow: 0 1px 3px #0001;
+  transition: background .18s;
+  font-size: 0.97em;
+}
+.acao-btn.delete {
+  background: #E74C3C;
+}
+.acao-btn.delete:hover {
+  background: #B71C1C;
+}
+.edit-button:hover {
+  background: #007bff;
+}
+
+/* CARD DE USUÁRIO (PERFIL) */
+.user-card {
+  background: #fff;
+  padding: 36px;
+  text-align: center;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px #0001;
+  margin: 36px auto;
+  max-width: 400px;
+}
+.user-card .user-image {
+  width: 70px;
+  height: 70px;
+  display: block;
+  margin: 0 auto 14px auto;
+}
+.user-name {
+  text-decoration: none;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin: 12px 0 2px 0;
+}
+.user-role, .user-email {
+  color: #555;
+  margin: 6px 0;
+}
+
+.login-box {
+  background: #fff;
+  max-width: 380px;
+  margin: 60px auto 0 auto;
+  padding: 36px 32px 22px 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 14px #0002;
+  text-align: center;
+  position: relative;
+}
+
+.login-box h2 {
+  margin-bottom: 28px;
+  color: #263238;
+  font-size: 2em;
+}
+
+.login-box .forgot-password {
+  margin-top: 12px;
+  text-align: right;
+}
+
+.login-box .forgot-password a {
+  color: #2196F3;
+  text-decoration: none;
+  font-size: 0.97em;
+  font-weight: 600;
+  transition: color .2s;
+}
+.login-box .forgot-password a:hover { text-decoration: underline; color: #1565c0; }
+
+#loginError {
+  color: #c00;
+  font-size: 1em;
+  margin-top: 9px;
+  min-height: 18px;
+}
+h2, #form-title { text-align: center; }
+/* SUPORTE RESPONSIVO */
+@media (max-width: 900px) {
+  .blocos-painel { flex-direction: column; gap:18px; }
+  .bloco-acao { min-width: 100%; }
+  .main-header { flex-direction:column; align-items:flex-start; gap:8px; }
+  main { max-width: 96vw; }
+  form { padding: 14px; }
+}
+@media (max-width: 600px) {
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 10px;
+  }
+  .logo { font-size: 22px; }
+  main { padding-top:18px; }
+}
+

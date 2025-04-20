@@ -1,41 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LocMac | Usuário</title>
-    <link rel="stylesheet" href="../css/usuario.css" />
+    <meta charset="UTF-8">
+    <title>Perfil - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
-
-<!-- Header -->
-<header class="header">
-    <h1 class="logo">LocMac</h1>
-    <div class="user-area">
-        <img src="../imgs/images.png" alt="Usuário" class="user-image" />
-        <a href="#" class="link-planejador">Perfil</a>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a style="text-decoration: none;" href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
     </div>
 </header>
-
-<!-- Informações do Usuário -->
-<section class="user-container">
-    <div class="user-card">
-        <img src="../imgs/images.png" alt="Foto do Usuário" class="user-photo" />
-        <h2 class="user-name">João da Silva</h2>
-        <p class="user-email">joao.silva@email.com</p>
-        <p class="user-role">Planejador de Obras</p>
-        <a href="#" class="edit-button">Editar Perfil</a>
+<main>
+    <h2>Perfil de <span id="perfil-user-nome"></span></h2>
+    <div class="user-card" style="background:#fff;max-width:400px;margin:auto;padding:36px;text-align:center;border-radius:14px;box-shadow:0 2px 14px #0001;">
+        <img src="../imgs/images.png" class="user-image" style="margin-bottom:15px;width:70px;height:70px;">
+        <h3 id="perfil-user-cargo"></h3>
+        <p>E-mail: <span id="perfil-user-email">sprint2@sprint2.com</span></p>
+        <a href="#" class="bloco-acao" style="display:inline-block;background:#2196F3;color:#fff;margin-top:14px;">Editar Perfil</a>
     </div>
-
-    <div class="user-info">
-        <h3>Atividades Recentes</h3>
-        <ul>
-            <li>Boletim de Medição enviado em 12/04</li>
-            <li>Relatório encaminhado ao cliente</li>
-            <li>Inserção de dias trabalhados - 10/04</li>
-        </ul>
-    </div>
-</section>
-
+</main>
+<script src="../js/menu.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('perfil-user-nome').innerText =
+        sessionStorage.getItem('nomeUsuario') || 'Usuário';
+      document.getElementById('perfil-user-cargo').innerText =
+        (sessionStorage.getItem('perfilLogado') || '').charAt(0).toUpperCase() +
+        (sessionStorage.getItem('perfilLogado') || '').toLowerCase().slice(1);
+    });
+</script>
 </body>
 </html>

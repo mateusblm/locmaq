@@ -2,54 +2,72 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Donos</title>
-    <link rel="stylesheet" href="../css/cadastroclient.css">
+    <title>Cadastro de Donos - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+    <script src="../js/menu.js"></script>
 </head>
 <body>
-<header class="header">
+<header class="main-header">
     <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
 </header>
 <main>
-    <div class="crud-center">
-        <div class="form-container">
-            <h3 id="formTitle">Cadastrar Dono</h3>
-            <form id="donoForm">
-                <input type="hidden" id="id" />
-                <input type="text" id="nome" placeholder="Nome" required>
-                <input type="text" id="endereco" placeholder="Endereço" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="text" id="cnpj" placeholder="CPF/CNPJ" required>
-                <input type="text" id="telefone" placeholder="Telefone" required>
-                <!-- Dados Bancários -->
-                <input type="text" id="banco" placeholder="Banco" required>
-                <input type="text" id="agencia" placeholder="Agência" required>
-                <input type="text" id="numeroConta" placeholder="Número da Conta" required>
-                <button type="submit" id="saveBtn">Cadastrar</button>
-                <button type="button" id="editBtn">Salvar Alterações</button>
-                <button type="button" id="cancelBtn">Cancelar</button>
-            </form>
+    <h2 id="formTitle" style="text-align:center;">Cadastrar Dono</h2>
+    <form id="donoForm" style="background:#fff;padding:24px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 2px 8px #0001;">
+        <input type="hidden" id="id" name="id">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="endereco">Endereço:</label>
+        <input type="text" id="endereco" name="endereco" required>
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="cnpj">CPF/CNPJ:</label>
+        <input type="text" id="cnpj" name="cnpj" required>
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" name="telefone" required>
+
+        <h3 style="margin-top:28px;">Dados Bancários</h3>
+        <label for="banco">Banco:</label>
+        <input type="text" id="banco" name="banco" required>
+        <label for="agencia">Agência:</label>
+        <input type="text" id="agencia" name="agencia" required>
+        <label for="numeroConta">Número da Conta:</label>
+        <input type="text" id="numeroConta" name="numeroConta" required>
+
+        <div style="text-align:right; margin-top:16px;">
+            <button id="saveBtn"   type="submit">Cadastrar</button>
+            <button id="editBtn"   type="button" style="display:none;">Salvar Alterações</button>
+            <button id="cancelBtn" type="button" style="display:none;">Cancelar</button>
+            <button type="reset">Limpar</button>
         </div>
-        <div class="tabela-container">
-            <h3>Lista de Donos</h3>
-            <table id="tabelaDonos">
-                <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Endereço</th>
-                    <th>Email</th>
-                    <th>CPF/CNPJ</th>
-                    <th>Telefone</th>
-                    <th>Banco</th>
-                    <th>Agência</th>
-                    <th>Nº Conta</th>
-                    <th>Ações</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+    </form>
+    <section style="margin: 40px auto 0 auto; max-width: 1200px;">
+        <h3>Lista de Donos</h3>
+        <table id="tabelaDonos" style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Endereço</th>
+                <th>Email</th>
+                <th>CPF/CNPJ</th>
+                <th>Telefone</th>
+                <th>Banco</th>
+                <th>Agência</th>
+                <th>Nº Conta</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
 </main>
+<script src="../js/menu.js"></script>
 <script src="../js/cadastrodono.js"></script>
 </body>
 </html>

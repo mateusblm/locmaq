@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Locmac | Planejador</title>
-    <link rel="stylesheet" href="../css/planejado.css" />
+    <meta charset="UTF-8">
+    <title>Painel Planejador - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
-
-<!-- Header -->
-<header class="header">
-    <h1 class="logo">LocMac</h1>
-    <div class="user-area">
-        <a href="#" class="card-button">Inserir Dias Trabalhados</a>
-        <a href="#" class="card-button">Cadastrar Boletim de Medição</a>
-        <a href="#" class="card-button">Informar Descontos</a>
-        <a href="#" class="card-button">Enviar Relatório ao Cliente</a>
-        <img src="../imgs/images.png" alt="Usuário" class="user-image" />
-        <a href="#" class="link-planejador">Planejador</a>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role">Planejador</span>
+        <img src="../imgs/images.png" class="user-image" alt="">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
     </div>
 </header>
+<main>
+    <h2>Painel do Planejador</h2>
+    <div class="blocos-painel">
+        <a href="../html/cadastrocliente.html" class="bloco-acao">Gerenciar Clientes</a>
+        <a href="../html/boletimmedicao.html" class="bloco-acao">Boletim de Medição</a>
+        <a href="../html/cadastrodono.html" class="bloco-acao">Gerenciar Proprietarios</a>
 
-<!-- Dashboard -->
-<!-- Dashboard -->
-<section class="dashboard">
-    <div class="dashboard-box">
-        <h2>Total de Dias Trabalhados</h2>
-        <p>123</p>
     </div>
-    <div class="dashboard-box">
-        <h2>Boletins Cadastrados</h2>
-        <p>45</p>
-    </div>
-    <div class="dashboard-box">
-        <h2>Descontos Aplicados</h2>
-        <p>R$ 1.250,00</p>
-    </div>
-    <div class="dashboard-box">
-        <h2>Relatórios Enviados</h2>
-        <p>12</p>
-    </div>
-</section>
-
-
+</main>
+<script src="../js/menu.js"></script>
 </body>
 </html>
