@@ -23,7 +23,7 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    @Enumerated(EnumType.STRING) // Certifique de que o enum seja mapeado como STRING
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoUsuario tipo;
 

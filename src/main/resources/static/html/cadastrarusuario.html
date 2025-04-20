@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cadastrar Usuario - LocMaq</title>
+    <title>Cadastrar Usuario - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
     <script>
         function showSuccessPopup() {
-            alert("Usuário cadastrado com sucesso!");
+            alert("Usuario cadastrado com sucesso!");
         }
 
         function handleFormSubmit(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
+            event.preventDefault();
             const form = event.target;
 
             fetch(form.action, {
@@ -19,12 +19,17 @@
             .then(response => {
                 if (response.ok) {
                     showSuccessPopup();
-                    form.reset(); // Limpar o formulário após o sucesso
+                    form.reset();
                 } else {
-                    alert("Erro ao cadastrar o usuário.");
+                    alert("Erro ao cadastrar o usuario.");
                 }
             });
         }
+
+        // Importante! Adiciona o handler quando o DOM estiver carregado
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('usuarioForm').onsubmit = handleFormSubmit;
+        });
     </script>
 </head>
 <body>
@@ -34,19 +39,19 @@
     <div class="user-info">
         <span id="user-role"></span>
         <img src="../imgs/images.png" class="user-image">
-        <a href="/html/usuario.html"><span id="user-name"></span></a>
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
         <a href="/logout" class="logout-btn">Sair</a>
     </div>
 </header>
 <main>
-    <form id="usuarioForm" style="background:#fff;padding:24px;border-radius:10px;max-width:400px;margin:auto;box-shadow:0 2px 8px #0001;">
+    <form  action="/gestor/cadastrar" method="post" id="usuarioForm" style="background:#fff;padding:24px;border-radius:10px;max-width:400px;margin:auto;box-shadow:0 2px 8px #0001;">
         <h2>Cadastrar Novo Usuario</h2>
         <label>Nome:</label>
-        <input type="text" id="usuarioNome" required>
+        <input type="text" id="usuarioNome" name="nome" required>
         <label>Senha:</label>
-        <input type="password" id="usuarioSenha" required>
+        <input type="password" id="usuarioSenha" name="senha" required>
         <label>Tipo de Usuario:</label>
-        <select id="usuarioTipo" required>
+        <select id="usuarioTipo" name="tipoUsuario" required>
             <option value="">Selecione...</option>
             <option value="PLANEJADOR">Planejador</option>
             <option value="LOGISTICA">Logistica</option>
