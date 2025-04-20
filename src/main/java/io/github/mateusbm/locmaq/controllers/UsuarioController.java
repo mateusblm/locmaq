@@ -4,30 +4,29 @@ import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam String nome, @RequestParam String senha) {
+    @PostMapping("/api/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> cred) {
+        String nome = cred.get("nome");
+        String senha = cred.get("senha");
         Usuario usuario = usuarioService.autenticar(nome, senha);
         if (usuario != null) {
-            if (usuario.getTipoUsuario() == TipoUsuario.GESTOR) {
-                return "redirect:/html/cadastrarusuario.html";
-            } else if (usuario.getTipoUsuario() == TipoUsuario.PLANEJADOR) {
-                return "redirect:/html/planejador.html";
-            } else if (usuario.getTipoUsuario() == TipoUsuario.LOGISTICA){
-                return "redirect:/html/equipamento.html"; }
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("nome", usuario.getNome());
+            resp.put("tipoUsuario", usuario.getTipoUsuario());
+            return ResponseEntity.ok(resp);
         }
-        return "redirect:/login?error";
+        return ResponseEntity.status(401).body("Usuário ou senha inválido");
     }
 }
