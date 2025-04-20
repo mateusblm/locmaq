@@ -31,7 +31,15 @@ public class Equipamento {
     @Column(nullable = false)
     private boolean disponibilidade;
 
-    @ManyToOne // Muitos equipamentos para um cliente
+    @ManyToOne //  Vários equipamentos para um cliente
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_dono")
+    private Dono dono;
+
+    public Equipamento() {
+
+    }
 }
