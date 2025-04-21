@@ -241,6 +241,36 @@ tbody tr:hover {
   background: #4b5563;
 }
 
+.visualizar-btn {
+  background: #51a8e5;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 17px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1em;
+  box-shadow: 0 1.5px 5px rgba(33,100,180,0.07);
+  margin: 0 2px;
+  transition: background 0.14s, transform 0.09s;
+  letter-spacing: 0.5px;
+  outline: none;
+}
+.visualizar-btn:hover, .visualizar-btn:focus {
+  background: #257cae;
+  color: #fff;
+  transform: translateY(-1px) scale(1.04);
+}
+
+#boletimDetailSection h3 {
+  text-align: center;
+  color: #263238;
+  font-size: 1.35em;
+  margin-bottom: 22px;
+  margin-top: 7px;
+  letter-spacing: 0.3px;
+}
+
 /* Perfil Usuario */
 .user-card {
   background: #fff;
@@ -323,4 +353,55 @@ h2, #form-title { text-align: center; }
   }
   .logo { font-size: 22px; }
   main { padding-top:18px; }
+}
+
+.form-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 12px;
+}
+.form-btn-group button {
+  margin-top: 0;
+}
+
+.boletim-form-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 12px;
+}
+.boletim-form-btn-group .primary-btn,
+.boletim-form-btn-group .secondary-btn {
+  min-width: 140px;
+  background-clip: padding-box;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-size: 1em;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: background .18s, color .18s;
+  height: 42px; /* força altura igual */
+  line-height: normal;
+  margin-top: 0;
+  display: inline-block;
+}
+
+.boletim-form-btn-group .primary-btn {
+  background: #374151;
+  color: #fff;
+  border: none;
+}
+.boletim-form-btn-group .primary-btn:hover {
+  background: #4b5563;
+}
+.boletim-form-btn-group .secondary-btn {
+  background: #f5f6fa;
+  color: #263238;
+  border: 1px solid #bbb;
+}
+.boletim-form-btn-group .secondary-btn:hover {
+  background: #e4edf6;
+  color: #374151;
+}
 }
