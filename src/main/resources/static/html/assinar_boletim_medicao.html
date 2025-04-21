@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Assinar Boletim de Medição - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main>
+    <h2>Assinar Boletim de Medição</h2>
+    <section style="margin-top: 24px; max-width: 1100px; margin-left:auto; margin-right:auto;">
+        <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Período</th>
+                <th>Planejador</th>
+                <th>Situação</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabelaAssinaturaBoletins">
+            </tbody>
+        </table>
+    </section>
+    <section id="boletimDetailSection" style="display:none; max-width:600px; margin:40px auto 0 auto;">
+        <h3>Detalhes do Boletim</h3>
+        <form id="detalheBoletimForm">
+            <input type="hidden" id="boletimIdDetalhe" name="id">
+            <label>Período:</label>
+            <input type="text" id="periodoDetalhe" name="periodo" readonly>
+            <label>Planejador:</label>
+            <input type="text" id="planejadorDetalhe" name="planejador" readonly>
+            <label>Situação:</label>
+            <input type="text" id="situacaoDetalhe" name="situacao">
+            <!-- Aqui incluir mais detalhes, se necessário -->
+            <div style="text-align:right; margin-top:14px;">
+                <button type="button" id="assinarBtn">Assinar</button>
+                <button type="button" id="cancelarDetalheBtn">Cancelar</button>
+            </div>
+        </form>
+    </section>
+</main>
+<script src="../js/menu.js"></script>
+<script src="../js/assinarboletim.js"></script>
+</body>
+</html>
