@@ -35,7 +35,7 @@
     const senha = document.getElementById('senha').value;
     document.getElementById('loginError').innerText = "";
 
-    fetch('/api/login', {
+    fetch('/api/usuarios/login', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ nome: nome, senha: senha })
