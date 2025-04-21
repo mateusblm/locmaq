@@ -9,14 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> cred) {
         String nome = cred.get("nome");
         String senha = cred.get("senha");
@@ -29,4 +31,14 @@ public class UsuarioController {
         }
         return ResponseEntity.status(401).body("Usuário ou senha inválido");
     }
+
+    @GetMapping
+    public List<Usuario> listarPorTipo(@RequestParam(value = "tipo", required = false) TipoUsuario tipo) {
+        if (tipo == null) {
+            return usuarioService.listarTodos();
+        } else {
+            return usuarioService.listarPorTipo(tipo);
+        }
+    }
+
 }

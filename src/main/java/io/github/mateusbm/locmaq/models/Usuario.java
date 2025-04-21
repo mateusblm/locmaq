@@ -20,28 +20,23 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 100)
     private String nome;
 
+    @Getter
     @Column(nullable = false)
     private String senha;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoUsuario tipo;
+    private TipoUsuario tipoUsuario;
 
-    public Usuario(String nome, String senha, TipoUsuario tipo) {
+    public Usuario(String nome, String senha, TipoUsuario tipoUsuario) {
         this.nome = nome;
         this.senha = senha;
-        this.tipo = tipo;
-    }
-
-    public TipoUsuario getTipoUsuario() {
-        return tipo;
+        this.tipoUsuario = tipoUsuario;
     }
 
     public Usuario() {
     }
 
-    public String getSenha() {
-        return senha;
-    }
 }
 

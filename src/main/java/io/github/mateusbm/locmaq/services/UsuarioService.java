@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UsuarioService {
     @Autowired
@@ -28,5 +30,18 @@ public class UsuarioService {
     public boolean existeUsuarioPorNome(String nome) {
         return usuarioRepository.findByNome(nome) != null;
     }
+
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public List<Usuario> listarTodos() {
+        return usuarioRepository.findAll();
+    }
+
+    public List<Usuario> listarPorTipo(TipoUsuario tipo) {
+        return usuarioRepository.findByTipoUsuario(tipo);
+    }
+
 }
 
