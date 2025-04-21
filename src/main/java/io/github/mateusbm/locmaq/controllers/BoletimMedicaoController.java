@@ -1,8 +1,5 @@
 package io.github.mateusbm.locmaq.controllers;
 
-import io.github.mateusbm.locmaq.services.BoletimMedicaoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;
 import io.github.mateusbm.locmaq.models.BoletimMedicao;
 import io.github.mateusbm.locmaq.models.Usuario;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
 @RestController
 @RequestMapping("/api/boletins")
 public class BoletimMedicaoController {
@@ -45,7 +41,3 @@ public class BoletimMedicaoController {
         return BoletimMedicaoDTO.fromEntity(service.assinarBoletim(id));
     }
 }
-
-
-
-

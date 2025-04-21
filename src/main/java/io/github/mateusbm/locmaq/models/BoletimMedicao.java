@@ -16,10 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class BoletimMedicao {
-
-    @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String periodo;
@@ -41,14 +38,4 @@ public class BoletimMedicao {
     public BoletimMedicao() {
 
     }
-
-
-    @Column(nullable = false)
-    private LocalDate dataMedicao;
-
-    @Column(nullable = false)
-    private double valorMedido;
-
-    @Column(length = 250)
-    private String observacoes;
 }

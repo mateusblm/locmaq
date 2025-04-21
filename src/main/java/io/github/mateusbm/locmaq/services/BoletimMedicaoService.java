@@ -1,15 +1,14 @@
 package io.github.mateusbm.locmaq.services;
 
-
-import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;
 import io.github.mateusbm.locmaq.models.BoletimMedicao;
 import io.github.mateusbm.locmaq.models.Equipamento;
 import io.github.mateusbm.locmaq.models.EquipamentoBoletimMedicao;
 import io.github.mateusbm.locmaq.models.Usuario;
+import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,11 +19,7 @@ public class BoletimMedicaoService {
     @Autowired
     private BoletimMedicaoRepository repo;
     @Autowired
-    private BoletimMedicaoRepository boletimMedicaoRepository;
-
-    public void cadastrarBoletim() {}
-    public void editarBoletim() {}
-    public void consultarBoletim() {}
+    private EquipamentoRepository equipamentoRepository;
 
     public List<BoletimMedicao> listarTodos() {
         return repo.findAll();
@@ -38,7 +33,7 @@ public class BoletimMedicaoService {
         List<EquipamentoBoletimMedicao> equipamentos = new ArrayList<>();
         if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
             for (var eqDTO : dto.getEquipamentos()) {
-                Equipamento eq = EquipamentoRepository.findById(eqDTO.getEquipamentoId()).orElseThrow();
+                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId()).orElseThrow();
                 Double valorMedido = eqDTO.getValorMedido();
                 if (valorMedido == null || Double.isNaN(valorMedido)) valorMedido = 0.0;
                 EquipamentoBoletimMedicao ebm = eqDTO.toEntity(eq);
