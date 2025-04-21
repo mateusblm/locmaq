@@ -18,18 +18,29 @@
 </header>
 <main>
   <h2>Contratos de Locação</h2>
-  <form id="contratoForm" style="background:#fff;padding:24px;border-radius:10px;max-width:500px;margin:auto;box-shadow:0 2px 8px #0001;">
+  <form id="contratoForm" style="background:#fff;padding:24px;border-radius:10px;max-width:540px;margin:auto;box-shadow:0 2px 8px #0001;">
+    <input type="hidden" id="contratoId">
+    <label>Usuário da Logística:</label>
+    <select id="contratoUsuarioLogistica" required>
+      <option value="">Selecione...</option>
+    </select>
     <label>Cliente:</label>
-    <select id="contratoCliente"></select>
+    <select id="contratoCliente" required>
+      <option value="">Selecione...</option>
+    </select>
     <label>Equipamento:</label>
-    <select id="contratoEquipamento"></select>
-    <label>Período:</label>
-    <input type="text" id="contratoPeriodo" required placeholder="Ex: 01/04/2025 a 30/04/2025">
+    <select id="contratoEquipamento" required>
+      <option value="">Selecione...</option>
+    </select>
+    <label>Data de início:</label>
+    <input type="date" id="contratoDataInicio" required>
+    <label>Data de término:</label>
+    <input type="date" id="contratoDataFim" required>
     <label>Valor Total (R$):</label>
-    <input type="number" id="contratoValor" required>
-    <div style="text-align:right;">
-      <button type="submit" style="margin-top:12px;">Salvar Contrato</button>
-      <button type="reset" style="margin-top:12px;">Limpar</button>
+    <input type="number" id="contratoValor" required min="0" step="0.01" placeholder="0,00">
+    <div class="contrato-form-btn-group">
+      <button type="submit" class="primary-btn">Salvar Contrato</button>
+      <button type="reset" class="secondary-btn">Limpar</button>
     </div>
   </form>
   <section style="margin-top:40px;">
@@ -37,9 +48,11 @@
     <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
       <thead>
       <tr>
+        <th>Usuário (Logística)</th>
         <th>Cliente</th>
         <th>Equipamento</th>
-        <th>Período</th>
+        <th>Início</th>
+        <th>Fim</th>
         <th>Valor Total</th>
         <th>Ações</th>
       </tr>

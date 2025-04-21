@@ -387,6 +387,8 @@ h2, #form-title { text-align: center; }
   display: inline-block;
 }
 
+
+
 .boletim-form-btn-group .primary-btn {
   background: #374151;
   color: #fff;
@@ -404,4 +406,40 @@ h2, #form-title { text-align: center; }
   background: #e4edf6;
   color: #374151;
 }
+}
+
+
+.contrato-form-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 12px;
+}
+.contrato-form-btn-group .primary-btn,
+.contrato-form-btn-group .secondary-btn {
+  min-width: 140px;
+  padding: 9px 18px;
+  height: 42px;
+  border-radius: 7px;
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.contrato-form-btn-group .primary-btn {
+  background: #374151;
+  color: #fff;
+  border: none;
+}
+.contrato-form-btn-group .primary-btn:hover {
+  background: #4b5563;
+}
+.contrato-form-btn-group .secondary-btn {
+  background: #f5f6fa;
+  color: #263238;
+  border: 1px solid #bbb;
+}
+.contrato-form-btn-group .secondary-btn:hover {
+  background: #e4edf6;
+  color: #374151;
 }
