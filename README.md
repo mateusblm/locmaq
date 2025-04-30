@@ -1,5 +1,6 @@
 # LocMaq - Sistema de Gestão de Locação de Máquinas.
 📋 Descrição
+
 O LocMaq é um sistema desenvolvido para gerenciar o processo de locação de máquinas e equipamentos, visando facilitar a rotina de empresas do setor de construção, operação e logística.
 ## 🚀 Funcionalidades 
 - Usuários com papéis distintos: planejador, logística, gestor (admin)
@@ -61,13 +62,20 @@ Construa e rode a aplicação:
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests. Para contribuir:
 
 Faça um fork do projeto.
+
 Crie uma branch para sua feature (git checkout -b feature/nova-feature).
+
 Commit suas alterações (git commit -m 'Adiciona nova feature').
+
 Faça o push para a branch (git push origin feature/nova-feature).
+
 Abra um Pull Request.
-Contato
+
+### Contato
 Para mais informações, entre em contato:
 
 Nome: Mateus Burlamaqui Moreira
+
 Email: mateusblm@outlook.com
+
 Linkedin: www.linkedin.com/in/mateus-burlamaqui-moreira/ 
