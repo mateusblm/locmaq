@@ -29,20 +29,26 @@ Pré-requisitos:
   
 ### Clone o repositório:
 git clone https://github.com/mateusblm/locmaq.git
+
 cd locmaq
 
 ### Configure o arquivo application.properties conforme suas credenciais MySQL:
 properties
+
 spring.datasource.url=jdbc:mysql://localhost:3306/locmaq
+
 spring.datasource.username=SEU_USUARIO
+
 spring.datasource.password=SUA_SENHA
+
 spring.jpa.hibernate.ddl-auto=update
+
 Crie o banco de dados no MySQL:
 
 ### No MySQL Workbench
 CREATE DATABASE locmaq;
-Construa e rode a aplicação:
 
+Construa e rode a aplicação:
 ### Rodar o projeto
 - ./mvnw spring-boot:run
 - Acesse no navegador:
