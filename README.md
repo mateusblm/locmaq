@@ -18,29 +18,8 @@ O LocMaq é um sistema desenvolvido para gerenciar o processo de locação de m�
 - Frontend: HTML5, CSS3, JavaScript
 - Gerenciamento: Maven
   
-## 📂 Estrutura do Projeto
-src/
-  main/
-    java/
-      io.github.mateusbm.locmaq/
-        models/
-          Usuario.java
-          TipoUsuario.java
-          Cliente.java
-          Dono.java
-          Equipamento.java
-          ContratoLocacao.java
-          BoletimMedicao.java
-          EquipamentoBoletimMedicao.java
-        services/
-        controllers/
-    resources/
-      application.properties
-      static/
-        css/
-        js/
-        index.html
-        
+## 📂 Estrutura do Projeto (MVC - Model - View - Controller)
+
 ## ⚙️ Instalação e Uso
 
 Pré-requisitos:
@@ -48,12 +27,11 @@ Pré-requisitos:
 - MySQL Server
 - Maven
   
-Clone o repositório:
-bash
+### Clone o repositório:
 git clone https://github.com/mateusblm/locmaq.git
 cd locmaq
-Configure o arquivo application.properties conforme suas credenciais MySQL:
 
+### Configure o arquivo application.properties conforme suas credenciais MySQL:
 properties
 spring.datasource.url=jdbc:mysql://localhost:3306/locmaq
 spring.datasource.username=SEU_USUARIO
@@ -61,18 +39,17 @@ spring.datasource.password=SUA_SENHA
 spring.jpa.hibernate.ddl-auto=update
 Crie o banco de dados no MySQL:
 
-sql
+### No MySQL Workbench
 CREATE DATABASE locmaq;
 Construa e rode a aplicação:
 
-bash
-./mvnw spring-boot:run
-Acesse no navegador:
-
-http://localhost:8080/
-Usuário padrão:
-Login: admin
-Senha: root
+### Rodar o projeto
+- ./mvnw spring-boot:run
+- Acesse no navegador:
+- http://localhost:8080/
+- Usuário padrão:
+- Login: admin
+- Senha: root
 
 ## Contribuição
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests. Para contribuir:
