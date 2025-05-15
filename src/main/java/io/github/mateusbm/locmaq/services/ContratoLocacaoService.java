@@ -12,7 +12,9 @@ import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+
 
 @Service
 public class ContratoLocacaoService {
@@ -35,11 +37,19 @@ public class ContratoLocacaoService {
     }
 
     public ContratoLocacao cadastrar(ContratoLocacaoDTO dto) {
+        if (!isEquipamentoDisponivel(dto.getEquipamentoId(), dto.getDataInicio(), dto.getDataFim(), dto.getId())) {
+            throw new RuntimeException("Equipamento já reservado para essas datas.");
+        }
         Usuario usuario = usuarioRepo.findById(dto.getUsuarioLogisticaId()).orElse(null);
         Cliente cliente = clienteRepo.findById(dto.getClienteId()).orElse(null);
         Equipamento equipamento = equipamentoRepo.findById(dto.getEquipamentoId()).orElse(null);
         ContratoLocacao contrato = dto.toEntity(usuario, cliente, equipamento);
         return contratoRepo.save(contrato);
+    }
+
+    public boolean isEquipamentoDisponivel(Long equipamentoId, LocalDate dataInicio, LocalDate dataFim, Long ignoreContratoId) {
+        List<ContratoLocacao> contratos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(equipamentoId, dataInicio, dataFim, ignoreContratoId);
+        return contratos.isEmpty();
     }
 
     public void remover(Long id) {

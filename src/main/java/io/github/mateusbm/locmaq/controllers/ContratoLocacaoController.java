@@ -4,6 +4,8 @@ import io.github.mateusbm.locmaq.dto.ContratoLocacaoDTO;
 import io.github.mateusbm.locmaq.models.ContratoLocacao;
 import io.github.mateusbm.locmaq.services.ContratoLocacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,16 +32,24 @@ public class ContratoLocacaoController {
     }
 
     @PostMapping
-    public ContratoLocacaoDTO cadastrar(@RequestBody ContratoLocacaoDTO dto) {
-        ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
-        return ContratoLocacaoDTO.fromEntity(c);
+    public ResponseEntity<?> cadastrar(@RequestBody ContratoLocacaoDTO dto) {
+        try {
+            ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
+            return ResponseEntity.ok(ContratoLocacaoDTO.fromEntity(c));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ContratoLocacaoDTO atualizar(@PathVariable Long id, @RequestBody ContratoLocacaoDTO dto) {
-        dto.setId(id);
-        ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
-        return ContratoLocacaoDTO.fromEntity(c);
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody ContratoLocacaoDTO dto) {
+        try {
+            dto.setId(id);
+            ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
+            return ResponseEntity.ok(ContratoLocacaoDTO.fromEntity(c));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

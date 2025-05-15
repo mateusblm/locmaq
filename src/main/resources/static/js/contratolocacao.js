@@ -6,9 +6,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("contratoForm").onsubmit = handleContratoSubmit;
   document.getElementById("contratoForm").onreset = limparCampos;
+
+  // Carrega o gráfico de Gantt
+  google.charts.load('current', {packages: ['gantt']});
+  google.charts.setOnLoadCallback(drawGanttChart);
 });
 
-// Função que formata string de data no padrão do input date
+// Função para desenhar o gráfico de Gantt
+function drawGanttChart() {
+  fetch('/api/contrato-locacoes')
+    .then(response => response.json())
+    .then(data => {
+      const dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('string', 'ID');
+      dataTable.addColumn('string', 'Tarefa');
+      dataTable.addColumn('string', 'Recurso');
+      dataTable.addColumn('date', 'Início');
+      dataTable.addColumn('date', 'Fim');
+      dataTable.addColumn('number', 'Duração');
+      dataTable.addColumn('number', 'Percentual Completo');
+      dataTable.addColumn('string', 'Dependências');
+
+      data.forEach(contrato => {
+        dataTable.addRow([
+          contrato.id.toString(),
+          `Locação de ${contrato.equipamentoNome}`,
+          contrato.clienteNome,
+          new Date(contrato.dataInicio),
+          new Date(contrato.dataFim),
+          null,
+          0,
+          null
+        ]);
+      });
+
+      const options = {
+        height: 400,
+        gantt: {
+          trackHeight: 30
+        }
+      };
+
+      const chart = new google.visualization.Gantt(document.getElementById('ganttChart'));
+      chart.draw(dataTable, options);
+    })
+    .catch(error => console.error('Erro ao carregar dados:', error));
+}
+
 function toInputDate(valor) {
   if (!valor) return "";
   return valor.length > 10 ? valor.substring(0, 10) : valor;
@@ -16,7 +60,7 @@ function toInputDate(valor) {
 
 function formatarDataBR(data) {
   if (!data) return "-";
-  const valor = toInputDate(data); // "YYYY-MM-DD"
+  const valor = toInputDate(data);
   const [ano, mes, dia] = valor.split("-");
   return `${dia}/${mes}/${ano}`;
 }
@@ -83,35 +127,26 @@ function handleContratoSubmit(e) {
     valorTotal: parseFloat(document.getElementById("contratoValor").value.replace(",", ".")) || 0,
   };
 
-  if (id) {
-    fetch(`/api/contrato-locacoes/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...body, id })
-    }).then(async r => {
-      if (r.ok) {
-        alert('Contrato atualizado!');
-        limparCampos();
-        carregarContratos();
-      } else {
-        alert('Erro ao atualizar!\n' + await r.text());
-      }
-    });
-  } else {
-    fetch('/api/contrato-locacoes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).then(async r => {
-      if (r.ok) {
-        alert('Contrato salvo!');
-        limparCampos();
-        carregarContratos();
-      } else {
-        alert('Erro ao salvar!\n' + await r.text());
-      }
-    });
-  }
+  const url = id ? `/api/contrato-locacoes/${id}` : '/api/contrato-locacoes';
+  const method = id ? 'PUT' : 'POST';
+
+  fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).then(async r => {
+    if (r.ok) {
+      alert('Contrato salvo ou atualizado!');
+      limparCampos();
+      carregarContratos();
+      drawGanttChart(); // Atualiza o gráfico
+    } else if (r.status === 409) {
+      const errorMsg = await r.text();
+      alert('Erro: ' + errorMsg);
+    } else {
+      alert('Erro inesperado ao salvar o contrato.');
+    }
+  });
 }
 
 window.editarContrato = function(id) {
@@ -119,11 +154,11 @@ window.editarContrato = function(id) {
     .then(r => r.json())
     .then(c => {
       console.log("DATA DEBUG:", {
-      dataInicio: c.dataInicio,
-      dataFim: c.dataFim,
-      tipoInicio: typeof c.dataInicio,
-      tipoFim: typeof c.dataFim,
-      igual: c.dataInicio === c.dataFim
+        dataInicio: c.dataInicio,
+        dataFim: c.dataFim,
+        tipoInicio: typeof c.dataInicio,
+        tipoFim: typeof c.dataFim,
+        igual: c.dataInicio === c.dataFim
       });
       document.getElementById("contratoId").value = c.id;
       document.getElementById("contratoUsuarioLogistica").value = c.usuarioLogisticaId;
@@ -142,6 +177,7 @@ window.excluirContrato = function(id) {
     .then(r => {
       if (r.ok) {
         carregarContratos();
+        drawGanttChart(); // Atualiza o gráfico
       } else {
         alert('Erro ao excluir!');
       }
