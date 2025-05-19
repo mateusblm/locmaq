@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Envio de relatório</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+</head>
+<body>
+<div class="container">
+    <h2>Enviar Relatório ao Cliente</h2>
+    <form action="/enviar-relatorio" method="post">
+        <label for="nome">Nome do Cliente:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">E-mail do Cliente:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="relatorio">Selecione o Relatório:</label>
+        <select id="relatorio" name="relatorio" required>
+            <option value="">-- Selecione --</option>
+            <option value="Relatório de Uso - Janeiro">Relatório de Uso - Janeiro</option>
+            <option value="Relatório de Uso - Fevereiro">Relatório de Uso - Fevereiro</option>
+            <option value="Relatório de Uso - Março">Relatório de Uso - Março</option>
+        </select>
+
+        <label for="mensagem">Mensagem Adicional (opcional):</label>
+        <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+
+        <button type="submit">Enviar Relatório</button>
+    </form>
+</body>
+</html>
