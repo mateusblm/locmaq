@@ -1,4 +1,5 @@
 package io.github.mateusbm.locmaq.config;
+
 import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,9 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (!usuarioService.existeUsuarioPorNome("admin")) {
-            usuarioService.cadastrarUsuario("admin", "root", TipoUsuario.GESTOR);
+            usuarioService.cadastrarUsuario("admin", "root", TipoUsuario.GESTOR, "Administrador");
             System.out.println("Usuário admin criado com sucesso.");
-        }
-        else {
+        } else {
             System.out.println("Usuario admin já criado");
         }
     }

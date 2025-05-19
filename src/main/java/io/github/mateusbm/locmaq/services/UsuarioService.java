@@ -4,7 +4,7 @@ import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,33 +12,24 @@ import java.util.List;
 
 @Service
 public class UsuarioService {
-
     @Autowired
     private UsuarioRepository usuarioRepository;
-
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    public Usuario autenticar(String nome, String senha) {
-        Usuario usuario = usuarioRepository.findByNome(nome);
-        if (usuario != null) {
-            System.out.println("Senha fornecida: " + senha);
-            System.out.println("Senha armazenada (hash): " + usuario.getSenha());
-            if (passwordEncoder.matches(senha, usuario.getSenha())) {
-                return usuario;
-            }
-        }
-        return null;
-    }
-
-    @Transactional
-    public void cadastrarUsuario(String nome, String senha, TipoUsuario tipoUsuario) {
-        String senhaHash = passwordEncoder.encode(senha);
-        Usuario novoUsuario = new Usuario(nome, senhaHash, tipoUsuario);
-        usuarioRepository.save(novoUsuario);
-    }
+    @Autowired
+    private ActionLogService actionLogService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public boolean existeUsuarioPorNome(String nome) {
         return usuarioRepository.findByNome(nome) != null;
+    }
+
+    @Transactional
+    public void cadastrarUsuario(String nome, String senha, TipoUsuario tipoUsuario, String gestorNome) {
+        Usuario novoUsuario = new Usuario(nome, passwordEncoder.encode(senha), tipoUsuario);
+        Usuario saved = usuarioRepository.save(novoUsuario);
+        actionLogService.logAction("Cadastro de usuário",
+                gestorNome,
+                "Usuário ID: " + saved.getId() + ", Nome: " + saved.getNome() + ", Tipo: " + saved.getTipoUsuario());
     }
 
     public Usuario buscarPorId(Long id) {
@@ -51,5 +42,9 @@ public class UsuarioService {
 
     public List<Usuario> listarPorTipo(TipoUsuario tipo) {
         return usuarioRepository.findByTipoUsuario(tipo);
+    }
+
+    public Usuario buscarPorNome(String nome) {
+        return usuarioRepository.findByNome(nome);
     }
 }

@@ -10,11 +10,10 @@ import io.github.mateusbm.locmaq.repositories.ContratoLocacaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
-
 
 @Service
 public class ContratoLocacaoService {
@@ -27,6 +26,12 @@ public class ContratoLocacaoService {
     private ClienteRepository clienteRepo;
     @Autowired
     private EquipamentoRepository equipamentoRepo;
+    @Autowired
+    private ActionLogService actionLogService;
+
+    private String getUsuarioAutenticado() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
     public List<ContratoLocacao> listarTodos() {
         return contratoRepo.findAll();
@@ -37,22 +42,68 @@ public class ContratoLocacaoService {
     }
 
     public ContratoLocacao cadastrar(ContratoLocacaoDTO dto) {
-        if (!isEquipamentoDisponivel(dto.getEquipamentoId(), dto.getDataInicio(), dto.getDataFim(), dto.getId())) {
-            throw new RuntimeException("Equipamento já reservado para essas datas.");
-        }
         Usuario usuario = usuarioRepo.findById(dto.getUsuarioLogisticaId()).orElse(null);
         Cliente cliente = clienteRepo.findById(dto.getClienteId()).orElse(null);
         Equipamento equipamento = equipamentoRepo.findById(dto.getEquipamentoId()).orElse(null);
+
+        // Validação de conflito (não há id ainda, pois é novo)
+        List<ContratoLocacao> conflitos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(
+                equipamento.getId(),
+                dto.getDataInicio(),
+                dto.getDataFim(),
+                null // null para cadastro!
+        );
+        if (!conflitos.isEmpty()) {
+            throw new IllegalStateException("O equipamento já está reservado para o período informado.");
+        }
+
         ContratoLocacao contrato = dto.toEntity(usuario, cliente, equipamento);
-        return contratoRepo.save(contrato);
+        ContratoLocacao saved = contratoRepo.save(contrato);
+        actionLogService.logAction("Cadastro de contrato de locação",
+                getUsuarioAutenticado(),
+                "Contrato ID: " + saved.getId() + ", Cliente: " + cliente.getNome() +
+                        ", Equipamento: " + equipamento.getNome());
+        return saved;
     }
 
-    public boolean isEquipamentoDisponivel(Long equipamentoId, LocalDate dataInicio, LocalDate dataFim, Long ignoreContratoId) {
-        List<ContratoLocacao> contratos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(equipamentoId, dataInicio, dataFim, ignoreContratoId);
-        return contratos.isEmpty();
+    public ContratoLocacao atualizar(Long id, ContratoLocacaoDTO dto) {
+        ContratoLocacao contrato = contratoRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado"));
+
+        Usuario usuario = usuarioRepo.findById(dto.getUsuarioLogisticaId()).orElse(null);
+        Cliente cliente = clienteRepo.findById(dto.getClienteId()).orElse(null);
+        Equipamento equipamento = equipamentoRepo.findById(dto.getEquipamentoId()).orElse(null);
+
+        // Validação de conflito ignorando o próprio contrato
+        List<ContratoLocacao> conflitos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(
+                equipamento.getId(),
+                dto.getDataInicio(),
+                dto.getDataFim(),
+                id // ignora o próprio contrato!
+        );
+        if (!conflitos.isEmpty()) {
+            throw new IllegalStateException("O equipamento já está reservado para o período informado.");
+        }
+
+        // Atualiza os campos
+        contrato.setUsuarioLogistica(usuario);
+        contrato.setCliente(cliente);
+        contrato.setEquipamento(equipamento);
+        contrato.setDataInicio(dto.getDataInicio());
+        contrato.setDataFim(dto.getDataFim());
+        contrato.setValorTotal(dto.getValorTotal());
+        // ... outros campos, se houver
+
+        ContratoLocacao saved = contratoRepo.save(contrato);
+        actionLogService.logAction("Atualização de contrato de locação",
+                getUsuarioAutenticado(),
+                "Contrato ID: " + saved.getId() + ", Cliente: " + cliente.getNome() +
+                        ", Equipamento: " + equipamento.getNome());
+        return saved;
     }
 
     public void remover(Long id) {
         contratoRepo.deleteById(id);
+        actionLogService.logAction("Remoção de contrato de locação", getUsuarioAutenticado(), "Contrato ID: " + id);
     }
 }

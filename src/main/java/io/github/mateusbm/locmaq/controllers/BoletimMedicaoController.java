@@ -6,7 +6,6 @@ import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.services.BoletimMedicaoService;
 import io.github.mateusbm.locmaq.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

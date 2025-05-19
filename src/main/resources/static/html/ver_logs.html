@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Logs de Ações - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+    <style>
+        /* Modal estilização */
+        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.4);}
+        .modal-content { background: #fff; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 400px; border-radius: 8px;}
+        .close { color: #aaa; float: right; font-size: 24px; font-weight: bold; cursor: pointer;}
+        .close:hover { color: #000;}
+    </style>
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role">Gestor</span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name">Nome Gestor</span></a>
+        <a href="logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main style="padding:40px;">
+    <h2>Logs de Ações do Sistema</h2>
+    <table id="logsTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ação</th>
+            <th>Usuário</th>
+            <th>Data e Hora</th>
+            <th>Detalhes</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</main>
+
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h3>Detalhes do Log</h3>
+        <div id="modalBody"></div>
+    </div>
+</div>
+<script src="../js/menu.js"></script>
+<script>
+
+    fetch('/api/logs')
+        .then(response => response.json())
+        .then(logs => {
+            const tbody = document.querySelector('#logsTable tbody');
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.id}</td>
+                    <td>${log.action}</td>
+                    <td>${log.user}</td>
+                    <td>${new Date(log.timestamp).toLocaleString()}</td>
+                    <td>
+                      <button onclick="showDetails(${log.id})">Detalhes</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+
+    function showDetails(logId) {
+        fetch('/api/logs/' + logId)
+            .then(response => response.json())
+            .then(log => {
+                const body = document.getElementById('modalBody');
+                body.innerHTML = `
+                    <strong>ID:</strong> ${log.id}<br>
+                    <strong>Ação:</strong> ${log.action}<br>
+                    <strong>Usuário:</strong> ${log.user}<br>
+                    <strong>Data e Hora:</strong> ${new Date(log.timestamp).toLocaleString()}<br>
+                    <strong>Detalhes:</strong><br>
+                    <pre>${log.details || 'Nenhum detalhe extra.'}</pre>
+                `;
+                document.getElementById('detailsModal').style.display = 'block';
+            });
+    }
+    document.getElementById('closeModal').onclick = function() {
+        document.getElementById('detailsModal').style.display = 'none';
+    };
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('detailsModal')) {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+    };
+</script>
+</body>
+</html>

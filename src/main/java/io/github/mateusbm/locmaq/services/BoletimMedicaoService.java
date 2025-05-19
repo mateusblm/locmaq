@@ -8,6 +8,7 @@ import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,12 @@ public class BoletimMedicaoService {
     private BoletimMedicaoRepository repo;
     @Autowired
     private EquipamentoRepository equipamentoRepository;
+    @Autowired
+    private ActionLogService actionLogService;
+
+    private String getUsuarioAutenticado() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
     public List<BoletimMedicao> listarTodos() {
         return repo.findAll();
@@ -49,14 +56,23 @@ public class BoletimMedicaoService {
         boletim.setEquipamentos(equipamentos);
 
         if (boletim.getDataMedicao() == null) boletim.setDataMedicao(LocalDate.now());
-
-        return repo.save(boletim);
+        BoletimMedicao saved = repo.save(boletim);
+        actionLogService.logAction(
+                "Cadastro de boletim de medição",
+                getUsuarioAutenticado(),
+                "Boletim ID: " + saved.getId() +
+                        ", Período: " + saved.getPeriodo() +
+                        ", Situação: " + saved.getSituacao()
+        );
+        return saved;
     }
 
     public BoletimMedicao assinarBoletim(Long id) {
         BoletimMedicao b = buscarPorId(id);
         b.setAssinado(true);
         b.setSituacao("ASSINADO");
-        return repo.save(b);
+        BoletimMedicao saved = repo.save(b);
+        actionLogService.logAction("Assinatura de boletim de medição", getUsuarioAutenticado(), "Boletim ID: " + saved.getId());
+        return saved;
     }
 }

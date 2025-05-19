@@ -14,4 +14,6 @@ public class EquipamentoDTO {
     private boolean disponibilidade;
     private Long clienteId;
     private Long donoId;
+    private Long usuarioLogisticaId;
+
 }

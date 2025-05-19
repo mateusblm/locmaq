@@ -36,7 +36,7 @@ public class ContratoLocacaoController {
         try {
             ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
             return ResponseEntity.ok(ContratoLocacaoDTO.fromEntity(c));
-        } catch (RuntimeException e) {
+        } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
@@ -44,11 +44,12 @@ public class ContratoLocacaoController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody ContratoLocacaoDTO dto) {
         try {
-            dto.setId(id);
-            ContratoLocacao c = contratoLocacaoService.cadastrar(dto);
+            ContratoLocacao c = contratoLocacaoService.atualizar(id, dto);
             return ResponseEntity.ok(ContratoLocacaoDTO.fromEntity(c));
-        } catch (RuntimeException e) {
+        } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
