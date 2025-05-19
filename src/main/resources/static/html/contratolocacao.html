@@ -1,74 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Contratos de Locação - LocMac</title>
-  <link rel="stylesheet" href="../css/padrao.css">
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src="../js/contratolocacao.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contrato de Locação</title>
+  <link rel="stylesheet" href="../css/contratolocacao.css" />
 </head>
 <body>
-<header class="main-header">
-  <div class="logo">LocMac</div>
-  <nav class="nav-links"></nav>
-  <div class="user-info">
-    <span id="user-role"></span>
-    <img src="../imgs/images.png" class="user-image">
-    <a href="../html/usuario.html"><span id="user-name"></span></a>
-    <a href="/logout" class="logout-btn">Sair</a>
-  </div>
-</header>
-<main>
-  <h2>Contratos de Locação</h2>
-  <form id="contratoForm" style="background:#fff;padding:24px;border-radius:10px;max-width:540px;margin:auto;box-shadow:0 2px 8px #0001;">
-    <input type="hidden" id="contratoId">
-    <label>Usuário da Logística:</label>
-    <select id="contratoUsuarioLogistica" required>
-      <option value="">Selecione...</option>
-    </select>
-    <label>Cliente:</label>
-    <select id="contratoCliente" required>
-      <option value="">Selecione...</option>
-    </select>
-    <label>Equipamento:</label>
-    <select id="contratoEquipamento" required>
-      <option value="">Selecione...</option>
-    </select>
-    <label>Data de início:</label>
-    <input type="date" id="contratoDataInicio" required>
-    <label>Data de término:</label>
-    <input type="date" id="contratoDataFim" required>
-    <label>Valor Total (R$):</label>
-    <input type="number" id="contratoValor" required min="0" step="0.01" placeholder="0,00">
-    <div class="contrato-form-btn-group">
-      <button type="submit" class="primary-btn">Salvar Contrato</button>
-      <button type="reset" class="secondary-btn">Limpar</button>
-    </div>
-  </form>
-  <section style="margin-top:40px;">
-    <h3>Contratos Existentes</h3>
-    <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
-      <thead>
-      <tr>
-        <th>Usuário (Logística)</th>
-        <th>Cliente</th>
-        <th>Equipamento</th>
-        <th>Início</th>
-        <th>Fim</th>
-        <th>Valor Total</th>
-        <th>Ações</th>
-      </tr>
-      </thead>
-      <tbody id="contratosTable"></tbody>
-    </table>
-  </section>
+  <header>
+    <div class="logo">LocMac</div>
+  </header>
 
-  <!-- Div para o gráfico de Gantt -->
-  <section style="margin-top:40px;">
-    <h3>Agenda de Reservas</h3>
-    <div id="ganttChart" style="width: 100%; height: 500px;"></div>
-  </section>
-</main>
-<script src="../js/menu.js"></script>
+  <main>
+    <div class="form-container">
+      <h2>Contrato de Locação</h2>
+      <form>
+        <input type="text" placeholder="Valor" required />
+        <input type="text" placeholder="Pedido" required />
+        <input type="text" placeholder="Local" required />
+        <input type="text" placeholder="Situação" required />
+        <label for="equipamentos">Equipamentos:</label>
+        <select id="equipamentos" name="equipamentos[]" multiple required>
+        </select>
+        <small>Segure Ctrl (ou Cmd no Mac) para selecionar vários equipamentos.</small>
+
+        <button type="submit">Cadastrar</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const equipamentosSelect = document.getElementById('equipamentos');
+
+      const equipamentos = [
+        { id: 1, nome: 'Retroescavadeira - CAT' },
+        { id: 2, nome: 'Escavadeira - Komatsu' },
+        { id: 3, nome: 'Caminhão Basculante - Volvo' }
+      ];
+
+      equipamentos.forEach(equip => {
+        const option = document.createElement('option');
+        option.value = equip.id;
+        option.textContent = equip.nome;
+        equipamentosSelect.appendChild(option);
+      });
+    });
+  </script>
 </body>
 </html>

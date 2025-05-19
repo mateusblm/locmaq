@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Locações - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main>
+    <h2 style="text-align:center;">Gestão de Locações</h2>
+
+    <section style="margin: 20px auto; max-width: 1000px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px #0001;">
+        <h3 style="margin-bottom: 16px;">Filtros</h3>
+        <form id="filtroForm" style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 200px;">
+                <label for="cliente">Cliente:</label>
+                <input type="text" id="cliente" name="cliente">
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="">Todos</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="encerrado">Encerrado</option>
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
+                <label for="tipoEquipamento">Tipo de Equipamento:</label>
+                <select id="tipoEquipamento" name="tipoEquipamento">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 200px;">
+                <label for="local">Local:</label>
+                <input type="text" id="local" name="local">
+            </div>
+
+            <div style="align-self: end;">
+                <button type="submit">Filtrar</button>
+            </div>
+        </form>
+    </section>
+
+    <section style="margin-top:40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+        <h3>Contratos Ativos</h3>
+        <table style="width:100%; background:#fff; border-radius:12px; box-shadow:0 2px 8px #0001;">
+            <thead>
+            <tr>
+                <th>Nº Contrato</th>
+                <th>Cliente</th>
+                <th>Equipamento</th>
+                <th>Tipo</th>
+                <th>Local</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Dados preenchidos via backend futuramente -->
+            </tbody>
+        </table>
+    </section>
+</main>
+<script src="../js/menu.js"></script>
+<script src="../js/locacoes.js"></script>
+</body>
+</html>
