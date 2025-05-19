@@ -1,3 +1,4 @@
+// src/main/resources/static/js/cadastrodono.js
 const API = "/api/donos";
 const form = document.getElementById("donoForm");
 const tabela = document.getElementById("tabelaDonos").querySelector("tbody");
@@ -5,6 +6,77 @@ const saveBtn = document.getElementById("saveBtn");
 const editBtn = document.getElementById("editBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 let editandoId = null;
+
+function validarCpfCnpj(valor) {
+    valor = valor.replace(/\D/g, '');
+    if (valor.length === 11) {
+        let soma = 0, resto;
+        if (/^(\d)\1+$/.test(valor)) return false;
+        for (let i = 1; i <= 9; i++) soma += parseInt(valor.substring(i-1, i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(valor.substring(9, 10))) return false;
+        soma = 0;
+        for (let i = 1; i <= 10; i++) soma += parseInt(valor.substring(i-1, i)) * (12 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        return resto === parseInt(valor.substring(10, 11));
+    } else if (valor.length === 14) {
+        if (/^(\d)\1+$/.test(valor)) return false;
+        let tamanho = valor.length - 2;
+        let numeros = valor.substring(0, tamanho);
+        let digitos = valor.substring(tamanho);
+        let soma = 0;
+        let pos = tamanho - 7;
+        for (let i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado !== parseInt(digitos.charAt(0))) return false;
+        tamanho = tamanho + 1;
+        numeros = valor.substring(0, tamanho);
+        soma = 0;
+        pos = tamanho - 7;
+        for (let i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        return resultado === parseInt(digitos.charAt(1));
+    }
+    return false;
+}
+
+function validarAgencia(valor) {
+    return /^\d{4}$/.test(valor);
+}
+
+function validarNumeroConta(valor) {
+    return /^\d{6}-\d{1}$/.test(valor);
+}
+
+document.getElementById('donoForm').addEventListener('submit', function(e) {
+    const cnpj = document.getElementById('cnpj').value;
+    const agencia = document.getElementById('agencia').value;
+    const numeroConta = document.getElementById('numeroConta').value;
+
+    if (!validarCpfCnpj(cnpj)) {
+        alert('CPF ou CNPJ inválido!');
+        e.preventDefault();
+        return;
+    }
+    if (!validarAgencia(agencia)) {
+        alert('Agência inválida! Deve conter 4 dígitos.');
+        e.preventDefault();
+        return;
+    }
+    if (!validarNumeroConta(numeroConta)) {
+        alert('Número da conta inválido! Formato: 123456-7');
+        e.preventDefault();
+        return;
+    }
+});
 
 function atualizarTabela() {
   fetch(API)
@@ -45,9 +117,15 @@ form.onsubmit = function(e) {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dono)
-  }).then(() => {
-    form.reset();
-    atualizarTabela();
+  }).then(async response => {
+    const msg = await response.text();
+    if (response.ok) {
+      alert(msg || "Proprietário cadastrado com sucesso!");
+      form.reset();
+      atualizarTabela();
+    } else {
+      alert(msg || "Erro ao cadastrar proprietário.");
+    }
   });
 };
 
@@ -88,14 +166,20 @@ editBtn.onclick = function() {
     method: "PUT",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dono)
-  }).then(() => {
-    form.reset();
-    editandoId = null;
-    saveBtn.style.display = "inline";
-    editBtn.style.display = "none";
-    cancelBtn.style.display = "none";
-    document.getElementById("formTitle").innerText = "Cadastrar Dono";
-    atualizarTabela();
+  }).then(async response => {
+    const msg = await response.text();
+    if (response.ok) {
+      alert(msg || "Proprietário atualizado com sucesso!");
+      form.reset();
+      editandoId = null;
+      saveBtn.style.display = "inline";
+      editBtn.style.display = "none";
+      cancelBtn.style.display = "none";
+      document.getElementById("formTitle").innerText = "Cadastrar Dono";
+      atualizarTabela();
+    } else {
+      alert(msg || "Erro ao atualizar proprietário.");
+    }
   });
 };
 

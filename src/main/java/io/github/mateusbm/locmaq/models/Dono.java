@@ -16,13 +16,16 @@ public class Dono {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nome;
 
     private String endereco;
     private String email;
+    @Column(nullable = false, unique = true)
     private String cnpj;
+    @Column(nullable = false)
     private String telefone;
+
     private String banco;
     private String agencia;
     private String numeroConta;

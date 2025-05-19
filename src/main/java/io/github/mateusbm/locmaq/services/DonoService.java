@@ -2,6 +2,7 @@ package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.models.Dono;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
+import io.github.mateusbm.locmaq.utils.ValidadorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,24 @@ public class DonoService {
     }
 
     public Dono salvar(Dono dono) {
+        String doc = dono.getCnpj().replaceAll("\\D", "");
+        if (doc.length() == 11) {
+            if (!ValidadorUtil.isCpfValido(doc)) {
+                throw new IllegalArgumentException("CPF inválido");
+            }
+        } else if (doc.length() == 14) {
+            if (!ValidadorUtil.isCnpjValido(doc)) {
+                throw new IllegalArgumentException("CNPJ inválido");
+            }
+        } else {
+            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
+        }
+        if (!ValidadorUtil.isAgenciaValida(dono.getAgencia())) {
+            throw new IllegalArgumentException("Agência inválida");
+        }
+        if (!ValidadorUtil.isNumeroContaValido(dono.getNumeroConta())) {
+            throw new IllegalArgumentException("Número da conta inválido");
+        }
         Dono saved = donoRepository.save(dono);
         actionLogService.logAction("Cadastro de proprietário", getUsuarioAutenticado(),
                 "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome());
@@ -36,6 +55,25 @@ public class DonoService {
     }
 
     public Dono editar(Long id, Dono novo) {
+        String doc = novo.getCnpj().replaceAll("\\D", "");
+        if (doc.length() == 11) {
+            if (!ValidadorUtil.isCpfValido(doc)) {
+                throw new IllegalArgumentException("CPF inválido");
+            }
+        } else if (doc.length() == 14) {
+            if (!ValidadorUtil.isCnpjValido(doc)) {
+                throw new IllegalArgumentException("CNPJ inválido");
+            }
+        } else {
+            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
+        }
+        if (!ValidadorUtil.isAgenciaValida(novo.getAgencia())) {
+            throw new IllegalArgumentException("Agência inválida");
+        }
+        if (!ValidadorUtil.isNumeroContaValido(novo.getNumeroConta())) {
+            throw new IllegalArgumentException("Número da conta inválido");
+        }
+
         Dono dono = donoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dono não encontrado"));
         dono.setNome(novo.getNome());
@@ -51,9 +89,9 @@ public class DonoService {
                 "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome());
         return saved;
     }
-
     public void remover(Long id) {
         donoRepository.deleteById(id);
-        actionLogService.logAction("Remoção de proprietário", getUsuarioAutenticado(), "Proprietário ID: " + id);
+        actionLogService.logAction("Remoção de proprietário", getUsuarioAutenticado(),
+                "Proprietário ID: " + id);
     }
 }

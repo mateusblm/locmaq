@@ -28,7 +28,7 @@
         <label for="email">E-mail:</label>
         <input type="email" id="email" name="email" required>
         <label for="cnpj">CPF/CNPJ:</label>
-        <input type="text" id="cnpj" name="cnpj" required>
+        <input type="text" id="cnpj" name="cnpj" maxlength="14" title="Digite 11 (CPF) ou 14 (CNPJ) dígitos" required>
         <label for="telefone">Telefone:</label>
         <input type="text" id="telefone" name="telefone" required>
 
@@ -36,13 +36,13 @@
         <label for="banco">Banco:</label>
         <input type="text" id="banco" name="banco" required>
         <label for="agencia">Agência:</label>
-        <input type="text" id="agencia" name="agencia" required>
+        <input type="text" id="agencia" name="agencia" pattern="\d{4}" title="Deve conter 4 dígitos" required>
         <label for="numeroConta">Número da Conta:</label>
-        <input type="text" id="numeroConta" name="numeroConta" required>
+        <input type="text" id="numeroConta" name="numeroConta" pattern="\d{6}-\d{1}" title="Formato: 123456-7" required>
 
         <div style="text-align:right; margin-top:16px;">
-            <button id="saveBtn"   type="submit">Cadastrar</button>
-            <button id="editBtn"   type="button" style="display:none;">Salvar Alterações</button>
+            <button id="saveBtn" type="submit">Cadastrar</button>
+            <button id="editBtn" type="button" style="display:none;">Salvar Alterações</button>
             <button id="cancelBtn" type="button" style="display:none;">Cancelar</button>
             <button type="reset">Limpar</button>
         </div>
