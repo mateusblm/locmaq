@@ -61,7 +61,7 @@ public class BoletimMedicaoService {
                 "Cadastro de boletim de medição",
                 getUsuarioAutenticado(),
                 "Boletim ID: " + saved.getId() +
-                        ", Período: " + saved.getPeriodo() +
+                        ", Período: " + saved.getDataInicio() + " a " + saved.getDataFim() +
                         ", Situação: " + saved.getSituacao()
         );
         return saved;

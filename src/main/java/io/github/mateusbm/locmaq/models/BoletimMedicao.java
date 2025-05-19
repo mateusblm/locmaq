@@ -19,7 +19,11 @@ public class BoletimMedicao {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String periodo;
+    @Column(nullable = false)
+    private LocalDate dataInicio;
+
+    @Column(nullable = false)
+    private LocalDate dataFim;
 
     @ManyToOne
     private Usuario planejador;

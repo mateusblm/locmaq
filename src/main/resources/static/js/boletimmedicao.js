@@ -52,7 +52,8 @@ function handleFormSubmit(e) {
     }
 
     const body = {
-        periodo: form.periodo.value,
+        dataInicio: form.dataInicio.value,
+        dataFim: form.dataFim.value,
         planejadorId: form.planejadorId.value,
         situacao: form.situacao.value,
         equipamentos
@@ -69,14 +70,13 @@ function handleFormSubmit(e) {
             alert('Boletim cadastrado!');
             form.reset();
             document.getElementById('equipamentos-list').innerHTML = '';
-            carregarBoletins(); // Atualiza a tabela após o cadastro
+            carregarBoletins();
         } else {
             const err = await r.text();
             alert('Erro ao cadastrar!\n' + err);
         }
     });
 }
-
 
 function carregarBoletins() {
     fetch('/api/boletins')
@@ -89,7 +89,7 @@ function carregarBoletins() {
             }
             tbody.innerHTML = boletins.map(b => `
                 <tr>
-                    <td>${b.periodo}</td>
+                    <td>${b.dataInicio} a ${b.dataFim}</td>
                     <td>${b.planejadorNome || "-"}</td>
                     <td>${b.situacao}</td>
                     <td>${b.assinado ? 'Sim' : 'Não'}</td>
@@ -100,13 +100,15 @@ function carregarBoletins() {
             `).join('');
         });
 }
+
 window.abrirDetalhe = function(id) {
     fetch(`/api/boletins/${id}`)
         .then(r => r.json())
         .then(b => {
             document.getElementById('boletimDetailSection').style.display = "block";
             document.getElementById('boletimIdDetalhe').value = b.id;
-            document.getElementById('periodoDetalhe').value = b.periodo;
+            document.getElementById('dataInicioDetalhe').value = b.dataInicio;
+            document.getElementById('dataFimDetalhe').value = b.dataFim;
             document.getElementById('planejadorDetalhe').value = b.planejadorNome || '-';
             document.getElementById('situacaoDetalhe').value = b.situacao;
             window.boletimDetalheId = b.id;

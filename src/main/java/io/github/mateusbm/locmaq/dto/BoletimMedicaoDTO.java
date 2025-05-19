@@ -16,7 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 public class BoletimMedicaoDTO {
     private Long id;
-    private String periodo;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
     private Long planejadorId;
     private String planejadorNome;
     private String situacao;
@@ -27,33 +28,31 @@ public class BoletimMedicaoDTO {
     public static BoletimMedicaoDTO fromEntity(BoletimMedicao b) {
         BoletimMedicaoDTO dto = new BoletimMedicaoDTO();
         dto.setId(b.getId());
-        dto.setPeriodo(b.getPeriodo());
+        dto.setDataInicio(b.getDataInicio());
+        dto.setDataFim(b.getDataFim());
         dto.setSituacao(b.getSituacao());
         dto.setAssinado(b.getAssinado());
-        if(b.getPlanejador()!=null){
+        dto.setDataMedicao(b.getDataMedicao());
+        if (b.getPlanejador() != null) {
             dto.setPlanejadorId(b.getPlanejador().getId());
             dto.setPlanejadorNome(b.getPlanejador().getNome());
         }
-        if(b.getEquipamentos()!=null){
+        if (b.getEquipamentos() != null) {
             dto.setEquipamentos(b.getEquipamentos().stream().map(EquipamentoBoletimMedicaoDTO::fromEntity).toList());
         }
         return dto;
     }
 
-    public BoletimMedicao toEntity(Usuario planejador, List<EquipamentoBoletimMedicao> equipamentos){
+    public BoletimMedicao toEntity(Usuario planejador, List<EquipamentoBoletimMedicao> equipamentos) {
         BoletimMedicao b = new BoletimMedicao();
         b.setId(this.id);
-        b.setPeriodo(this.periodo);
+        b.setDataInicio(this.dataInicio);
+        b.setDataFim(this.dataFim);
         b.setSituacao(this.situacao);
         b.setPlanejador(planejador);
         b.setEquipamentos(equipamentos != null ? equipamentos : new ArrayList<>());
-        b.setAssinado(this.assinado!=null? this.assinado:false);
-
-        if (this.dataMedicao == null) {
-            b.setDataMedicao(LocalDate.now());
-        } else {
-            b.setDataMedicao(this.dataMedicao);
-        }
+        b.setAssinado(this.assinado != null ? this.assinado : false);
+        b.setDataMedicao(this.dataMedicao != null ? this.dataMedicao : LocalDate.now());
         return b;
     }
 }
