@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Envio de relatório</title>
+    <title>Painel Planejador - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role">Planejador</span>
+        <img src="../imgs/images.png" class="user-image" alt="">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
 <div class="container">
     <h2>Enviar Relatório ao Cliente</h2>
     <form action="/enviar-relatorio" method="post">
@@ -28,5 +38,19 @@
 
         <button type="submit">Enviar Relatório</button>
     </form>
+</div>
+<div id="mensagem-status"></div>
+<script src="../js/menu.js"></script>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    if (status === 'sucesso') {
+        document.getElementById('mensagem-status').innerText = 'E-mail enviado com sucesso!';
+        document.getElementById('mensagem-status').style.color = 'green';
+    } else if (status === 'erro') {
+        document.getElementById('mensagem-status').innerText = 'Falha ao enviar o e-mail. Tente novamente.';
+        document.getElementById('mensagem-status').style.color = 'red';
+    }
+</script>
 </body>
 </html>
