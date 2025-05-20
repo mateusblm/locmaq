@@ -1,5 +1,6 @@
 package io.github.mateusbm.locmaq.controllers;
 
+import io.github.mateusbm.locmaq.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class RelatorioController {
+public class EmailController {
 
     @Autowired
     private EmailService emailService;
@@ -20,8 +21,12 @@ public class RelatorioController {
             @RequestParam(required = false) String mensagem,
             RedirectAttributes redirectAttributes
     ) {
-        emailService.enviarRelatorio(nome, email, relatorio, mensagem);
-        redirectAttributes.addFlashAttribute("mensagem", "Relatório enviado com sucesso!");
-        return "redirect:/formulario-relatorio";
+        try {
+            emailService.enviarRelatorio(nome, email, relatorio, mensagem);
+            redirectAttributes.addFlashAttribute("mensagem", "Relatório enviado com sucesso!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensagem", "Falha ao enviar o relatório. Tente novamente.");
+        }
+        return "redirect:/html/relatorios_cliente.html";
     }
 }
