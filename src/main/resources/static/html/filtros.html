@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios de Boletins - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+    <style>
+        .filtro-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .filtro-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main style="max-width: 1100px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px #0001;">
+    <h2 style="margin-bottom: 24px;">Relatórios de Boletins de Medição</h2>
+
+    <div class="filtro-group">
+        <div>
+            <label for="filtroDataInicio">Data Início</label>
+            <input type="date" id="filtroDataInicio">
+        </div>
+        <div>
+            <label for="filtroDataFim">Data Fim</label>
+            <input type="date" id="filtroDataFim">
+        </div>
+        <div>
+            <label for="filtroValorMin">Valor Medido Mínimo</label>
+            <input type="number" step="0.01" id="filtroValorMin">
+        </div>
+        <div>
+            <label for="filtroValorMax">Valor Medido Máximo</label>
+            <input type="number" step="0.01" id="filtroValorMax">
+        </div>
+        <div>
+            <label for="filtroEquipamento">Equipamento</label>
+            <select id="filtroEquipamento">
+                <option value="">Todos</option>
+                <!-- opções via JS -->
+            </select>
+        </div>
+        <div>
+            <label for="filtroPlanejador">Planejador</label>
+            <select id="filtroPlanejador">
+                <option value="">Todos</option>
+                <!-- opções via JS -->
+            </select>
+        </div>
+        <div>
+            <label for="filtroSituacao">Situação</label>
+            <select id="filtroSituacao">
+                <option value="">Todas</option>
+                <option value="PENDENTE">PENDENTE</option>
+                <option value="ASSINADO">ASSINADO</option>
+            </select>
+        </div>
+        <div>
+            <label for="filtroAssinado">Assinado</label>
+            <select id="filtroAssinado">
+                <option value="">Todos</option>
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="text-align:right; margin-bottom:20px;">
+        <button onclick="aplicarFiltros()" class="primary-btn">Aplicar Filtros</button>
+        <button onclick="resetarFiltros()" class="secondary-btn">Limpar Filtros</button>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th>Período</th>
+            <th>Planejador</th>
+            <th>Situação</th>
+            <th>Assinado</th>
+            <th>Equipamentos</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody id="tabelaRelatorios">
+        <!-- Linhas geradas dinamicamente -->
+        </tbody>
+    </table>
+</main>
+
+<script src="../js/menu.js"></script>
+<script src="../js/relatorios.js"></script>
+</body>
+</html>
