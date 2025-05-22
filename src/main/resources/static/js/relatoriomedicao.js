@@ -33,7 +33,6 @@ async function aplicarFiltros() {
         equipamentoId: document.getElementById('filtroEquipamento').value,
         planejadorId: document.getElementById('filtroPlanejador').value,
         situacao: document.getElementById('filtroSituacao').value,
-        assinado: document.getElementById('filtroAssinado').value,
     };
 
     boletins.filter(b => {
@@ -41,14 +40,13 @@ async function aplicarFiltros() {
             (!filtros.dataInicio || b.dataInicio >= filtros.dataInicio) &&
             (!filtros.dataFim || b.dataFim <= filtros.dataFim);
         const porSituacao = !filtros.situacao || b.situacao === filtros.situacao;
-        const porAssinado = !filtros.assinado || String(b.assinado) === filtros.assinado;
         const porPlanejador = !filtros.planejadorId || b.planejadorId == filtros.planejadorId;
         const contemEquipamento = !filtros.equipamentoId || b.equipamentos.some(e => e.equipamentoId == filtros.equipamentoId);
         const dentroValor = b.equipamentos.every(e => {
             const v = e.valorMedido ?? 0;
             return (!filtros.valorMin || v >= filtros.valorMin) && (!filtros.valorMax || v <= filtros.valorMax);
         });
-        return dentroPeriodo && porSituacao && porAssinado && porPlanejador && contemEquipamento && dentroValor;
+        return dentroPeriodo && porSituacao && porPlanejador && contemEquipamento && dentroValor;
     }).forEach(b => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
