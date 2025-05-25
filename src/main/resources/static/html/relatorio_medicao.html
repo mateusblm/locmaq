@@ -4,19 +4,6 @@
     <meta charset="UTF-8">
     <title>Relatórios de Boletins - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
-    <style>
-        .filtro-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .filtro-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-    </style>
 </head>
 <body>
 <header class="main-header">
@@ -29,8 +16,8 @@
         <a href="/logout" class="logout-btn">Sair</a>
     </div>
 </header>
-<main style="max-width: 1100px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px #0001;">
-    <h2 style="margin-bottom: 24px;">Relatórios de Boletins de Medição</h2>
+<main class="container">
+    <h2>Relatórios de Boletins de Medição</h2>
 
     <div class="filtro-group">
         <div>
@@ -53,7 +40,12 @@
             <label for="filtroEquipamento">Equipamento</label>
             <select id="filtroEquipamento">
                 <option value="">Todos</option>
-                <!-- opções via JS -->
+            </select>
+        </div>
+        <div>
+            <label for="filtroPlanejador">Planejador</label>
+            <select id="filtroPlanejador">
+                <option value="">Todos</option>
             </select>
         </div>
         <div>
@@ -66,12 +58,12 @@
         </div>
     </div>
 
-    <div style="text-align:right; margin-bottom:20px;">
-        <button onclick="aplicarFiltros()" class="primary-btn">Aplicar Filtros</button>
-        <button onclick="resetarFiltros()" class="secondary-btn">Limpar Filtros</button>
+    <div class="botoes-filtro">
+        <button onclick="aplicarFiltros()" class="acao-btn">Aplicar Filtros</button>
+        <button onclick="resetarFiltros()" class="acao-btn">Limpar Filtros</button>
     </div>
 
-    <table style="width:100%;border-collapse:collapse;">
+    <table class="tabela-padrao">
         <thead>
         <tr>
             <th>Período</th>
@@ -83,10 +75,17 @@
         </tr>
         </thead>
         <tbody id="tabelaRelatorios">
-        <!-- Linhas geradas dinamicamente -->
         </tbody>
     </table>
 </main>
+
+<!-- Modal de Detalhes -->
+<div class="modal-bg" id="modalDetalhe">
+    <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal()">&times;</span>
+        <div id="modalDetalheConteudo"></div>
+    </div>
+</div>
 
 <script src="../js/menu.js"></script>
 <script src="../js/relatoriomedicao.js"></script>
