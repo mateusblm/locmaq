@@ -56,7 +56,11 @@ public class DonoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remover(@PathVariable Long id) {
-        donoService.remover(id);
-        return ResponseEntity.ok().build();
+        try {
+            donoService.remover(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

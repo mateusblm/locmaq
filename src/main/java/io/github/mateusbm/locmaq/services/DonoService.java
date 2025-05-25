@@ -2,6 +2,7 @@ package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.models.Dono;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
+import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,10 @@ public class DonoService {
     private DonoRepository donoRepository;
     @Autowired
     private ActionLogService actionLogService;
+
+    @Autowired
+    private EquipamentoRepository equipamentoRepository; // crie esse repository se não existir
+
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
@@ -90,6 +95,10 @@ public class DonoService {
         return saved;
     }
     public void remover(Long id) {
+        long count = equipamentoRepository.countByDonoId(id);
+        if (count > 0) {
+            throw new IllegalArgumentException("Não é possível remover o proprietário: existem equipamentos vinculados a ele.");
+        }
         donoRepository.deleteById(id);
         actionLogService.logAction("Remoção de proprietário", getUsuarioAutenticado(),
                 "Proprietário ID: " + id);

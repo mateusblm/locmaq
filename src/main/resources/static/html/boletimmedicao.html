@@ -41,6 +41,8 @@
             <button type="reset" class="secondary-btn">Limpar</button>
         </div>
     </form>
+    <!-- Bloco de mensagem -->
+    <div id="mensagem-erro" style="display:none;max-width:520px;margin:20px auto;padding:16px;border-radius:8px;background:#ffe0e0;color:#a00;font-weight:bold;text-align:center;border:1px solid #f99;"></div>
     <section style="margin: 40px auto 0 auto;max-width:900px;">
         <h3>Histórico de Boletins</h3>
         <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
@@ -77,7 +79,6 @@
 </main>
 <script src="../js/menu.js"></script>
 <script src="../js/boletimmedicao.js"></script>
-<script>
 <script>
     function fecharDetalhe() {
         document.getElementById('boletimDetailSection').style.display = "none";

@@ -56,8 +56,16 @@ function addEquipamento(equip = {}) {
     document.getElementById('equipamentos-list').appendChild(div);
 }
 
+// Exibe mensagem padronizada na tela
 function exibirMensagem(msg, tipo = "erro") {
-    alert(msg);
+    const div = document.getElementById("mensagem-erro");
+    if (!div) return;
+    div.innerText = msg;
+    div.style.display = "block";
+    div.style.background = tipo === "sucesso" ? "#e0ffe0" : "#ffe0e0";
+    div.style.color = tipo === "sucesso" ? "#0a0" : "#a00";
+    div.style.border = tipo === "sucesso" ? "1px solid #9f9" : "1px solid #f99";
+    setTimeout(() => { div.style.display = "none"; }, 5000);
 }
 
 function handleFormSubmit(e) {

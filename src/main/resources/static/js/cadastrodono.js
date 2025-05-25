@@ -1,4 +1,3 @@
-// src/main/resources/static/js/cadastrodono.js
 const API = "/api/donos";
 const form = document.getElementById("donoForm");
 const tabela = document.getElementById("tabelaDonos").querySelector("tbody");
@@ -6,6 +5,18 @@ const saveBtn = document.getElementById("saveBtn");
 const editBtn = document.getElementById("editBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 let editandoId = null;
+
+// Exibe mensagem padronizada na tela
+function exibirMensagem(msg, tipo = "erro") {
+    const div = document.getElementById("mensagem-erro");
+    if (!div) return;
+    div.innerText = msg;
+    div.style.display = "block";
+    div.style.background = tipo === "sucesso" ? "#e0ffe0" : "#ffe0e0";
+    div.style.color = tipo === "sucesso" ? "#0a0" : "#a00";
+    div.style.border = tipo === "sucesso" ? "1px solid #9f9" : "1px solid #f99";
+    setTimeout(() => { div.style.display = "none"; }, 5000);
+}
 
 function validarCpfCnpj(valor) {
     valor = valor.replace(/\D/g, '');
@@ -62,17 +73,17 @@ document.getElementById('donoForm').addEventListener('submit', function(e) {
     const numeroConta = document.getElementById('numeroConta').value;
 
     if (!validarCpfCnpj(cnpj)) {
-        alert('CPF ou CNPJ inválido!');
+        exibirMensagem('CPF ou CNPJ inválido!');
         e.preventDefault();
         return;
     }
     if (!validarAgencia(agencia)) {
-        alert('Agência inválida! Deve conter 4 dígitos.');
+        exibirMensagem('Agência inválida! Deve conter 4 dígitos.');
         e.preventDefault();
         return;
     }
     if (!validarNumeroConta(numeroConta)) {
-        alert('Número da conta inválido! Formato: 123456-7');
+        exibirMensagem('Número da conta inválido! Formato: 123456-7');
         e.preventDefault();
         return;
     }
@@ -120,11 +131,11 @@ form.onsubmit = function(e) {
   }).then(async response => {
     const msg = await response.text();
     if (response.ok) {
-      alert(msg || "Proprietário cadastrado com sucesso!");
+      exibirMensagem(msg || "Proprietário cadastrado com sucesso!", "sucesso");
       form.reset();
       atualizarTabela();
     } else {
-      alert(msg || "Erro ao cadastrar proprietário.");
+      exibirMensagem(msg || "Erro ao cadastrar proprietário.");
     }
   });
 };
@@ -169,7 +180,7 @@ editBtn.onclick = function() {
   }).then(async response => {
     const msg = await response.text();
     if (response.ok) {
-      alert(msg || "Proprietário atualizado com sucesso!");
+      exibirMensagem(msg || "Proprietário atualizado com sucesso!", "sucesso");
       form.reset();
       editandoId = null;
       saveBtn.style.display = "inline";
@@ -178,7 +189,7 @@ editBtn.onclick = function() {
       document.getElementById("formTitle").innerText = "Cadastrar Dono";
       atualizarTabela();
     } else {
-      alert(msg || "Erro ao atualizar proprietário.");
+      exibirMensagem(msg || "Erro ao atualizar proprietário.");
     }
   });
 };
@@ -195,10 +206,17 @@ cancelBtn.onclick = function() {
 window.removerDono = function(id) {
   if (confirm("Deseja remover este dono?")) {
     fetch(API + "/" + id, { method: "DELETE" })
-      .then(() => atualizarTabela());
+      .then(async response => {
+        if (response.ok) {
+          exibirMensagem("Proprietário removido com sucesso!", "sucesso");
+          atualizarTabela();
+        } else {
+          const msg = await response.text();
+          exibirMensagem(msg || "Erro ao remover proprietário.");
+        }
+      });
   }
-};
-
+}
 saveBtn.style.display = "inline";
 editBtn.style.display = "none";
 cancelBtn.style.display = "none";
