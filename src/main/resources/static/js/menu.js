@@ -19,7 +19,7 @@ const menusPorPerfil = {
   GESTOR: [
     { href: "/html/gestor.html", label: "Painel Gestor" },
     { href: "/html/cadastrarusuario.html", label: "Criar Usuario" },
-    { href: "/html/assinar_boletim_medicao.html", label: "Assinar Boletim" },
+    { href: "/html/assinar_boletim_medicao.html", label: "Gerenciar Boletim" },
     { href: "/html/cadastrocliente.html", label: "Gerenciar Clientes" },
     { href: "/html/ver_logs.html", label: "Logs do sistema" }
   ],

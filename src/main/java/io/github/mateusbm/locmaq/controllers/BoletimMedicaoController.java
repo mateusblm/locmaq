@@ -1,3 +1,4 @@
+// src/main/java/io/github/mateusbm/locmaq/controllers/BoletimMedicaoController.java
 package io.github.mateusbm.locmaq.controllers;
 
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;
@@ -64,6 +65,11 @@ public class BoletimMedicaoController {
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody BoletimMedicaoDTO dto) {
         try {
+            BoletimMedicao boletim = service.buscarPorId(id);
+            if (Boolean.TRUE.equals(boletim.getAssinado())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Não é permitido editar um boletim de medição já assinado.");
+            }
             Usuario planejador = usuarioService.buscarPorId(dto.getPlanejadorId());
             BoletimMedicao atualizado = service.editar(id, dto, planejador);
             return ResponseEntity.ok(BoletimMedicaoDTO.fromEntity(atualizado));
@@ -87,6 +93,18 @@ public class BoletimMedicaoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boletim não encontrado.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao assinar boletim.");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> remover(@PathVariable Long id) {
+        try {
+            service.remover(id);
+            return ResponseEntity.ok("Boletim removido com sucesso!");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boletim não encontrado.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao remover boletim.");
         }
     }
 }

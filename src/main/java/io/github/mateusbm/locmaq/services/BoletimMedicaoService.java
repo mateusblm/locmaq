@@ -117,4 +117,10 @@ public class BoletimMedicaoService {
         actionLogService.logAction("Assinatura de boletim de medição", getUsuarioAutenticado(), "Boletim ID: " + saved.getId());
         return saved;
     }
+
+    public void remover(Long id) {
+        BoletimMedicao b = buscarPorId(id);
+        repo.delete(b);
+        actionLogService.logAction("Remoção de boletim de medição", getUsuarioAutenticado(), "Boletim ID: " + id);
+    }
 }

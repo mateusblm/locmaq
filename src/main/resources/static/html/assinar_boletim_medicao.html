@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Assinar Boletim de Medição - LocMac</title>
+    <title>Gerenciar Boletim de Medição - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
@@ -17,7 +17,8 @@
     </div>
 </header>
 <main>
-    <h2>Assinar Boletim de Medição</h2>
+    <h2>Gerenciar Boletim de Medição</h2>
+    <div id="mensagem-erro" style="display:none;max-width:500px;margin:20px auto;padding:16px;border-radius:8px;text-align:center;font-weight:bold;"></div>
     <section style="margin-top: 24px; max-width: 1100px; margin-left:auto; margin-right:auto;">
         <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
             <thead>
@@ -33,17 +34,19 @@
             </tbody>
         </table>
     </section>
-    <section id="boletimDetailSection" style="display:none; max-width:600px; margin:40px auto 0 auto;">
-        <h3>Detalhes do Boletim</h3>
+    <section id="boletimDetailSection" style="display:none; max-width:700px; margin:40px auto 0 auto;">
+        <h3 id="tituloDetalhe">Detalhes do Boletim</h3>
         <form id="detalheBoletimForm">
             <input type="hidden" id="boletimIdDetalhe" name="id">
-            <label>Período:</label>
-            <input type="text" id="periodoDetalhe" name="periodo" readonly>
+            <label>Período Início:</label>
+            <input type="date" id="dataInicioDetalhe" name="dataInicio" required>
+            <label>Período Fim:</label>
+            <input type="date" id="dataFimDetalhe" name="dataFim" required>
             <label>Planejador:</label>
             <input type="text" id="planejadorDetalhe" name="planejador" readonly>
             <label>Situação:</label>
-            <input type="text" id="situacaoDetalhe" name="situacao">
-            <!-- Aqui incluir mais detalhes, se necessário -->
+            <input type="text" id="situacaoDetalhe" name="situacao" required>
+            <div id="equipamentosDetalhe" style="margin-top:18px;"></div>
             <div style="text-align:right; margin-top:14px;">
                 <button type="button" id="assinarBtn">Assinar</button>
                 <button type="button" id="cancelarDetalheBtn">Cancelar</button>
