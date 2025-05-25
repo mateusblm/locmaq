@@ -1,17 +1,35 @@
+function parseDateBR(str) {
+    if (!str) return null;
+    const [dia, mes, ano] = str.split('/');
+    if (!dia || !mes || !ano) return null;
+    return new Date(`${ano}-${mes}-${dia}T00:00:00`);
+}
+
 async function carregarFiltros() {
-    // Preencher planejadores e equipamentos
-    const planejadores = await fetch('/api/usuarios').then(r => r.json());
-    const equipamentos = await fetch('/api/equipamentos').then(r => r.json());
+    // Planejadores únicos dos boletins
+    const boletins = await fetch('/api/boletins').then(r => r.json());
+    const planejadoresUnicos = [];
+    const ids = new Set();
+    boletins.forEach(b => {
+        if (b.planejadorId && !ids.has(b.planejadorId)) {
+            planejadoresUnicos.push({ id: b.planejadorId, nome: b.planejadorNome });
+            ids.add(b.planejadorId);
+        }
+    });
 
     const plannerSelect = document.getElementById('filtroPlanejador');
-    planejadores.forEach(p => {
+    plannerSelect.innerHTML = '<option value="">Todos</option>';
+    planejadoresUnicos.forEach(p => {
         const option = document.createElement('option');
         option.value = p.id;
         option.textContent = p.nome;
         plannerSelect.appendChild(option);
     });
 
+    // Equipamentos
+    const equipamentos = await fetch('/api/equipamentos').then(r => r.json());
     const eqSelect = document.getElementById('filtroEquipamento');
+    eqSelect.innerHTML = '<option value="">Todos</option>';
     equipamentos.forEach(eq => {
         const option = document.createElement('option');
         option.value = eq.id;
@@ -36,9 +54,16 @@ async function aplicarFiltros() {
     };
 
     boletins.filter(b => {
+        // Corrigir comparação de datas
+        const bDataInicio = parseDateBR(b.dataInicio);
+        const bDataFim = parseDateBR(b.dataFim);
+        const filtroDataInicio = filtros.dataInicio ? new Date(filtros.dataInicio + 'T00:00:00') : null;
+        const filtroDataFim = filtros.dataFim ? new Date(filtros.dataFim + 'T00:00:00') : null;
+
         const dentroPeriodo =
-            (!filtros.dataInicio || b.dataInicio >= filtros.dataInicio) &&
-            (!filtros.dataFim || b.dataFim <= filtros.dataFim);
+            (!filtroDataInicio || (bDataInicio && bDataInicio >= filtroDataInicio)) &&
+            (!filtroDataFim || (bDataFim && bDataFim <= filtroDataFim));
+
         const porSituacao = !filtros.situacao || b.situacao === filtros.situacao;
         const porPlanejador = !filtros.planejadorId || b.planejadorId == filtros.planejadorId;
         const contemEquipamento = !filtros.equipamentoId || b.equipamentos.some(e => e.equipamentoId == filtros.equipamentoId);
@@ -54,7 +79,7 @@ async function aplicarFiltros() {
             <td>${b.planejadorNome}</td>
             <td>${b.situacao}</td>
             <td>${b.assinado ? 'Sim' : 'Não'}</td>
-            <td>${b.equipamentos.map(e => e.nomeEquipamento || e.equipamentoId).join(', ')}</td>
+            <td>${b.equipamentos.map(e => e.equipamentoNome || e.equipamentoId).join(', ')}</td>
             <td><button onclick="verDetalhe(${b.id})">Ver</button></td>
         `;
         tbody.appendChild(tr);
@@ -66,10 +91,41 @@ function resetarFiltros() {
     aplicarFiltros();
 }
 
-function verDetalhe(id) {
-    // Abre modal ou redireciona para página de detalhes
-    alert("Ver detalhe do boletim ID: " + id);
+async function verDetalhe(id) {
+    const resp = await fetch(`/api/boletins/${id}`);
+    if (!resp.ok) {
+        alert('Erro ao buscar detalhes do boletim.');
+        return;
+    }
+    const b = await resp.json();
+    const conteudo = `
+        <h3>Detalhes do Boletim</h3>
+        <p><b>Período:</b> ${b.dataInicio} a ${b.dataFim}</p>
+        <p><b>Planejador:</b> ${b.planejadorNome}</p>
+        <p><b>Situação:</b> ${b.situacao}</p>
+        <p><b>Assinado:</b> ${b.assinado ? 'Sim' : 'Não'}</p>
+        <p><b>Equipamentos:</b></p>
+        <ul>
+            ${b.equipamentos.map(e => `
+                <li>
+                    <b>Nome:</b> ${e.equipamentoNome || e.equipamentoId} <br>
+                    <b>Valor Medido:</b> ${e.valorMedido ?? '-'}
+                </li>
+            `).join('')}
+        </ul>
+    `;
+    document.getElementById('modalDetalheConteudo').innerHTML = conteudo;
+    document.getElementById('modalDetalhe').style.display = 'flex';
 }
+
+function fecharModal() {
+    document.getElementById('modalDetalhe').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('modalDetalhe');
+    if (event.target === modal) fecharModal();
+};
 
 window.onload = () => {
     carregarFiltros();
