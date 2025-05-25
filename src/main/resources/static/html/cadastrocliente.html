@@ -38,6 +38,7 @@
       <button type="reset">Limpar</button>
     </div>
   </form>
+  <div id="mensagem" style="max-width:400px;margin:16px auto 0;display:none;padding:12px;border-radius:8px;text-align:center;font-weight:bold;"></div>
   <section style="margin-top:40px;">
     <h3>Lista de Clientes</h3>
     <table id="tabelaClientes" style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
@@ -62,7 +63,16 @@
   const saveBtn = document.getElementById("saveBtn");
   const editBtn = document.getElementById("editBtn");
   const cancelBtn = document.getElementById("cancelBtn");
+  const mensagem = document.getElementById("mensagem");
   let editandoId = null;
+
+  function exibirMensagem(texto, tipo) {
+    mensagem.innerText = texto;
+    mensagem.style.display = "block";
+    mensagem.style.background = tipo === "erro" ? "#ffe0e0" : "#e0ffe0";
+    mensagem.style.color = tipo === "erro" ? "#b20000" : "#006600";
+    setTimeout(() => { mensagem.style.display = "none"; }, 4000);
+  }
 
   function atualizarTabela() {
     fetch(API)
@@ -97,9 +107,19 @@
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cliente)
-    }).then(() => {
-      form.reset();
-      atualizarTabela();
+    })
+    .then(async resp => {
+      if (resp.ok) {
+        exibirMensagem("Cliente cadastrado com sucesso!", "sucesso");
+        form.reset();
+        atualizarTabela();
+      } else {
+        const erro = await resp.text();
+        exibirMensagem(erro || "Erro ao cadastrar cliente.", "erro");
+      }
+    })
+    .catch(() => {
+      exibirMensagem("Erro de conexão com o servidor.", "erro");
     });
   };
 
@@ -142,6 +162,9 @@
       cancelBtn.style.display = "none";
       document.getElementById("formTitle").innerText = "Cadastrar Cliente";
       atualizarTabela();
+      exibirMensagem("Cliente atualizado com sucesso!", "sucesso");
+    }).catch(() => {
+      exibirMensagem("Erro ao atualizar cliente.", "erro");
     });
   };
 
@@ -157,7 +180,18 @@
   window.removerCliente = function(id) {
     if (confirm("Deseja remover este cliente?")) {
       fetch(API + "/" + id, { method: "DELETE" })
-        .then(() => atualizarTabela());
+        .then(async resp => {
+          if (resp.ok) {
+            atualizarTabela();
+            exibirMensagem("Cliente removido com sucesso!", "sucesso");
+          } else {
+            const erro = await resp.text();
+            exibirMensagem(erro || "Erro ao remover cliente.", "erro");
+          }
+        })
+        .catch(() => {
+          exibirMensagem("Erro ao remover cliente.", "erro");
+        });
     }
   };
 

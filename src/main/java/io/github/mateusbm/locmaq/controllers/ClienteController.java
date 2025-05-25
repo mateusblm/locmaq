@@ -3,6 +3,9 @@ package io.github.mateusbm.locmaq.controllers;
 import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +22,17 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente criar(@RequestBody Cliente cliente) {
-        return clienteService.cadastrarCliente(cliente);
+    public ResponseEntity<?> criar(@RequestBody Cliente cliente) {
+        try {
+            Cliente novoCliente = clienteService.cadastrarCliente(cliente);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Já existe um cliente com esse nome.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao cadastrar cliente.");
+        }
     }
 
     @PutMapping("/{id}")
@@ -29,8 +41,17 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
-    public void remover(@PathVariable Long id) {
-        clienteService.removerCliente(id);
+    public ResponseEntity<?> remover(@PathVariable Long id) {
+        try {
+            clienteService.removerCliente(id);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Não é possível remover o cliente pois existem equipamentos vinculados.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao remover cliente.");
+        }
     }
 
     @GetMapping("/{id}")
