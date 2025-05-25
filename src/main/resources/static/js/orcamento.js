@@ -44,12 +44,11 @@ function submitPadrao(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orcamentoForm').onsubmit = submitPadrao;
-    carregarContratos();
-    carregarOrcamentos();
+    carregarContratos().then(carregarOrcamentos);
 });
 
 function carregarContratos() {
-    fetch('/api/contrato-locacoes')
+    return fetch('/api/contrato-locacoes')
         .then(r => r.json())
         .then(data => {
             contratos = data;
@@ -115,8 +114,8 @@ function carregarOrcamentos() {
                         <td>${o.aprovadoPor || '-'}</td>
                         <td>
                             ${o.status === 'PENDENTE' ? `
-                                <button class="action-btn" onclick="editarOrcamento(${o.id})">Editar</button>
-                                <button class="action-btn" onclick="excluirOrcamento(${o.id})">Excluir</button>
+                                <button class="visualizar-btn" onclick="editarOrcamento(${o.id})">Editar</button>
+                                <button class="acao-btn delete" onclick="excluirOrcamento(${o.id})">Excluir</button>
                             ` : ''}
                         </td>
                     </tr>
