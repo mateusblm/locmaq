@@ -443,3 +443,57 @@ h2, #form-title { text-align: center; }
   background: #e4edf6;
   color: #374151;
 }
+
+.filtro-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.filtro-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.botoes-filtro {
+    text-align: right;
+    margin-bottom: 20px;
+}
+.tabela-padrao {
+    width: 100%;
+    border-collapse: collapse;
+}
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0001;
+}
+/* Modal estilos (caso não tenha) */
+.modal-bg {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    background: #0008;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #fff;
+    padding: 32px;
+    border-radius: 10px;
+    min-width: 350px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 16px #0003;
+}
+.modal-close {
+    float: right;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+}
