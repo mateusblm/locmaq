@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,14 @@ public class BoletimMedicaoService {
     }
 
     public BoletimMedicao buscarPorId(Long id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id).orElseThrow(() -> new EntityNotFoundException("Boletim não encontrado"));
     }
 
     public BoletimMedicao cadastrar(BoletimMedicaoDTO dto, Usuario planejador) {
+        if (dto.getDataFim() != null && dto.getDataInicio() != null && dto.getDataFim().isBefore(dto.getDataInicio())) {
+            throw new IllegalArgumentException("A data final não pode ser anterior à data inicial.");
+        }
+
         List<EquipamentoBoletimMedicao> equipamentos = new ArrayList<>();
         if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
             for (var eqDTO : dto.getEquipamentos()) {
@@ -63,6 +68,43 @@ public class BoletimMedicaoService {
                 "Boletim ID: " + saved.getId() +
                         ", Período: " + saved.getDataInicio() + " a " + saved.getDataFim() +
                         ", Situação: " + saved.getSituacao()
+        );
+        return saved;
+    }
+
+    public BoletimMedicao editar(Long id, BoletimMedicaoDTO dto, Usuario planejador) {
+        if (dto.getDataFim() != null && dto.getDataInicio() != null && dto.getDataFim().isBefore(dto.getDataInicio())) {
+            throw new IllegalArgumentException("A data final não pode ser anterior à data inicial.");
+        }
+
+        BoletimMedicao boletim = buscarPorId(id);
+
+        boletim.setDataInicio(dto.getDataInicio());
+        boletim.setDataFim(dto.getDataFim());
+        boletim.setPlanejador(planejador);
+        boletim.setSituacao(dto.getSituacao());
+
+        // Remove todos os equipamentos antigos
+        boletim.getEquipamentos().clear();
+
+        // Adiciona os novos equipamentos diretamente na lista já limpa
+        if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
+            for (var eqDTO : dto.getEquipamentos()) {
+                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId()).orElseThrow();
+                Double valorMedido = eqDTO.getValorMedido();
+                if (valorMedido == null || Double.isNaN(valorMedido)) valorMedido = 0.0;
+                EquipamentoBoletimMedicao ebm = eqDTO.toEntity(eq);
+                ebm.setValorMedido(valorMedido);
+                ebm.setBoletimMedicao(boletim);
+                boletim.getEquipamentos().add(ebm);
+            }
+        }
+
+        BoletimMedicao saved = repo.save(boletim);
+        actionLogService.logAction(
+                "Edição de boletim de medição",
+                getUsuarioAutenticado(),
+                "Boletim ID: " + saved.getId()
         );
         return saved;
     }

@@ -6,8 +6,12 @@ import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.services.BoletimMedicaoService;
 import io.github.mateusbm.locmaq.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -19,24 +23,70 @@ public class BoletimMedicaoController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public List<BoletimMedicaoDTO> listarTodos() {
-        return service.listarTodos().stream().map(BoletimMedicaoDTO::fromEntity).toList();
+    public ResponseEntity<?> listarTodos() {
+        try {
+            List<BoletimMedicaoDTO> lista = service.listarTodos().stream().map(BoletimMedicaoDTO::fromEntity).toList();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao listar boletins.");
+        }
     }
 
     @GetMapping("/{id}")
-    public BoletimMedicaoDTO buscar(@PathVariable Long id) {
-        return BoletimMedicaoDTO.fromEntity(service.buscarPorId(id));
+    public ResponseEntity<?> buscar(@PathVariable Long id) {
+        try {
+            BoletimMedicaoDTO dto = BoletimMedicaoDTO.fromEntity(service.buscarPorId(id));
+            return ResponseEntity.ok(dto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boletim não encontrado.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao buscar boletim.");
+        }
     }
 
     @PostMapping
-    public BoletimMedicaoDTO cadastrar(@RequestBody BoletimMedicaoDTO dto) {
-        Usuario planejador = usuarioService.buscarPorId(dto.getPlanejadorId());
-        BoletimMedicao b = service.cadastrar(dto, planejador);
-        return BoletimMedicaoDTO.fromEntity(b);
+    public ResponseEntity<?> cadastrar(@RequestBody BoletimMedicaoDTO dto) {
+        try {
+            Usuario planejador = usuarioService.buscarPorId(dto.getPlanejadorId());
+            BoletimMedicao b = service.cadastrar(dto, planejador);
+            return ResponseEntity.status(HttpStatus.CREATED).body(BoletimMedicaoDTO.fromEntity(b));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Planejador não encontrado.");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos ou violação de integridade.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cadastrar boletim.");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody BoletimMedicaoDTO dto) {
+        try {
+            Usuario planejador = usuarioService.buscarPorId(dto.getPlanejadorId());
+            BoletimMedicao atualizado = service.editar(id, dto, planejador);
+            return ResponseEntity.ok(BoletimMedicaoDTO.fromEntity(atualizado));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boletim ou planejador não encontrado.");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados inválidos ou violação de integridade.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao editar boletim.");
+        }
     }
 
     @PostMapping("/{id}/assinar")
-    public BoletimMedicaoDTO assinar(@PathVariable Long id) {
-        return BoletimMedicaoDTO.fromEntity(service.assinarBoletim(id));
+    public ResponseEntity<?> assinar(@PathVariable Long id) {
+        try {
+            BoletimMedicaoDTO dto = BoletimMedicaoDTO.fromEntity(service.assinarBoletim(id));
+            return ResponseEntity.ok(dto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boletim não encontrado.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao assinar boletim.");
+        }
     }
 }

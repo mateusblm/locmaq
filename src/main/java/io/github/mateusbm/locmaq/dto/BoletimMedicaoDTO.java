@@ -1,5 +1,6 @@
 package io.github.mateusbm.locmaq.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.mateusbm.locmaq.models.BoletimMedicao;
 import io.github.mateusbm.locmaq.models.EquipamentoBoletimMedicao;
 import io.github.mateusbm.locmaq.models.Usuario;
@@ -16,14 +17,21 @@ import java.util.List;
 @NoArgsConstructor
 public class BoletimMedicaoDTO {
     private Long id;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataInicio;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dataFim;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private LocalDate dataMedicao;
+
     private Long planejadorId;
     private String planejadorNome;
     private String situacao;
     private List<EquipamentoBoletimMedicaoDTO> equipamentos;
     private Boolean assinado;
-    private LocalDate dataMedicao;
 
     public static BoletimMedicaoDTO fromEntity(BoletimMedicao b) {
         BoletimMedicaoDTO dto = new BoletimMedicaoDTO();
