@@ -48,7 +48,8 @@ function carregarBoletins() {
                     </td>
                 </tr>
             `).join('');
-        });
+        })
+        .catch(() => exibirMensagem("Erro de conexão: não foi possível acessar o servidor. Verifique sua conexão ou tente novamente mais tarde."));
 }
 
 window.abrirDetalhe = function(id) {
@@ -87,7 +88,8 @@ window.abrirDetalhe = function(id) {
             document.getElementById('assinarBtn').style.display = !b.assinado ? "inline-block" : "none";
             window.boletimDetalheId = b.id;
             window.equipamentosDetalhe = b.equipamentos || [];
-        });
+        })
+        .catch(() => exibirMensagem("Erro de conexão: não foi possível acessar o servidor. Verifique sua conexão ou tente novamente mais tarde."));
 };
 
 window.removerBoletim = function(id) {
@@ -101,7 +103,8 @@ window.removerBoletim = function(id) {
                 } else {
                     exibirMensagem(msg || "Erro ao remover boletim.");
                 }
-            });
+            })
+            .catch(() => exibirMensagem("Erro de conexão: não foi possível acessar o servidor. Verifique sua conexão ou tente novamente mais tarde."));
     }
 };
 
@@ -116,7 +119,8 @@ window.assinar = function(id) {
                 const msg = await r.text();
                 exibirMensagem(msg || 'Erro ao assinar boletim.');
             }
-        });
+        })
+        .catch(() => exibirMensagem("Erro de conexão: não foi possível acessar o servidor. Verifique sua conexão ou tente novamente mais tarde."));
 };
 
 document.getElementById("assinarBtn").onclick = function () {
