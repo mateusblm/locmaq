@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <title>Painel Planejador - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
+    <style>
+        #mensagem-status {
+        display: none;
+        max-width: 400px;
+        margin: 20px auto 0 auto;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px #0001;
+        transition: all 0.2s;
+        }
+    </style>
 </head>
 <body>
 <header class="main-header">
@@ -18,19 +32,21 @@
 </header>
 <div class="container">
     <h2>Enviar Relatório ao Cliente</h2>
-    <form action="/enviar-relatorio" method="post">
+    <form id="formRelatorio">
         <label for="nome">Nome do Cliente:</label>
         <input type="text" id="nome" name="nome" required>
 
         <label for="email">E-mail do Cliente:</label>
         <input type="email" id="email" name="email" required>
 
-        <label for="relatorio">Selecione o Relatório:</label>
-        <select id="relatorio" name="relatorio" required>
+        <label for="boletimId">Selecione o Boletim de Medição:</label>
+        <select id="boletimId" name="boletimId" required>
             <option value="">-- Selecione --</option>
-            <option value="Relatório de Uso - Janeiro">Relatório de Uso - Janeiro</option>
-            <option value="Relatório de Uso - Fevereiro">Relatório de Uso - Fevereiro</option>
-            <option value="Relatório de Uso - Março">Relatório de Uso - Março</option>
+        </select>
+
+        <label for="contratoId">Selecione o Contrato de Locação:</label>
+        <select id="contratoId" name="contratoId" required>
+            <option value="">-- Selecione --</option>
         </select>
 
         <label for="mensagem">Mensagem Adicional (opcional):</label>
@@ -39,18 +55,8 @@
         <button type="submit">Enviar Relatório</button>
     </form>
 </div>
-<div id="mensagem-status"></div>
+<div id="mensagem-status" style="margin-top:20px; font-weight:bold;"></div>
 <script src="../js/menu.js"></script>
-<script>
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get('status');
-    if (status === 'sucesso') {
-        document.getElementById('mensagem-status').innerText = 'E-mail enviado com sucesso!';
-        document.getElementById('mensagem-status').style.color = 'green';
-    } else if (status === 'erro') {
-        document.getElementById('mensagem-status').innerText = 'Falha ao enviar o e-mail. Tente novamente.';
-        document.getElementById('mensagem-status').style.color = 'red';
-    }
-</script>
+<script src="../js/relatorios_cliente.js"></script>
 </body>
 </html>

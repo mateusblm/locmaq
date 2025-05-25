@@ -2,31 +2,37 @@ package io.github.mateusbm.locmaq.controllers;
 
 import io.github.mateusbm.locmaq.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
 public class EmailController {
 
     @Autowired
     private EmailService emailService;
 
     @PostMapping("/enviar-relatorio")
-    public String enviarRelatorio(
-            @RequestParam String nome,
-            @RequestParam String email,
-            @RequestParam String relatorio,
-            @RequestParam(required = false) String mensagem,
-            RedirectAttributes redirectAttributes
-    ) {
+    public Map<String, Object> enviarRelatorio(@RequestBody Map<String, Object> dados) {
+        Map<String, Object> resp = new HashMap<>();
         try {
-            emailService.enviarRelatorio(nome, email, relatorio, mensagem);
-            redirectAttributes.addFlashAttribute("mensagem", "Relatório enviado com sucesso!");
+            emailService.enviarRelatorioCompleto(
+                    (String) dados.get("nome"),
+                    (String) dados.get("email"),
+                    Long.valueOf(dados.get("boletimId").toString()),
+                    Long.valueOf(dados.get("contratoId").toString()),
+                    (String) dados.get("mensagem")
+            );
+            resp.put("sucesso", true);
+            resp.put("mensagem", "✅ E-mail enviado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            resp.put("sucesso", false);
+            resp.put("mensagem", "❌ " + e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagem", "Falha ao enviar o relatório. Tente novamente.");
+            resp.put("sucesso", false);
+            resp.put("mensagem", "❌ Falha ao enviar o e-mail. Tente novamente.");
         }
-        return "redirect:/html/relatorios_cliente.html";
+        return resp;
     }
 }
