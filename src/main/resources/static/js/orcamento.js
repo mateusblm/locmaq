@@ -1,0 +1,183 @@
+let contratos = [];
+let contratosMap = {};
+let contratoSelecionado = null;
+let orcamentos = [];
+let editandoId = null;
+
+// Função padrão de submit (POST)
+function submitPadrao(e) {
+    e.preventDefault();
+    if (!contratoSelecionado) return;
+    const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
+    const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+    const diaria = parseFloat(contratoSelecionado.valorTotal) || 0;
+    const total = (diaria * dias) - desconto;
+    const orcamento = {
+        contrato: { id: contratoSelecionado.id },
+        diasTrabalhados: dias,
+        desconto: desconto,
+        valorTotal: total
+    };
+    fetch('/api/orcamentos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orcamento)
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('Erro ao salvar orçamento');
+        return r.json();
+    })
+    .then(() => {
+        alert('Orçamento salvo!');
+        document.getElementById('orcamentoForm').reset();
+        document.getElementById('infoContrato').style.display = 'none';
+        document.getElementById('valorTotal').textContent = 'R$ 0,00';
+        carregarOrcamentos();
+        editandoId = null;
+    })
+    .catch(err => {
+        const msg = document.getElementById('mensagem-erro');
+        msg.style.display = 'block';
+        msg.textContent = err.message;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('orcamentoForm').onsubmit = submitPadrao;
+    carregarContratos();
+    carregarOrcamentos();
+});
+
+function carregarContratos() {
+    fetch('/api/contrato-locacoes')
+        .then(r => r.json())
+        .then(data => {
+            contratos = data;
+            contratosMap = {};
+            data.forEach(c => contratosMap[c.id] = c);
+            const sel = document.getElementById('contratoSelect');
+            sel.innerHTML = '<option value="">Selecione...</option>' +
+                contratos.map(c => `<option value="${c.id}">${c.clienteNome} - ${c.equipamentoNome}</option>`).join('');
+        });
+}
+
+document.getElementById('contratoSelect').addEventListener('change', function() {
+    const id = this.value;
+    contratoSelecionado = contratos.find(c => c.id == id);
+    if (contratoSelecionado) {
+        document.getElementById('infoContrato').style.display = 'block';
+        document.getElementById('clienteNome').textContent = contratoSelecionado.clienteNome;
+        document.getElementById('equipamentoNome').textContent = contratoSelecionado.equipamentoNome;
+        document.getElementById('valorDiaria').textContent = contratoSelecionado.valorTotal != null
+            ? contratoSelecionado.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2})
+            : '0,00';
+    } else {
+        document.getElementById('infoContrato').style.display = 'none';
+    }
+    calcularOrcamento();
+});
+
+document.getElementById('diasTrabalhados').addEventListener('input', calcularOrcamento);
+document.getElementById('desconto').addEventListener('input', calcularOrcamento);
+
+function calcularOrcamento() {
+    if (!contratoSelecionado) {
+        document.getElementById('valorTotal').textContent = 'R$ 0,00';
+        return;
+    }
+    const diaria = parseFloat(contratoSelecionado.valorTotal) || 0;
+    const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
+    const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+    let total = (diaria * dias) - desconto;
+    if (total < 0) total = 0;
+    document.getElementById('valorTotal').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2});
+}
+
+function carregarOrcamentos() {
+    fetch('/api/orcamentos')
+        .then(r => r.json())
+        .then(data => {
+            orcamentos = data;
+            const tbody = document.getElementById('tabelaOrcamentos');
+            tbody.innerHTML = '';
+            data.forEach(o => {
+                const contrato = contratosMap[o.contrato?.id] || {};
+                const cliente = contrato.clienteNome || '-';
+                const equipamento = contrato.equipamentoNome || '-';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${cliente}</td>
+                        <td>${equipamento}</td>
+                        <td>${o.diasTrabalhados}</td>
+                        <td>R$ ${o.desconto != null ? o.desconto.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '0,00'}</td>
+                        <td>R$ ${o.valorTotal != null ? o.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '0,00'}</td>
+                        <td>${o.status}</td>
+                        <td>${o.aprovadoPor || '-'}</td>
+                        <td>
+                            ${o.status === 'PENDENTE' ? `
+                                <button class="action-btn" onclick="editarOrcamento(${o.id})">Editar</button>
+                                <button class="action-btn" onclick="excluirOrcamento(${o.id})">Excluir</button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+function editarOrcamento(id) {
+    const o = orcamentos.find(x => x.id === id);
+    if (!o) return;
+    editandoId = id;
+    document.getElementById('contratoSelect').value = o.contrato.id;
+    document.getElementById('contratoSelect').dispatchEvent(new Event('change'));
+    document.getElementById('diasTrabalhados').value = o.diasTrabalhados;
+    document.getElementById('desconto').value = o.desconto;
+    calcularOrcamento();
+
+    document.getElementById('orcamentoForm').onsubmit = function(e) {
+        e.preventDefault();
+        const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
+        const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+        const diaria = parseFloat(contratosMap[o.contrato.id].valorTotal) || 0;
+        const total = (diaria * dias) - desconto;
+        const novo = {
+            contrato: { id: o.contrato.id },
+            diasTrabalhados: dias,
+            desconto: desconto,
+            valorTotal: total
+        };
+        fetch(`/api/orcamentos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(novo)
+        })
+        .then(r => {
+            if (!r.ok) throw new Error('Erro ao editar orçamento');
+            return r.json();
+        })
+        .then(() => {
+            alert('Orçamento editado!');
+            document.getElementById('orcamentoForm').reset();
+            document.getElementById('orcamentoForm').onsubmit = submitPadrao;
+            document.getElementById('infoContrato').style.display = 'none';
+            document.getElementById('valorTotal').textContent = 'R$ 0,00';
+            carregarOrcamentos();
+            editandoId = null;
+        })
+        .catch(err => alert(err.message));
+    };
+}
+
+function excluirOrcamento(id) {
+    if (!confirm('Deseja realmente excluir este orçamento?')) return;
+    fetch(`/api/orcamentos/${id}`, { method: 'DELETE' })
+        .then(r => {
+            if (!r.ok) throw new Error('Erro ao excluir orçamento');
+            carregarOrcamentos();
+        })
+        .catch(err => alert(err.message));
+}
+
+window.editarOrcamento = editarOrcamento;
+window.excluirOrcamento = excluirOrcamento;
