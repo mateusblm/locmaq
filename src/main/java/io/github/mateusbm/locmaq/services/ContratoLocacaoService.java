@@ -1,3 +1,4 @@
+// src/main/java/io/github/mateusbm/locmaq/services/ContratoLocacaoService.java
 package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.dto.ContratoLocacaoDTO;
@@ -46,18 +47,21 @@ public class ContratoLocacaoService {
         Cliente cliente = clienteRepo.findById(dto.getClienteId()).orElse(null);
         Equipamento equipamento = equipamentoRepo.findById(dto.getEquipamentoId()).orElse(null);
 
-        // Validação de conflito (não há id ainda, pois é novo)
         List<ContratoLocacao> conflitos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(
                 equipamento.getId(),
                 dto.getDataInicio(),
                 dto.getDataFim(),
-                null // null para cadastro!
+                null
         );
         if (!conflitos.isEmpty()) {
             throw new IllegalStateException("O equipamento já está reservado para o período informado.");
         }
 
         ContratoLocacao contrato = dto.toEntity(usuario, cliente, equipamento);
+        // Garante valor padrão se não vier do DTO
+        if (contrato.getStatusPagamento() == null) {
+            contrato.setStatusPagamento("PENDENTE");
+        }
         ContratoLocacao saved = contratoRepo.save(contrato);
         actionLogService.logAction("Cadastro de contrato de locação",
                 getUsuarioAutenticado(),
@@ -74,25 +78,23 @@ public class ContratoLocacaoService {
         Cliente cliente = clienteRepo.findById(dto.getClienteId()).orElse(null);
         Equipamento equipamento = equipamentoRepo.findById(dto.getEquipamentoId()).orElse(null);
 
-        // Validação de conflito ignorando o próprio contrato
         List<ContratoLocacao> conflitos = contratoRepo.findByEquipamentoIdAndPeriodExcluding(
                 equipamento.getId(),
                 dto.getDataInicio(),
                 dto.getDataFim(),
-                id // ignora o próprio contrato!
+                id
         );
         if (!conflitos.isEmpty()) {
             throw new IllegalStateException("O equipamento já está reservado para o período informado.");
         }
 
-        // Atualiza os campos
         contrato.setUsuarioLogistica(usuario);
         contrato.setCliente(cliente);
         contrato.setEquipamento(equipamento);
         contrato.setDataInicio(dto.getDataInicio());
         contrato.setDataFim(dto.getDataFim());
         contrato.setValorTotal(dto.getValorTotal());
-        // ... outros campos, se houver
+        contrato.setStatusPagamento(dto.getStatusPagamento() != null ? dto.getStatusPagamento() : "PENDENTE");
 
         ContratoLocacao saved = contratoRepo.save(contrato);
         actionLogService.logAction("Atualização de contrato de locação",

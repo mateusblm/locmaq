@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Espelho de Faturamento - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main>
+    <section style="margin: 40px auto 0 auto;max-width:1100px;">
+        <h2>Espelho de Faturamento</h2>
+        <!-- Painel de resumo -->
+        <section id="resumoFaturamento" style="margin-bottom:32px; background:#fff; border-radius:10px; box-shadow:0 2px 8px #0001; padding:24px;">
+            <h3>Resumo do Faturamento</h3>
+            <div id="faturamentoTotais"></div>
+        </section>
+        <table style="width:100%;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;">
+            <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Equipamento</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Valor Total</th>
+                <th>Status Pagamento</th>
+                <th>Contrato</th>
+            </tr>
+            </thead>
+            <tbody id="tabelaFaturamento"></tbody>
+        </table>
+    </section>
+    <div id="mensagem-erro" style="display:none;max-width:520px;margin:20px auto;padding:16px;border-radius:8px;background:#ffe0e0;color:#a00;font-weight:bold;text-align:center;border:1px solid #f99;"></div>
+</main>
+<script src="../js/menu.js"></script>
+<script>
+    function carregarEspelhoFaturamento() {
+        fetch('/api/faturamento/espelho')
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao buscar dados do espelho de faturamento');
+                return res.text(); // Recebe como texto para tratar erro de login
+            })
+            .then(text => {
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Você precisa estar autenticado para acessar o espelho de faturamento.');
+                }
+                // ... (restante do código para montar o resumo e tabela)
+                let totalPago = 0, totalPendente = 0, totalCancelado = 0;
+                let qtdPago = 0, qtdPendente = 0, qtdCancelado = 0;
+                data.forEach(item => {
+                    if (item.statusPagamento === "PAGO") {
+                        totalPago += item.valorTotal || 0;
+                        qtdPago++;
+                    } else if (item.statusPagamento === "PENDENTE") {
+                        totalPendente += item.valorTotal || 0;
+                        qtdPendente++;
+                    } else if (item.statusPagamento === "CANCELADO") {
+                        totalCancelado += item.valorTotal || 0;
+                        qtdCancelado++;
+                    }
+                });
+                document.getElementById("faturamentoTotais").innerHTML = `
+                    <div><b>Contratos Pagos:</b> R$ ${totalPago.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdPago})</div>
+                    <div><b>Contratos Pendentes:</b> R$ ${totalPendente.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdPendente})</div>
+                    <div><b>Contratos Cancelados:</b> R$ ${totalCancelado.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdCancelado})</div>
+                    <div style="margin-top:8px;"><b>Total Geral:</b> R$ ${(totalPago+totalPendente+totalCancelado).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                `;
+                const tbody = document.getElementById('tabelaFaturamento');
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${item.cliente}</td>
+                        <td>${item.equipamento}</td>
+                        <td>${item.inicioLocacao || ''}</td>
+                        <td>${item.fimLocacao || ''}</td>
+                        <td>R$ ${item.valorTotal != null ? item.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) : ''}</td>
+                        <td>${item.statusPagamento}</td>
+                        <td>${item.contrato}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(err => {
+                const msg = document.getElementById('mensagem-erro');
+                msg.style.display = 'block';
+                msg.textContent = err.message;
+            });
+    }
+        document.addEventListener('DOMContentLoaded', carregarEspelhoFaturamento);
+</script>
+</body>
+</html>

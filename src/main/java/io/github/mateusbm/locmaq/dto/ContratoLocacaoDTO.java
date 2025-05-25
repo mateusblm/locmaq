@@ -1,3 +1,4 @@
+// src/main/java/io/github/mateusbm/locmaq/dto/ContratoLocacaoDTO.java
 package io.github.mateusbm.locmaq.dto;
 
 import io.github.mateusbm.locmaq.models.Cliente;
@@ -24,12 +25,14 @@ public class ContratoLocacaoDTO {
     private Double valorTotal;
     private LocalDate dataFim;
     private LocalDate dataInicio;
+    private String statusPagamento;
 
     public static ContratoLocacaoDTO fromEntity(ContratoLocacao c) {
         ContratoLocacaoDTO dto = new ContratoLocacaoDTO();
         dto.setId(c.getId());
         dto.setDataFim(c.getDataFim());
         dto.setDataInicio(c.getDataInicio());
+        dto.setStatusPagamento(c.getStatusPagamento());
         if (c.getUsuarioLogistica() != null) {
             dto.setUsuarioLogisticaId(c.getUsuarioLogistica().getId());
             dto.setUsuarioLogisticaNome(c.getUsuarioLogistica().getNome());
@@ -57,6 +60,7 @@ public class ContratoLocacaoDTO {
         c.setValorTotal(this.valorTotal);
         c.setDataInicio(this.dataInicio);
         c.setDataFim(this.dataFim);
+        c.setStatusPagamento(this.statusPagamento != null ? this.statusPagamento : "PENDENTE");
         return c;
     }
 }

@@ -95,7 +95,7 @@ function carregarContratos() {
     .then(contratos => {
       const tb = document.getElementById("contratosTable");
       if (!contratos || !contratos.length) {
-        tb.innerHTML = `<tr><td colspan="7" style="text-align:center">Nenhum contrato cadastrado</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="8" style="text-align:center">Nenhum contrato cadastrado</td></tr>`;
         return;
       }
       tb.innerHTML = contratos.map(c => `
@@ -106,6 +106,7 @@ function carregarContratos() {
           <td>${formatarDataBR(c.dataInicio)}</td>
           <td>${formatarDataBR(c.dataFim)}</td>
           <td>R$ ${c.valorTotal != null ? c.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '-'}</td>
+          <td>${c.statusPagamento || '-'}</td>
           <td>
             <button class="visualizar-btn" onclick="editarContrato(${c.id})">Editar</button>
             <button class="acao-btn delete" onclick="excluirContrato(${c.id})">Excluir</button>
@@ -125,6 +126,7 @@ function handleContratoSubmit(e) {
     dataInicio: document.getElementById("contratoDataInicio").value,
     dataFim: document.getElementById("contratoDataFim").value,
     valorTotal: parseFloat(document.getElementById("contratoValor").value.replace(",", ".")) || 0,
+    statusPagamento: document.getElementById("contratoStatusPagamento").value
   };
 
   const url = id ? `/api/contrato-locacoes/${id}` : '/api/contrato-locacoes';
@@ -153,13 +155,6 @@ window.editarContrato = function(id) {
   fetch(`/api/contrato-locacoes/${id}`)
     .then(r => r.json())
     .then(c => {
-      console.log("DATA DEBUG:", {
-        dataInicio: c.dataInicio,
-        dataFim: c.dataFim,
-        tipoInicio: typeof c.dataInicio,
-        tipoFim: typeof c.dataFim,
-        igual: c.dataInicio === c.dataFim
-      });
       document.getElementById("contratoId").value = c.id;
       document.getElementById("contratoUsuarioLogistica").value = c.usuarioLogisticaId;
       document.getElementById("contratoCliente").value = c.clienteId;
@@ -167,6 +162,7 @@ window.editarContrato = function(id) {
       document.getElementById("contratoValor").value = c.valorTotal;
       document.getElementById("contratoDataInicio").value = toInputDate(c.dataInicio);
       document.getElementById("contratoDataFim").value = toInputDate(c.dataFim);
+      document.getElementById("contratoStatusPagamento").value = c.statusPagamento || "PENDENTE";
       window.scrollTo({top: 0, behavior: 'smooth'});
     });
 };
@@ -192,4 +188,5 @@ function limparCampos() {
   document.getElementById("contratoValor").value = "";
   document.getElementById("contratoDataInicio").value = "";
   document.getElementById("contratoDataFim").value = "";
+  document.getElementById("contratoStatusPagamento").value = "PENDENTE";
 }

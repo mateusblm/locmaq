@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table
@@ -36,6 +34,9 @@ public class ContratoLocacao {
 
     @Column(name = "data_fim", nullable = false)
     private LocalDate dataFim;
+
+    @Column(name = "status_pagamento", nullable = false)
+    private String statusPagamento = "PENDENTE";
 
     public ContratoLocacao() {
 
