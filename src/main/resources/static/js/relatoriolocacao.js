@@ -59,7 +59,7 @@ async function aplicarFiltros() {
         status: document.getElementById('filtroStatus').value,
     };
 
-    contratos.filter(c => {
+    const contratosFiltrados = contratos.filter(c => {
         const cDataInicio = c.dataInicio ? new Date(c.dataInicio + 'T00:00:00') : null;
         const cDataFim = c.dataFim ? new Date(c.dataFim + 'T00:00:00') : null;
         const filtroDataInicio = filtros.dataInicio ? new Date(filtros.dataInicio + 'T00:00:00') : null;
@@ -74,7 +74,9 @@ async function aplicarFiltros() {
         const porStatus = !filtros.status || c.statusPagamento === filtros.status;
 
         return dentroPeriodo && porCliente && porEquipamento && porStatus;
-    }).forEach(c => {
+    });
+
+    contratosFiltrados.forEach(c => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${c.clienteNome}</td>
@@ -87,6 +89,14 @@ async function aplicarFiltros() {
         `;
         tbody.appendChild(tr);
     });
+
+    if (contratosFiltrados.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="7" class="sem-dados">
+            Nenhum contrato encontrado para os filtros selecionados.
+        </td>`;
+        tbody.appendChild(tr);
+    }
 }
 
 function resetarFiltros() {

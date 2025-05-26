@@ -497,3 +497,10 @@ h2, #form-title { text-align: center; }
     cursor: pointer;
     color: #888;
 }
+
+.sem-dados {
+    text-align: center;
+    padding: 32px 0;
+    color: #888;
+    font-size: 1.1em;
+}
