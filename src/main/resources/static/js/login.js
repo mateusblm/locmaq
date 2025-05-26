@@ -1,3 +1,16 @@
+// Exibe mensagem de acesso restrito, se houver parâmetro na URL
+window.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(window.location.search);
+  const msg = params.get('mensagem');
+  if (msg) {
+    const div = document.getElementById('mensagem-login');
+    if (div) {
+      div.textContent = decodeURIComponent(msg);
+      div.style.display = 'block';
+    }
+  }
+});
+
 document.getElementById('loginForm').onsubmit = function(event) {
   event.preventDefault();
 
@@ -11,11 +24,9 @@ document.getElementById('loginForm').onsubmit = function(event) {
     body: new URLSearchParams({ username: nome, password: senha })
   })
     .then(resp => {
-      // Se não autenticou, resp.redirected pode ser true ou resp.url termina com ?error
       if(resp.redirected || !resp.ok || (resp.url && resp.url.includes('?error'))) {
         throw new Error();
       }
-      // Agora tenta buscar o usuário autenticado
       return fetch('/api/usuarios/me');
     })
     .then(r => {
