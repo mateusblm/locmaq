@@ -23,7 +23,6 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/index.html")
                         .loginProcessingUrl("/login")
-                        // Importante: handlers para AJAX/fetch no front-end!
                         .successHandler((request, response, authentication) -> response.setStatus(200))
                         .failureHandler((request, response, exception) -> response.setStatus(401))
                         .permitAll()
