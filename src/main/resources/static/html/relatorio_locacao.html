@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Gestão de Locações - LocMac</title>
+    <title>Relatórios de Contratos de Locação - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
 </head>
 <body>
@@ -16,66 +16,71 @@
         <a href="/logout" class="logout-btn">Sair</a>
     </div>
 </header>
-<main>
-    <h2 style="text-align:center;">Gestão de Locações</h2>
+<main class="container">
+    <h2>Relatórios de Contratos de Locação</h2>
 
-    <section style="margin: 20px auto; max-width: 1000px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px #0001;">
-        <h3 style="margin-bottom: 16px;">Filtros</h3>
-        <form id="filtroForm" style="display: flex; flex-wrap: wrap; gap: 20px;">
-            <div style="flex: 1; min-width: 200px;">
-                <label for="cliente">Cliente:</label>
-                <input type="text" id="cliente" name="cliente">
-            </div>
+    <div class="filtro-group">
+        <div>
+            <label for="filtroDataInicio">Data Início</label>
+            <input type="date" id="filtroDataInicio">
+        </div>
+        <div>
+            <label for="filtroDataFim">Data Fim</label>
+            <input type="date" id="filtroDataFim">
+        </div>
+        <div>
+            <label for="filtroCliente">Cliente</label>
+            <select id="filtroCliente">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div>
+            <label for="filtroEquipamento">Equipamento</label>
+            <select id="filtroEquipamento">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div>
+            <label for="filtroStatus">Status Pagamento</label>
+            <select id="filtroStatus">
+                <option value="">Todos</option>
+                <option value="PAGO">PAGO</option>
+                <option value="PENDENTE">PENDENTE</option>
+                <option value="CANCELADO">CANCELADO</option>
+            </select>
+        </div>
+    </div>
 
-            <div style="flex: 1; min-width: 200px;">
-                <label for="status">Status:</label>
-                <select id="status" name="status">
-                    <option value="">Todos</option>
-                    <option value="ativo">Ativo</option>
-                    <option value="encerrado">Encerrado</option>
-                </select>
-            </div>
+    <div class="botoes-filtro">
+        <button onclick="aplicarFiltros()" class="acao-btn">Aplicar Filtros</button>
+        <button onclick="resetarFiltros()" class="acao-btn">Limpar Filtros</button>
+    </div>
 
-            <div style="flex: 1; min-width: 200px;">
-                <label for="tipoEquipamento">Tipo de Equipamento:</label>
-                <select id="tipoEquipamento" name="tipoEquipamento">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-
-            <div style="flex: 1; min-width: 200px;">
-                <label for="local">Local:</label>
-                <input type="text" id="local" name="local">
-            </div>
-
-            <div style="align-self: end;">
-                <button type="submit">Filtrar</button>
-            </div>
-        </form>
-    </section>
-
-    <section style="margin-top:40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-        <h3>Contratos Ativos</h3>
-        <table style="width:100%; background:#fff; border-radius:12px; box-shadow:0 2px 8px #0001;">
-            <thead>
-            <tr>
-                <th>Nº Contrato</th>
-                <th>Cliente</th>
-                <th>Equipamento</th>
-                <th>Tipo</th>
-                <th>Local</th>
-                <th>Início</th>
-                <th>Fim</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Dados preenchidos via backend futuramente -->
-            </tbody>
-        </table>
-    </section>
+    <table class="tabela-padrao">
+        <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Equipamento</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Valor Total</th>
+            <th>Status Pagamento</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody id="tabelaContratos"></tbody>
+    </table>
 </main>
+
+<!-- Modal de Detalhes -->
+<div class="modal-bg" id="modalDetalhe">
+    <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal()">&times;</span>
+        <div id="modalDetalheConteudo"></div>
+    </div>
+</div>
+
 <script src="../js/menu.js"></script>
+<script src="../js/relatoriolocacao.js"></script>
 </body>
 </html>
