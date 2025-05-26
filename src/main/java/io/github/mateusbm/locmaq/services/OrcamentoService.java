@@ -3,6 +3,8 @@ package io.github.mateusbm.locmaq.services;
 import io.github.mateusbm.locmaq.models.*;
 import io.github.mateusbm.locmaq.repositories.OrcamentoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class OrcamentoService {
     }
 
     public Orcamento salvar(Orcamento orcamento) {
+        validarDesconto(orcamento);
         return repository.save(orcamento);
     }
 
@@ -23,7 +26,8 @@ public class OrcamentoService {
     }
 
     public Orcamento buscarPorId(Long id) {
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Orçamento não encontrado."));
     }
 
     public void excluir(Long id) {
@@ -51,9 +55,13 @@ public class OrcamentoService {
         double taxaLucro = orcamento.getTaxaLucro();
         double valorDiaria = contrato.getValorTotal();
 
-
-        // CLIENTE
         double valorCliente = valorDiaria * dias;
+        if (desconto > valorCliente - (valorCliente * taxaLucro / 100.0)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "O desconto não pode ser maior que o valor total do aluguel menos a taxa de lucro (R$ " +
+                            String.format("%.2f", valorCliente - (valorCliente * taxaLucro / 100.0)) + ").");
+        }
+
         Orcamento cliente = new Orcamento();
         cliente.setContrato(contrato);
         cliente.setDiasTrabalhados(dias);
@@ -65,10 +73,7 @@ public class OrcamentoService {
         cliente.setTipoOrcamento(TipoOrcamento.CLIENTE);
         cliente.setTaxaLucro(taxaLucro);
 
-        // DONO
         double valorDono = valorCliente - desconto - (valorCliente * taxaLucro / 100.0);
-         // O valor do dono é o valor total menos o desconto e a taxa de lucro
-         // que é aplicada ao valor total do cliente.
         Orcamento dono = new Orcamento();
         dono.setContrato(contrato);
         dono.setDiasTrabalhados(dias);
@@ -80,8 +85,17 @@ public class OrcamentoService {
         dono.setTipoOrcamento(TipoOrcamento.DONO);
         dono.setTaxaLucro(0);
 
-
         repository.save(dono);
         repository.save(cliente);
+    }
+
+    private void validarDesconto(Orcamento orcamento) {
+        double taxaLucro = orcamento.getTaxaLucro();
+        double valorCliente = orcamento.getContrato().getValorTotal() * orcamento.getDiasTrabalhados();
+        if (orcamento.getDesconto() > valorCliente - (valorCliente * taxaLucro / 100.0)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "O desconto não pode ser maior que o valor total do aluguel menos a taxa de lucro (R$ " +
+                            String.format("%.2f", valorCliente - (valorCliente * taxaLucro / 100.0)) + ").");
+        }
     }
 }

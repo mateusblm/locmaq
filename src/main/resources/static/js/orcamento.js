@@ -4,10 +4,22 @@ let contratoSelecionado = null;
 let orcamentos = [];
 let editandoId = null;
 
-// Função padrão de submit (POST)
+function mostrarMensagem(msg, tipo = "erro") {
+    const div = document.getElementById('mensagem-erro');
+    div.style.display = 'block';
+    div.textContent = msg;
+    div.style.background = tipo === "sucesso" ? "#e0ffe0" : "#ffe0e0";
+    div.style.color = tipo === "sucesso" ? "#0a0" : "#a00";
+    div.style.border = tipo === "sucesso" ? "1px solid #9f9" : "1px solid #f99";
+    setTimeout(() => { div.style.display = 'none'; }, 5000);
+}
+
 function submitPadrao(e) {
     e.preventDefault();
-    if (!contratoSelecionado) return;
+    if (!contratoSelecionado) {
+        mostrarMensagem("Selecione um contrato antes de criar o orçamento.");
+        return;
+    }
     const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
     const desconto = parseFloat(document.getElementById('desconto').value) || 0;
     const taxaLucro = parseFloat(document.getElementById('taxaLucro').value) || 0;
@@ -22,20 +34,26 @@ function submitPadrao(e) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orcamento)
     })
-    .then(r => {
-        if (!r.ok) throw new Error('Erro ao salvar orçamento');
-        alert('Orçamentos (cliente e dono) salvos!');
+    .then(async r => {
+        if (!r.ok) {
+            let msg = "Erro ao salvar orçamento.";
+            try {
+                const data = await r.json();
+                msg = data.message || data.mensagem || msg;
+            } catch {
+                // fallback para texto puro
+                msg = await r.text();
+            }
+            throw new Error(msg);
+        }
+        mostrarMensagem('Orçamentos (cliente e dono) salvos com sucesso!', "sucesso");
         document.getElementById('orcamentoForm').reset();
         document.getElementById('infoContrato').style.display = 'none';
         document.getElementById('valorTotal').textContent = 'R$ 0,00';
         carregarOrcamentos();
         editandoId = null;
     })
-    .catch(err => {
-        const msg = document.getElementById('mensagem-erro');
-        msg.style.display = 'block';
-        msg.textContent = err.message;
-    });
+    .catch(err => mostrarMensagem(err.message));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -86,7 +104,6 @@ function calcularOrcamento() {
     const desconto = parseFloat(document.getElementById('desconto').value) || 0;
     const taxaLucro = parseFloat(document.getElementById('taxaLucro').value) || 0;
 
-    // Cálculo igual ao backend
     let totalCliente = diaria * dias;
     let totalDono = totalCliente - desconto - (totalCliente * taxaLucro / 100.0);
 
@@ -163,12 +180,12 @@ function editarOrcamento(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(novo)
         })
-        .then(r => {
-            if (!r.ok) throw new Error('Erro ao editar orçamento');
-            return r.json();
-        })
-        .then(() => {
-            alert('Orçamento editado!');
+        .then(async r => {
+            if (!r.ok) {
+                const msg = await r.text();
+                throw new Error(msg || "Erro ao editar orçamento.");
+            }
+            mostrarMensagem('Orçamento editado com sucesso!', "sucesso");
             document.getElementById('orcamentoForm').reset();
             document.getElementById('orcamentoForm').onsubmit = submitPadrao;
             document.getElementById('infoContrato').style.display = 'none';
@@ -176,18 +193,22 @@ function editarOrcamento(id) {
             carregarOrcamentos();
             editandoId = null;
         })
-        .catch(err => alert(err.message));
+        .catch(err => mostrarMensagem(err.message));
     };
 }
 
 function excluirOrcamento(id) {
     if (!confirm('Deseja realmente excluir este orçamento?')) return;
     fetch(`/api/orcamentos/${id}`, { method: 'DELETE' })
-        .then(r => {
-            if (!r.ok) throw new Error('Erro ao excluir orçamento');
+        .then(async r => {
+            if (!r.ok) {
+                const msg = await r.text();
+                throw new Error(msg || "Erro ao excluir orçamento.");
+            }
+            mostrarMensagem('Orçamento excluído com sucesso!', "sucesso");
             carregarOrcamentos();
         })
-        .catch(err => alert(err.message));
+        .catch(err => mostrarMensagem(err.message));
 }
 
 window.editarOrcamento = editarOrcamento;
