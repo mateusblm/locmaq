@@ -8,7 +8,6 @@ import io.github.mateusbm.locmaq.services.OrcamentoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,13 +28,9 @@ public class OrcamentoController {
     }
 
     @PostMapping
-    public Orcamento criar(@RequestBody Orcamento orcamento) {
+    public void criar(@RequestBody Orcamento orcamento) {
         ContratoLocacao contrato = contratoRepo.findById(orcamento.getContrato().getId()).orElseThrow();
-        orcamento.setContrato(contrato);
-        orcamento.setStatus(StatusOrcamento.PENDENTE);
-        orcamento.setDataCriacao(LocalDateTime.now());
-        orcamento.setAprovadoPor(null);
-        return service.salvar(orcamento);
+        service.criarOrcamentosDuplos(orcamento, contrato);
     }
 
     @PutMapping("/{id}")
@@ -46,6 +41,7 @@ public class OrcamentoController {
         o.setDiasTrabalhados(novo.getDiasTrabalhados());
         o.setDesconto(novo.getDesconto());
         o.setValorTotal(novo.getValorTotal());
+        o.setTaxaLucro(novo.getTaxaLucro());
         return service.salvar(o);
     }
 

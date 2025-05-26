@@ -10,13 +10,12 @@ function submitPadrao(e) {
     if (!contratoSelecionado) return;
     const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
     const desconto = parseFloat(document.getElementById('desconto').value) || 0;
-    const diaria = parseFloat(contratoSelecionado.valorTotal) || 0;
-    const total = (diaria * dias) - desconto;
+    const taxaLucro = parseFloat(document.getElementById('taxaLucro').value) || 0;
     const orcamento = {
         contrato: { id: contratoSelecionado.id },
         diasTrabalhados: dias,
         desconto: desconto,
-        valorTotal: total
+        taxaLucro: taxaLucro
     };
     fetch('/api/orcamentos', {
         method: 'POST',
@@ -25,10 +24,7 @@ function submitPadrao(e) {
     })
     .then(r => {
         if (!r.ok) throw new Error('Erro ao salvar orçamento');
-        return r.json();
-    })
-    .then(() => {
-        alert('Orçamento salvo!');
+        alert('Orçamentos (cliente e dono) salvos!');
         document.getElementById('orcamentoForm').reset();
         document.getElementById('infoContrato').style.display = 'none';
         document.getElementById('valorTotal').textContent = 'R$ 0,00';
@@ -78,6 +74,7 @@ document.getElementById('contratoSelect').addEventListener('change', function() 
 
 document.getElementById('diasTrabalhados').addEventListener('input', calcularOrcamento);
 document.getElementById('desconto').addEventListener('input', calcularOrcamento);
+document.getElementById('taxaLucro').addEventListener('input', calcularOrcamento);
 
 function calcularOrcamento() {
     if (!contratoSelecionado) {
@@ -87,9 +84,18 @@ function calcularOrcamento() {
     const diaria = parseFloat(contratoSelecionado.valorTotal) || 0;
     const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
     const desconto = parseFloat(document.getElementById('desconto').value) || 0;
-    let total = (diaria * dias) - desconto;
-    if (total < 0) total = 0;
-    document.getElementById('valorTotal').textContent = 'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits:2});
+    const taxaLucro = parseFloat(document.getElementById('taxaLucro').value) || 0;
+
+    // Cálculo igual ao backend
+    let totalCliente = diaria * dias;
+    let totalDono = totalCliente - desconto - (totalCliente * taxaLucro / 100.0);
+
+    if (totalCliente < 0) totalCliente = 0;
+    if (totalDono < 0) totalDono = 0;
+
+    document.getElementById('valorTotal').textContent =
+        'Cliente: R$ ' + totalCliente.toLocaleString('pt-BR', {minimumFractionDigits:2}) +
+        ' | Dono: R$ ' + totalDono.toLocaleString('pt-BR', {minimumFractionDigits:2});
 }
 
 function carregarOrcamentos() {
@@ -110,6 +116,7 @@ function carregarOrcamentos() {
                         <td>${o.diasTrabalhados}</td>
                         <td>R$ ${o.desconto != null ? o.desconto.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '0,00'}</td>
                         <td>R$ ${o.valorTotal != null ? o.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) : '0,00'}</td>
+                        <td>${o.tipoOrcamento}</td>
                         <td>${o.status}</td>
                         <td>${o.aprovadoPor || '-'}</td>
                         <td>
@@ -132,19 +139,24 @@ function editarOrcamento(id) {
     document.getElementById('contratoSelect').dispatchEvent(new Event('change'));
     document.getElementById('diasTrabalhados').value = o.diasTrabalhados;
     document.getElementById('desconto').value = o.desconto;
+    document.getElementById('taxaLucro').value = o.taxaLucro;
     calcularOrcamento();
 
     document.getElementById('orcamentoForm').onsubmit = function(e) {
         e.preventDefault();
         const dias = parseInt(document.getElementById('diasTrabalhados').value) || 0;
         const desconto = parseFloat(document.getElementById('desconto').value) || 0;
+        const taxaLucro = parseFloat(document.getElementById('taxaLucro').value) || 0;
         const diaria = parseFloat(contratosMap[o.contrato.id].valorTotal) || 0;
-        const total = (diaria * dias) - desconto;
+        let total = o.tipoOrcamento === 'CLIENTE'
+            ? diaria * dias
+            : (diaria * dias) - desconto - ((diaria * dias) * taxaLucro / 100.0);
         const novo = {
             contrato: { id: o.contrato.id },
             diasTrabalhados: dias,
             desconto: desconto,
-            valorTotal: total
+            valorTotal: total,
+            taxaLucro: taxaLucro
         };
         fetch(`/api/orcamentos/${id}`, {
             method: 'PUT',

@@ -32,6 +32,8 @@
         <input type="number" id="diasTrabalhados" min="1" required>
         <label>Desconto (R$):</label>
         <input type="number" id="desconto" min="0" step="0.01" value="0">
+        <label>Taxa de Lucro (%):</label>
+        <input type="number" id="taxaLucro" placeholder="Taxa de Lucro (%)" step="0.01" value="0">
         <div style="margin:18px 0;">
             <b>Valor Total do Orçamento:</b>
             <span id="valorTotal" style="font-size:1.2em;">R$ 0,00</span>
@@ -50,6 +52,7 @@
                 <th>Dias</th>
                 <th>Desconto</th>
                 <th>Valor Total</th>
+                <th>Tipo</th>
                 <th>Status</th>
                 <th>Aprovado Por</th>
                 <th>Ações</th>
@@ -59,7 +62,7 @@
         </table>
     </section>
 </main>
-<script src="../js/menu.js"> </script>
-<script src="../js/orcamento.js"> </script>
+<script src="../js/menu.js"></script>
+<script src="../js/orcamento.js"></script>
 </body>
 </html>

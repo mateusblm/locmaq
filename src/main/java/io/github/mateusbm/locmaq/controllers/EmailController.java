@@ -22,7 +22,8 @@ public class EmailController {
                     (String) dados.get("email"),
                     Long.valueOf(dados.get("boletimId").toString()),
                     Long.valueOf(dados.get("contratoId").toString()),
-                    (String) dados.get("mensagem")
+                    (String) dados.get("mensagem"),
+                    (String) dados.get("papel") // Adicione este argumento
             );
             resp.put("sucesso", true);
             resp.put("mensagem", "✅ E-mail enviado com sucesso!");

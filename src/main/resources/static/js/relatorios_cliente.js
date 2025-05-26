@@ -44,7 +44,8 @@ document.getElementById("formRelatorio").onsubmit = function(e) {
         email: form.email.value,
         boletimId: form.boletimId.value,
         contratoId: form.contratoId.value,
-        mensagem: form.mensagem.value
+        mensagem: form.mensagem.value,
+        papel: form.papel.value // novo campo
     };
     fetch("/enviar-relatorio", {
         method: "POST",
