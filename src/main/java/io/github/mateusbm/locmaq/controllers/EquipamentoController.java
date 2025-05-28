@@ -50,4 +50,26 @@ public class EquipamentoController {
         equipamentoService.removerEquipamento(id);
         return ResponseEntity.ok().build();
     }
+
+//    @DeleteMapping("/deletar-trator")
+//    public String deletarTratores() {
+//        int deletados = equipamentoRepository.deleteByNome("trator");
+//        return deletados + " equipamentos com nome 'trator' foram deletados.";
+//    }
+//    @DeleteMapping("/deletar-todos")
+//    public String deletarTodosEquipamentos() {
+//        int deletados = equipamentoRepository.deleteAll();
+//        return deletados + " equipamentos foram deletados.";
+//    }
+
+//    @GetMapping("/disponiveis")
+//    public List<Equipamento> listarDisponiveis() {
+//        return equipamentoRepository.findByDisponibilidadeTrue();
+//    }
+
+//    @GetMapping("/pesquisar")
+//    public List<Equipamento> pesquisarEquipamentos(@RequestParam(required = false) String nome,
+//                                                   @RequestParam(required = false) String descricao) {
+//        return equipamentoService.pesquisarEquipamentos(nome, descricao);
+//    }
 }

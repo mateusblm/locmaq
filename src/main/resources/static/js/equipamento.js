@@ -175,3 +175,15 @@ function handleFormReset() {
     document.getElementById('equipamentoForm').reset();
     document.getElementById('id').value = '';
 }
+
+//document.getElementById('deletarTratoresBtn').addEventListener('click', function() {
+//    if (!confirm('Deseja realmente deletar todos os equipamentos com nome "trator"?')) return;
+//    fetch('/api/equipamentos/deletar-trator', { method: 'DELETE' })
+//        .then(r => r.text())
+//        .then(msg => {
+//            alert(msg);
+//            // Atualize a lista de equipamentos, se necessário
+//            carregarEquipamentos && carregarEquipamentos();
+//        })
+//        .catch(() => alert('Erro ao deletar tratores.'));
+//});

@@ -101,4 +101,16 @@ public class EquipamentoService {
         Equipamento equipamento = equipamentoRepository.findById(id).orElse(null);
         return equipamento != null && equipamento.isDisponibilidade();
     }
+
+//    public List<Equipamento> pesquisarEquipamentos(String nome, String descricao) {
+//        if (nome != null && descricao != null) {
+//            return equipamentoRepository.findByNomeContainingAndDescricaoContaining(nome, descricao);
+//        } else if (nome != null) {
+//            return equipamentoRepository.findByNomeContaining(nome);
+//        } else if (descricao != null) {
+//            return equipamentoRepository.findByDescricaoContaining(descricao);
+//        } else {
+//            return equipamentoRepository.findAll();
+//        }
+//    }
 }
