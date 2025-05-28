@@ -45,4 +45,28 @@ public interface EquipamentoRepository extends JpaRepository<Equipamento, Long> 
     @Transactional
     @Query("DELETE FROM Equipamento e WHERE LOWER(e.nome) = LOWER(:nome) AND e.dono.id = :donoId")
     int deleteByNomeAndDonoId(String nome, Long donoId);
+
+//    // Buscar por intervalo de valor de locação
+//    List<Equipamento> findByValorLocacaoBetween(Double min, Double max);
+//
+//    // Buscar por descrição contendo texto (case-insensitive)
+//    List<Equipamento> findByDescricaoContainingIgnoreCase(String descricao);
+//
+//    // Buscar por disponibilidade e dono
+//    List<Equipamento> findByDisponibilidadeAndDonoId(boolean disponibilidade, Long donoId);
+//
+//    // Buscar por cliente e disponibilidade
+//    List<Equipamento> findByClienteIdAndDisponibilidade(Long clienteId, boolean disponibilidade);
+//
+//    // Deletar por dono
+//    @Transactional
+//    @Modifying
+//    @Query("DELETE FROM Equipamento e WHERE e.dono.id = :donoId")
+//    int deleteByDonoId(Long donoId);
+//
+//    // Buscar por múltiplos critérios (nome e descrição)
+//    @Query("SELECT e FROM Equipamento e WHERE LOWER(e.nome) LIKE LOWER(CONCAT('%', :nome, '%')) AND LOWER(e.descricao) LIKE LOWER(CONCAT('%', :descricao, '%'))")
+//    List<Equipamento> findByNomeAndDescricao(String nome, String descricao);
+
 }
+
