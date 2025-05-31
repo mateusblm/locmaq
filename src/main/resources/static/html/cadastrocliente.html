@@ -154,16 +154,23 @@
       method: "PUT",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cliente)
-    }).then(() => {
-      form.reset();
-      editandoId = null;
-      saveBtn.style.display = "inline";
-      editBtn.style.display = "none";
-      cancelBtn.style.display = "none";
-      document.getElementById("formTitle").innerText = "Cadastrar Cliente";
-      atualizarTabela();
-      exibirMensagem("Cliente atualizado com sucesso!", "sucesso");
-    }).catch(() => {
+    })
+    .then(async resp => {
+      if (resp.ok) {
+        form.reset();
+        editandoId = null;
+        saveBtn.style.display = "inline";
+        editBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+        document.getElementById("formTitle").innerText = "Cadastrar Cliente";
+        atualizarTabela();
+        exibirMensagem("Cliente atualizado com sucesso!", "sucesso");
+      } else {
+        const erro = await resp.text();
+        exibirMensagem(erro || "Erro ao atualizar cliente.", "erro");
+      }
+    })
+    .catch(() => {
       exibirMensagem("Erro ao atualizar cliente.", "erro");
     });
   };
@@ -202,3 +209,4 @@
 </script>
 </body>
 </html>
+

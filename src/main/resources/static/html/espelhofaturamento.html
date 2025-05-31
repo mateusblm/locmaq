@@ -31,7 +31,9 @@
                 <th>Equipamento</th>
                 <th>Início</th>
                 <th>Fim</th>
-                <th>Valor Total</th>
+                <th>Valor Recebido do Cliente</th>
+                <th>Valor Pago ao Proprietário</th>
+                <th>Taxa de Lucro (%)</th>
                 <th>Status Pagamento</th>
                 <th>Contrato</th>
             </tr>
@@ -47,7 +49,7 @@
         fetch('/api/faturamento/espelho')
             .then(res => {
                 if (!res.ok) throw new Error('Erro ao buscar dados do espelho de faturamento');
-                return res.text(); // Recebe como texto para tratar erro de login
+                return res.text();
             })
             .then(text => {
                 let data;
@@ -56,26 +58,19 @@
                 } catch (e) {
                     throw new Error('Você precisa estar autenticado para acessar o espelho de faturamento.');
                 }
-                // ... (restante do código para montar o resumo e tabela)
-                let totalPago = 0, totalPendente = 0, totalCancelado = 0;
-                let qtdPago = 0, qtdPendente = 0, qtdCancelado = 0;
+                let totalCliente = 0, totalDono = 0, totalLucro = 0;
+                let qtd = 0;
                 data.forEach(item => {
-                    if (item.statusPagamento === "PAGO") {
-                        totalPago += item.valorTotal || 0;
-                        qtdPago++;
-                    } else if (item.statusPagamento === "PENDENTE") {
-                        totalPendente += item.valorTotal || 0;
-                        qtdPendente++;
-                    } else if (item.statusPagamento === "CANCELADO") {
-                        totalCancelado += item.valorTotal || 0;
-                        qtdCancelado++;
-                    }
+                    totalCliente += item.valorCliente || 0;
+                    totalDono += item.valorDono || 0;
+                    totalLucro += (item.valorCliente || 0) - (item.valorDono || 0);
+                    qtd++;
                 });
                 document.getElementById("faturamentoTotais").innerHTML = `
-                    <div><b>Contratos Pagos:</b> R$ ${totalPago.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdPago})</div>
-                    <div><b>Contratos Pendentes:</b> R$ ${totalPendente.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdPendente})</div>
-                    <div><b>Contratos Cancelados:</b> R$ ${totalCancelado.toLocaleString('pt-BR', {minimumFractionDigits:2})} (${qtdCancelado})</div>
-                    <div style="margin-top:8px;"><b>Total Geral:</b> R$ ${(totalPago+totalPendente+totalCancelado).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                    <div><b>Total Recebido dos Clientes:</b> R$ ${totalCliente.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                    <div><b>Total Pago aos Proprietários:</b> R$ ${totalDono.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                    <div><b>Total Lucro LocMac:</b> R$ ${totalLucro.toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
+                    <div style="margin-top:8px;"><b>Contratos:</b> ${qtd}</div>
                 `;
                 const tbody = document.getElementById('tabelaFaturamento');
                 tbody.innerHTML = '';
@@ -86,7 +81,9 @@
                         <td>${item.equipamento}</td>
                         <td>${item.inicioLocacao || ''}</td>
                         <td>${item.fimLocacao || ''}</td>
-                        <td>R$ ${item.valorTotal != null ? item.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits:2}) : ''}</td>
+                        <td>R$ ${item.valorCliente != null ? item.valorCliente.toLocaleString('pt-BR', {minimumFractionDigits:2}) : ''}</td>
+                        <td>R$ ${item.valorDono != null ? item.valorDono.toLocaleString('pt-BR', {minimumFractionDigits:2}) : ''}</td>
+                        <td>${item.taxaLucro != null ? item.taxaLucro.toLocaleString('pt-BR', {minimumFractionDigits:2}) : ''}</td>
                         <td>${item.statusPagamento}</td>
                         <td>${item.contrato}</td>
                     `;
@@ -99,7 +96,7 @@
                 msg.textContent = err.message;
             });
     }
-        document.addEventListener('DOMContentLoaded', carregarEspelhoFaturamento);
+    document.addEventListener('DOMContentLoaded', carregarEspelhoFaturamento);
 </script>
 </body>
 </html>

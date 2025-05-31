@@ -36,7 +36,7 @@ public class EmailService {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
 
-    public void enviarRelatorioCompleto(String nome, String emailDestino, Long boletimId, Long contratoId, String mensagemAdicional) {
+    public void enviarRelatorioCompleto(String nome, String emailDestino, Long boletimId, Long contratoId, String mensagemAdicional, String papel) {
         if (!isEmailValido(emailDestino)) {
             throw new IllegalArgumentException("E-mail informado é inválido.");
         }
@@ -45,39 +45,63 @@ public class EmailService {
         ContratoLocacao contrato = contratoLocacaoRepository.findById(contratoId).orElseThrow();
         BoletimMedicaoDTO boletimDTO = BoletimMedicaoDTO.fromEntity(boletim);
 
-        // Busca orçamento aprovado ou pendente mais recente
-        Optional<Orcamento> orcamentoOpt = orcamentoRepository
-                .findFirstByContratoIdAndStatusInOrderByDataCriacaoDesc(
-                        contratoId,
-                        List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
-                );
-
-        String assunto = "Relatório de Locação de Equipamento";
-
+        String assunto;
         StringBuilder corpo = new StringBuilder();
-        corpo.append("Olá ").append(nome).append(",\n\n")
-                .append("Segue o relatório detalhado da sua locação:\n\n")
-                .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
-                .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n")
-                .append("Valor Diária: R$ ").append(contrato.getValorTotal()).append("\n\n");
 
-        corpo.append("Boletim de Medição:\n")
-                .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
-                .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
-                .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
+        if ("PROPRIETARIO".equalsIgnoreCase(papel)) {
+            assunto = "Relatório de Repasse ao Proprietário";
+            // Busca orçamento DONO
+            Optional<Orcamento> orcamentoOpt = orcamentoRepository
+                    .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
+                            contratoId,
+                            io.github.mateusbm.locmaq.models.TipoOrcamento.DONO,
+                            List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
+                    );
+            corpo.append("Olá ").append(nome).append(",\n\n")
+                    .append("Segue o relatório de repasse referente ao seu equipamento alugado:\n\n")
+                    .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
+                    .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
+                    .append("Boletim de Medição:\n")
+                    .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
+                    .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
+                    .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
 
-        // Detalhes do orçamento
-        if (orcamentoOpt.isPresent()) {
-            Orcamento orc = orcamentoOpt.get();
-            corpo.append("Detalhes do Orçamento:\n")
-                    .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
-                    .append("- Desconto: R$ ").append(String.format("%.2f", orc.getDesconto())).append("\n")
-                    .append("- Valor Total do Aluguel: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
+            if (orcamentoOpt.isPresent()) {
+                Orcamento orc = orcamentoOpt.get();
+                corpo.append("Detalhes do Repasse:\n")
+                        .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
+                        .append("- Valor Total a Receber: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
+            } else {
+                corpo.append("Não há orçamento de repasse aprovado ou pendente para este contrato.\n\n");
+            }
         } else {
-            corpo.append("Não há orçamento aprovado ou pendente para este contrato.\n\n");
+            assunto = "Relatório de Locação de Equipamento";
+            // Busca orçamento CLIENTE
+            Optional<Orcamento> orcamentoOpt = orcamentoRepository
+                    .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
+                            contratoId,
+                            io.github.mateusbm.locmaq.models.TipoOrcamento.CLIENTE,
+                            List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
+                    );
+            corpo.append("Olá ").append(nome).append(",\n\n")
+                    .append("Segue o relatório detalhado da sua locação:\n\n")
+                    .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
+                    .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
+                    .append("Boletim de Medição:\n")
+                    .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
+                    .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
+                    .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
+
+            if (orcamentoOpt.isPresent()) {
+                Orcamento orc = orcamentoOpt.get();
+                corpo.append("Detalhes do Orçamento:\n")
+                        .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
+                        .append("- Desconto: R$ ").append(String.format("%.2f", orc.getDesconto())).append("\n")
+                        .append("- Valor Total do Aluguel: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
+            } else {
+                corpo.append("Não há orçamento aprovado ou pendente para este contrato.\n\n");
+            }
         }
-
-
 
         if (mensagemAdicional != null && !mensagemAdicional.isEmpty()) {
             corpo.append("\nMensagem adicional:\n").append(mensagemAdicional).append("\n");

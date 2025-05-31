@@ -9,8 +9,11 @@ if (!perfilLogado || !nomeUsuario) {
 document.querySelectorAll('.logout-btn').forEach(b => {
     b.addEventListener('click', function(e) {
         e.preventDefault();
-        sessionStorage.clear();
-        window.location.href = '/index.html';
+        fetch('/logout', { method: 'POST' })
+          .finally(() => {
+            sessionStorage.clear();
+            window.location.href = '/index.html';
+          });
     });
 });
 

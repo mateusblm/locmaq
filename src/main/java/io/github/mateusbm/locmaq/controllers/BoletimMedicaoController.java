@@ -1,4 +1,3 @@
-// src/main/java/io/github/mateusbm/locmaq/controllers/BoletimMedicaoController.java
 package io.github.mateusbm.locmaq.controllers;
 
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;

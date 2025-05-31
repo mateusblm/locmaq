@@ -24,20 +24,27 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody Cliente cliente) {
         try {
-            Cliente novoCliente = clienteService.cadastrarCliente(cliente);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
+            clienteService.cadastrarCliente(cliente);
+            return ResponseEntity.ok("Cliente cadastrado com sucesso!");
         } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Já existe um cliente com esse nome.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao cadastrar cliente.");
+            return ResponseEntity.badRequest().body("Já existe um cliente com esse CPF ou CNPJ.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-        return clienteService.atualizarCliente(id, cliente);
+    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Cliente cliente) {
+        try {
+            Cliente atualizado = clienteService.atualizarCliente(id, cliente);
+            return ResponseEntity.ok("Cliente atualizado com sucesso!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -59,3 +66,4 @@ public class ClienteController {
         return clienteService.buscarClientePorId(id).orElse(null);
     }
 }
+

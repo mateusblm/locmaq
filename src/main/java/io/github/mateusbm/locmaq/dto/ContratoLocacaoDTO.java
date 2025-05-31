@@ -1,4 +1,3 @@
-// src/main/java/io/github/mateusbm/locmaq/dto/ContratoLocacaoDTO.java
 package io.github.mateusbm.locmaq.dto;
 
 import io.github.mateusbm.locmaq.models.Cliente;

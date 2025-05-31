@@ -1,11 +1,9 @@
 package io.github.mateusbm.locmaq.models;
 
-import io.github.mateusbm.locmaq.models.ContratoLocacao;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,4 +30,9 @@ public class Orcamento {
 
     private String aprovadoPor;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoOrcamento tipoOrcamento; // CLIENTE ou DONO
+
+    private double taxaLucro; // Usado para CLIENTE
 }
