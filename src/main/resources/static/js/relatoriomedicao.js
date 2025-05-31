@@ -53,7 +53,7 @@ async function aplicarFiltros() {
         situacao: document.getElementById('filtroSituacao').value,
     };
 
-    boletins.filter(b => {
+    const filtrados = boletins.filter(b => {
         // Corrigir comparação de datas
         const bDataInicio = parseDateBR(b.dataInicio);
         const bDataFim = parseDateBR(b.dataFim);
@@ -72,7 +72,22 @@ async function aplicarFiltros() {
             return (!filtros.valorMin || v >= filtros.valorMin) && (!filtros.valorMax || v <= filtros.valorMax);
         });
         return dentroPeriodo && porSituacao && porPlanejador && contemEquipamento && dentroValor;
-    }).forEach(b => {
+    });
+
+    if (filtrados.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 6;
+        td.textContent = 'Nenhum resultado encontrado.';
+        td.style.textAlign = 'center';
+        td.style.color = '#888';
+        td.style.fontWeight = 'bold';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+    }
+
+    filtrados.forEach(b => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${b.dataInicio} a ${b.dataFim}</td>
@@ -131,3 +146,4 @@ window.onload = () => {
     carregarFiltros();
     aplicarFiltros();
 };
+
