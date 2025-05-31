@@ -34,6 +34,9 @@ public class EquipamentoService {
     }
 
     public void cadastrarEquipamento(EquipamentoDTO dto) {
+        if (equipamentoRepository.existsByNome(dto.getNome())) {
+            throw new RuntimeException("Já existe um equipamento cadastrado com este nome.");
+        }
         Optional<Cliente> clienteOpt = clienteRepository.findById(dto.getClienteId());
         Optional<Dono> donoOpt = donoRepository.findById(dto.getDonoId());
 
@@ -67,6 +70,11 @@ public class EquipamentoService {
     }
 
     public Equipamento editarEquipamento(Long id, EquipamentoDTO dto) {
+        // Verifica se já existe outro equipamento com o mesmo nome
+        Optional<Equipamento> existente = equipamentoRepository.findByNome(dto.getNome());
+        if (existente.isPresent() && !existente.get().getId().equals(id)) {
+            throw new RuntimeException("Já existe um equipamento cadastrado com este nome.");
+        }
         Equipamento equipamento = equipamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"));
         equipamento.setNome(dto.getNome());

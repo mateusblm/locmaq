@@ -87,8 +87,23 @@ function buildEquipamentoTable(equipamentos) {
     });
 }
 
+function exibirAlerta(msg, positivo = false) {
+    const alerta = document.getElementById('alerta-erro');
+    alerta.textContent = msg;
+    alerta.style.display = 'block';
+    alerta.style.background = positivo ? '#4CAF50' : '#d9534f';
+    alerta.style.color = '#fff';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function esconderAlerta() {
+    const alerta = document.getElementById('alerta-erro');
+    alerta.style.display = 'none';
+}
+
 function handleFormSubmit(e) {
     e.preventDefault();
+    esconderAlerta();
 
     const nome = document.getElementById('nome').value.trim();
     const descricao = document.getElementById('descricao').value.trim();
@@ -98,7 +113,7 @@ function handleFormSubmit(e) {
     const donoId = document.getElementById('dono').value;
 
     if (!nome || !valorLocacao || !clienteId || !donoId) {
-        alert('Preencha todos os campos obrigatórios!');
+        exibirAlerta('Preencha todos os campos obrigatórios!');
         return;
     }
 
@@ -125,13 +140,37 @@ function handleFormSubmit(e) {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(equipamento)
     })
-    .then(resp => {
+    .then(async resp => {
+        esconderAlerta();
         if (resp.ok) {
-            alert('Equipamento salvo com sucesso!');
-            handleFormReset();
-            loadEquipamentos();
+            exibirAlerta('Equipamento salvo com sucesso!', true);
+            setTimeout(() => {
+                esconderAlerta();
+                handleFormReset();
+                loadEquipamentos();
+            }, 1500);
         } else {
-            resp.text().then(t => alert('Erro ao salvar: ' + t));
+            let msg = 'Erro ao salvar.';
+            try {
+                const data = await resp.json();
+                if (data && data.mensagem) {
+                    // Mensagens técnicas do back-end são traduzidas para o usuário
+                    if (data.mensagem.includes('Já existe um equipamento cadastrado com este nome')) {
+                        msg = 'Já existe um equipamento com este nome. Escolha outro nome para continuar.';
+                    } else if (data.mensagem.includes('Cliente não encontrado')) {
+                        msg = 'Cliente não encontrado. Selecione um cliente válido.';
+                    } else if (data.mensagem.includes('Dono não encontrado')) {
+                        msg = 'Dono não encontrado. Selecione um dono válido.';
+                    } else if (data.mensagem.includes('Equipamento não encontrado')) {
+                        msg = 'Equipamento não encontrado.';
+                    } else {
+                        msg = 'Erro ao salvar: ' + data.mensagem;
+                    }
+                }
+            } catch (e) {
+                msg = 'Erro ao salvar.';
+            }
+            exibirAlerta(msg);
         }
     });
 }
@@ -157,13 +196,29 @@ window.editEquipamento = function(id) {
 window.deleteEquipamento = function(id) {
     if (confirm('Deseja realmente excluir este equipamento?')) {
         fetch(`${apiBase}/equipamentos/${id}`, { method: 'DELETE' })
-            .then(resp => {
+            .then(async resp => {
+                esconderAlerta();
                 if (resp.ok) {
-                    alert('Equipamento excluído!');
-                    loadEquipamentos();
-                    if (editingId == id) handleFormReset();
+                    exibirAlerta('Equipamento excluído!', true);
+                    setTimeout(() => {
+                        esconderAlerta();
+                        loadEquipamentos();
+                        if (editingId == id) handleFormReset();
+                    }, 1500);
+                } else {
+                    let msg = 'Erro ao excluir equipamento.';
+                    try {
+                        const data = await resp.json();
+                        if (data && data.mensagem) {
+                            if (data.mensagem.includes('vinculado a um boletim de medição')) {
+                                msg = 'Não é possível excluir este equipamento pois ele está vinculado a um boletim de medição.';
+                            } else {
+                                msg = data.mensagem;
+                            }
+                        }
+                    } catch (e) {}
+                    exibirAlerta(msg);
                 }
-                else alert('Erro ao excluir equipamento!');
             });
     }
 };
@@ -174,4 +229,6 @@ function handleFormReset() {
     document.getElementById('submit-btn').textContent = "Salvar";
     document.getElementById('equipamentoForm').reset();
     document.getElementById('id').value = '';
+    esconderAlerta();
 }
+

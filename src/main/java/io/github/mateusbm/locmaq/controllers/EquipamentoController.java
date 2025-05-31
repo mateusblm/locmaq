@@ -22,8 +22,13 @@ public class EquipamentoController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarEquipamento(@RequestBody EquipamentoDTO dto) {
-        equipamentoService.cadastrarEquipamento(dto);
-        return ResponseEntity.ok().build();
+        try {
+            equipamentoService.cadastrarEquipamento(dto);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException ex) {
+            String mensagem = ex.getClass().getName() + ": " + ex.getMessage();
+            return ResponseEntity.badRequest().body(new ErroResponse(mensagem));
+        }
     }
 
     @GetMapping
@@ -41,13 +46,37 @@ public class EquipamentoController {
     @PutMapping("/{id}")
     public ResponseEntity<?> editarEquipamento(@PathVariable Long id,
                                                @RequestBody EquipamentoDTO dto) {
-        equipamentoService.editarEquipamento(id, dto);
-        return ResponseEntity.ok().build();
+        try {
+            equipamentoService.editarEquipamento(id, dto);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException ex) {
+            String mensagem = ex.getClass().getName() + ": " + ex.getMessage();
+            return ResponseEntity.badRequest().body(new ErroResponse(mensagem));
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removerEquipamento(@PathVariable Long id) {
-        equipamentoService.removerEquipamento(id);
-        return ResponseEntity.ok().build();
+        try {
+            equipamentoService.removerEquipamento(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception ex) {
+            String msg = ex.getMessage();
+            if (msg != null && (msg.contains("ConstraintViolationException") || msg.contains("a foreign key constraint fails"))) {
+                msg = "Não é possível excluir este equipamento pois ele está vinculado a um boletim de medição.";
+            } else {
+                msg = "Erro ao excluir equipamento.";
+            }
+            return ResponseEntity.badRequest().body(new ErroResponse(msg));
+        }
+    }
+
+    // Classe auxiliar para resposta de erro
+    class ErroResponse {
+        private String mensagem;
+        public ErroResponse(String mensagem) { this.mensagem = mensagem; }
+        public String getMensagem() { return mensagem; }
+        public void setMensagem(String mensagem) { this.mensagem = mensagem; }
     }
 }
+
