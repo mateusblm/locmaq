@@ -1,6 +1,7 @@
 package io.github.mateusbm.locmaq.controllers;
 
 import io.github.mateusbm.locmaq.models.Cliente;
+import io.github.mateusbm.locmaq.dto.ClienteBuscaDTO;
 import io.github.mateusbm.locmaq.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -65,5 +66,9 @@ public class ClienteController {
     public Cliente buscarPorId(@PathVariable Long id) {
         return clienteService.buscarClientePorId(id).orElse(null);
     }
-}
 
+    @GetMapping("/busca")
+    public List<ClienteBuscaDTO> buscarPorNome(@RequestParam String nome) {
+        return clienteService.buscarPorNomeDTO(nome);
+    }
+}

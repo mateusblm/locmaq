@@ -1,6 +1,7 @@
 package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.models.Cliente;
+import io.github.mateusbm.locmaq.dto.ClienteBuscaDTO;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -80,5 +82,11 @@ public class ClienteService {
         clienteRepository.deleteById(id);
         actionLogService.logAction("Remoção de cliente", getUsuarioAutenticado(), "Cliente ID: " + id);
     }
-}
 
+    public List<ClienteBuscaDTO> buscarPorNomeDTO(String nome) {
+        return clienteRepository.findAll().stream()
+            .filter(c -> c.getNome() != null && c.getNome().toLowerCase().contains(nome.toLowerCase()))
+            .map(c -> new ClienteBuscaDTO(c.getId(), c.getNome(), c.getEmail()))
+            .collect(Collectors.toList());
+    }
+}

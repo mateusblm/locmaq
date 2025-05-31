@@ -1,6 +1,7 @@
 package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.models.Dono;
+import io.github.mateusbm.locmaq.dto.DonoBuscaDTO;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DonoService {
@@ -94,6 +96,7 @@ public class DonoService {
                 "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome());
         return saved;
     }
+
     public void remover(Long id) {
         long count = equipamentoRepository.countByDonoId(id);
         if (count > 0) {
@@ -102,5 +105,12 @@ public class DonoService {
         donoRepository.deleteById(id);
         actionLogService.logAction("Remoção de proprietário", getUsuarioAutenticado(),
                 "Proprietário ID: " + id);
+    }
+
+    public List<DonoBuscaDTO> buscarPorNomeDTO(String nome) {
+        return donoRepository.findAll().stream()
+            .filter(d -> d.getNome() != null && d.getNome().toLowerCase().contains(nome.toLowerCase()))
+            .map(d -> new DonoBuscaDTO(d.getId(), d.getNome(), d.getEmail()))
+            .collect(Collectors.toList());
     }
 }

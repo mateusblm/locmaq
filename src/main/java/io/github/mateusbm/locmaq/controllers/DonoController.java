@@ -1,6 +1,7 @@
 package io.github.mateusbm.locmaq.controllers;
 
 import io.github.mateusbm.locmaq.models.Dono;
+import io.github.mateusbm.locmaq.dto.DonoBuscaDTO;
 import io.github.mateusbm.locmaq.services.DonoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +26,11 @@ public class DonoController {
         return donoService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/busca")
+    public List<DonoBuscaDTO> buscarPorNome(@RequestParam String nome) {
+        return donoService.buscarPorNomeDTO(nome);
     }
 
     @PostMapping

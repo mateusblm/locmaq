@@ -34,7 +34,9 @@
     <h2>Enviar Relatório ao Cliente</h2>
     <form id="formRelatorio">
         <label for="nome">Nome do Cliente:</label>
-        <input type="text" id="nome" name="nome" required>
+        <input type="text" id="nome" name="nome" autocomplete="off" required>
+        <div id="sugestoes-nome" class="autocomplete-sugestoes"></div>
+        <input type="hidden" id="papel" name="papel">
 
         <label for="email">E-mail do Cliente:</label>
         <input type="email" id="email" name="email" required>
@@ -48,11 +50,6 @@
         <select id="contratoId" name="contratoId" required>
             <option value="">-- Selecione --</option>
         </select>
-        <label for="papel">Enviar relatório para:</label>
-        <select id="papel" name="papel" required>
-            <option value="ALUGADOR">Cliente Alugador</option>
-            <option value="PROPRIETARIO">Cliente Proprietário</option>
-        </select>
 
         <label for="mensagem">Mensagem Adicional (opcional):</label>
         <textarea id="mensagem" name="mensagem" rows="4"></textarea>
@@ -65,3 +62,4 @@
 <script src="../js/relatorios_cliente.js"></script>
 </body>
 </html>
+

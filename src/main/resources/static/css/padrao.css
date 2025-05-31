@@ -504,3 +504,23 @@ h2, #form-title { text-align: center; }
     color: #888;
     font-size: 1.1em;
 }
+
+/* Autocomplete */
+.autocomplete-sugestoes {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px #0001;
+    z-index: 10;
+    max-height: 180px;
+    overflow-y: auto;
+    width: 100%;
+    min-width: 220px;
+    margin-top: 2px;
+    left: 0;
+    right: 0;
+}
+#formRelatorio { position: relative; }
+#sugestoes-nome { min-width: 220px; }
+
