@@ -63,7 +63,7 @@ public class EquipamentoController {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (msg != null && (msg.contains("ConstraintViolationException") || msg.contains("a foreign key constraint fails"))) {
-                msg = "Não é possível excluir este equipamento pois ele está vinculado a um boletim de medição.";
+                msg = "Não é possível excluir este equipamento pois ele está vinculado a um contrato de locação.";
             } else {
                 msg = "Erro ao excluir equipamento.";
             }

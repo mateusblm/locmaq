@@ -210,8 +210,8 @@ window.deleteEquipamento = function(id) {
                     try {
                         const data = await resp.json();
                         if (data && data.mensagem) {
-                            if (data.mensagem.includes('vinculado a um boletim de medição')) {
-                                msg = 'Não é possível excluir este equipamento pois ele está vinculado a um boletim de medição.';
+                            if (data.mensagem.includes('vinculado a um contrato de locação')) {
+                                msg = 'Não é possível excluir este equipamento pois ele está vinculado a um contrato de locação.';
                             } else {
                                 msg = data.mensagem;
                             }
