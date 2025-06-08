@@ -94,7 +94,7 @@
       });
   }
 
-  form.onsubmit = function(e) {
+    form.onsubmit = function(e) {
     e.preventDefault();
     const cliente = {
       nome: form.nome.value,
@@ -115,7 +115,11 @@
         atualizarTabela();
       } else {
         const erro = await resp.text();
-        exibirMensagem(erro || "Erro ao cadastrar cliente.", "erro");
+        if (erro.includes("Já existe um cliente com esse CPF ou CNPJ")) {
+          exibirMensagem("Já existe um cliente com esse CPF ou CNPJ.", "erro");
+        } else {
+          exibirMensagem(erro || "Erro ao cadastrar cliente.", "erro");
+        }
       }
     })
     .catch(() => {
