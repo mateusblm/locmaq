@@ -21,21 +21,20 @@ document.getElementById('loginForm').onsubmit = function(event) {
   fetch('/login', {
     method: 'POST',
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({ username: nome, password: senha })
+    body: new URLSearchParams({ username: nome, password: senha }),
+    credentials: 'include'
   })
     .then(resp => {
-      if(resp.redirected || !resp.ok || (resp.url && resp.url.includes('?error'))) {
-        throw new Error();
+      if (!resp.ok) {
+        return resp.text().then(text => { throw new Error(text); });
       }
-      return fetch('/api/usuarios/me');
+      return fetch('/api/usuarios/me', { credentials: 'include' });
     })
     .then(r => {
       if (!r.ok) throw new Error();
       return r.json();
     })
     .then(user => {
-      if (!user || !user.tipoUsuario) throw new Error();
-
       sessionStorage.setItem('perfilLogado', user.tipoUsuario);
       sessionStorage.setItem('nomeUsuario', user.nome);
 
@@ -44,7 +43,11 @@ document.getElementById('loginForm').onsubmit = function(event) {
       else if (user.tipoUsuario === 'LOGISTICA') window.location.href = '/html/logistica.html';
       else window.location.href = '/html/usuario.html';
     })
-    .catch(() => {
-      document.getElementById('loginError').innerText = "Usuário ou senha inválidos!";
+    .catch((err) => {
+      if (err.message && err.message.toLowerCase().includes("desativado")) {
+        document.getElementById('loginError').innerText = "Sua conta está desativada. Procure o gestor para reativação.";
+      } else {
+        document.getElementById('loginError').innerText = "Usuário ou senha inválidos!";
+      }
     });
 };

@@ -47,4 +47,11 @@ public class UsuarioService {
     public Usuario buscarPorNome(String nome) {
         return usuarioRepository.findByNome(nome);
     }
+
+    @Transactional
+    public void ativarUsuario(Long id, boolean ativo) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.setAtivo(ativo);
+        usuarioRepository.save(usuario);
+    }
 }

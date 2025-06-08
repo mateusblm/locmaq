@@ -36,4 +36,17 @@ public class GestorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao cadastrar o usuário.");
         }
     }
+
+    @PostMapping("/{id}/ativar")
+    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+        usuarioService.ativarUsuario(id, true);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/desativar")
+    public ResponseEntity<?> desativarUsuario(@PathVariable Long id) {
+        usuarioService.ativarUsuario(id, false);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -3,33 +3,6 @@
 <head>
     <title>Cadastrar Usuario - LocMac</title>
     <link rel="stylesheet" href="../css/padrao.css">
-    <script>
-        function showSuccessPopup() {
-            alert("Usuario cadastrado com sucesso!");
-        }
-
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            const form = event.target;
-
-            fetch(form.action, {
-                method: form.method,
-                body: new URLSearchParams(new FormData(form))
-            })
-            .then(response => {
-                if (response.ok) {
-                    showSuccessPopup();
-                    form.reset();
-                } else {
-                    alert("Erro ao cadastrar o usuario.");
-                }
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('usuarioForm').onsubmit = handleFormSubmit;
-        });
-    </script>
 </head>
 <body>
 <header class="main-header">
@@ -60,7 +33,25 @@
             <button type="reset" style="margin-top:12px;">Limpar</button>
         </div>
     </form>
+
+    <section style="max-width:800px;margin:40px auto 0;">
+        <h2>Usuarios Cadastrados</h2>
+        <table id="usuariosTable" style="width:100%;border-collapse:collapse;">
+            <thead>
+            <tr style="background:#f5f5f5;">
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Acao</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Linhas preenchidas via JS -->
+            </tbody>
+        </table>
+    </section>
 </main>
 <script src="../js/menu.js"></script>
+<script src="../js/cadastrarusuario.js"></script>
 </body>
 </html>

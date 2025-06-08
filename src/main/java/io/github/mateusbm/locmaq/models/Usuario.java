@@ -29,6 +29,9 @@ public class Usuario {
     @Column(nullable = false)
     private TipoUsuario tipoUsuario;
 
+    private boolean ativo = true;
+
+
     public Usuario(String nome, String senha, TipoUsuario tipoUsuario) {
         this.nome = nome;
         this.senha = senha;

@@ -21,7 +21,7 @@ document.querySelectorAll('.logout-btn').forEach(b => {
 const menusPorPerfil = {
   GESTOR: [
     { href: "/html/gestor.html", label: "Painel Gestor" },
-    { href: "/html/cadastrarusuario.html", label: "Criar Usuario" },
+    { href: "/html/cadastrarusuario.html", label: "Gerenciar Usuario" },
     { href: "/html/assinar_boletim_medicao.html", label: "Aprovar Boletim" },
     { href: "/html/cadastrocliente.html", label: "Gerenciar Clientes" },
     { href: "/html/ver_logs.html", label: "Logs do sistema" }

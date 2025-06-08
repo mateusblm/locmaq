@@ -95,7 +95,7 @@ async function aplicarFiltros() {
             <td>${b.situacao}</td>
             <td>${b.assinado ? 'Sim' : 'Não'}</td>
             <td>${b.equipamentos.map(e => e.equipamentoNome || e.equipamentoId).join(', ')}</td>
-            <td><button onclick="verDetalhe(${b.id})">Ver</button></td>
+            <td><button class="visualizar-btn" onclick="verDetalhe(${b.id})">Ver</button></td>
         `;
         tbody.appendChild(tr);
     });

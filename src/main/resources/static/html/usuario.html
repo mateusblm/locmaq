@@ -23,6 +23,10 @@
         <h3 id="perfil-user-cargo"></h3>
         <p>E-mail: <span id="perfil-user-email">sprint2@sprint2.com</span></p>
         <a href="#" class="bloco-acao" style="display:inline-block;background:#2196F3;color:#fff;margin-top:14px;">Editar Perfil</a>
+        <button id="btn-desativar" style="background:#f44336;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;">
+            Desativar Conta
+        </button>
+        <div id="msg-desativar" style="margin-top:10px;color:#c00;"></div>
     </div>
 </main>
 <script src="../js/menu.js"></script>
@@ -34,6 +38,17 @@
         (sessionStorage.getItem('perfilLogado') || '').charAt(0).toUpperCase() +
         (sessionStorage.getItem('perfilLogado') || '').toLowerCase().slice(1);
     });
+
+  document.getElementById('btn-desativar').onclick = async function() {
+  if (!confirm('Tem certeza que deseja desativar sua conta?')) return;
+  const resp = await fetch('/api/usuarios/me/desativar', { method: 'POST', credentials: 'include' });
+  if (resp.ok) {
+    sessionStorage.clear();
+    window.location.href = '/';
+  } else {
+    document.getElementById('msg-desativar').innerText = 'Erro ao desativar a conta.';
+  }
+};
 </script>
 </body>
 </html>

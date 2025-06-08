@@ -28,42 +28,6 @@
     <div id="loginError" style="color: #c00; text-align:center; margin-top: 10px;"></div>
   </div>
 </main>
-<script>
-  document.getElementById('loginForm').onsubmit = function(event) {
-    event.preventDefault();
-
-    const nome = document.getElementById('nome').value;
-    const senha = document.getElementById('senha').value;
-    document.getElementById('loginError').innerText = "";
-
-    fetch('/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({ username: nome, password: senha })
-    })
-      .then(resp => {
-        if (resp.ok) {
-          // Após login, obtenha o perfil autenticado:
-          return fetch('/api/usuarios/me').then(r => r.json());
-        } else {
-          throw new Error();
-        }
-      })
-      .then(user => {
-        // Salve em sessionStorage se quiser para facilitar nos menus
-        sessionStorage.setItem('perfilLogado', user.tipoUsuario);
-        sessionStorage.setItem('nomeUsuario', user.nome);
-
-        // Redirecione conforme o perfil
-        if (user.tipoUsuario === 'GESTOR') window.location.href = '/html/gestor.html';
-        else if (user.tipoUsuario === 'PLANEJADOR') window.location.href = '/html/planejador.html';
-        else if (user.tipoUsuario === 'LOGISTICA') window.location.href = '/html/logistica.html';
-        else window.location.href = '/html/usuario.html';
-      })
-      .catch(() => {
-        document.getElementById('loginError').innerText = "Usuário ou senha inválidos!";
-      });
-  };
-</script>
+<script src="js/login.js"></script>
 </body>
 </html>
