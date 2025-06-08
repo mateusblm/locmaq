@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   google.charts.setOnLoadCallback(drawGanttChart);
 });
 
+function exibirMensagemContrato(msg, tipo) {
+  const div = document.getElementById('mensagem-contrato');
+  div.innerText = msg;
+  div.style.display = 'block';
+  div.style.background = tipo === 'sucesso' ? '#e6f9ec' : '#fdeaea';
+  div.style.color = tipo === 'sucesso' ? '#207245' : '#c00';
+  div.style.border = tipo === 'sucesso' ? '1px solid #b2e2c5' : '1px solid #f5c2c7';
+  setTimeout(() => { div.style.display = 'none'; }, 4000);
+}
+
 // Função para desenhar o gráfico de Gantt
 function drawGanttChart() {
   fetch('/api/contrato-locacoes')
@@ -50,7 +60,7 @@ function drawGanttChart() {
       const chart = new google.visualization.Gantt(document.getElementById('ganttChart'));
       chart.draw(dataTable, options);
     })
-    .catch(error => console.error('Erro ao carregar dados:', error));
+    .catch(error => exibirMensagemContrato('Erro ao carregar dados do gráfico.', 'erro'));
 }
 
 function toInputDate(valor) {
@@ -118,13 +128,22 @@ function carregarContratos() {
 
 function handleContratoSubmit(e) {
   e.preventDefault();
+
+  const dataInicio = document.getElementById("contratoDataInicio").value;
+  const dataFim = document.getElementById("contratoDataFim").value;
+
+  if (dataInicio && dataFim && dataFim < dataInicio) {
+    exibirMensagemContrato('A data de término não pode ser anterior à data de início.', 'erro');
+    return;
+  }
+
   const id = document.getElementById("contratoId").value;
   const body = {
     usuarioLogisticaId: document.getElementById("contratoUsuarioLogistica").value,
     clienteId: document.getElementById("contratoCliente").value,
     equipamentoId: document.getElementById("contratoEquipamento").value,
-    dataInicio: document.getElementById("contratoDataInicio").value,
-    dataFim: document.getElementById("contratoDataFim").value,
+    dataInicio,
+    dataFim,
     valorTotal: parseFloat(document.getElementById("contratoValor").value.replace(",", ".")) || 0,
     statusPagamento: document.getElementById("contratoStatusPagamento").value
   };
@@ -138,15 +157,15 @@ function handleContratoSubmit(e) {
     body: JSON.stringify(body)
   }).then(async r => {
     if (r.ok) {
-      alert('Contrato salvo ou atualizado!');
+      exibirMensagemContrato('Contrato salvo ou atualizado com sucesso!', 'sucesso');
       limparCampos();
       carregarContratos();
-      drawGanttChart(); // Atualiza o gráfico
+      drawGanttChart();
     } else if (r.status === 409) {
       const errorMsg = await r.text();
-      alert('Erro: ' + errorMsg);
+      exibirMensagemContrato('Erro: ' + errorMsg, 'erro');
     } else {
-      alert('Erro inesperado ao salvar o contrato.');
+      exibirMensagemContrato('Erro inesperado ao salvar o contrato.', 'erro');
     }
   });
 }
@@ -170,12 +189,18 @@ window.editarContrato = function(id) {
 window.excluirContrato = function(id) {
   if (!confirm("Deseja excluir este contrato?")) return;
   fetch(`/api/contrato-locacoes/${id}`, { method: 'DELETE' })
-    .then(r => {
+    .then(async r => {
       if (r.ok) {
+        exibirMensagemContrato('Contrato excluído com sucesso!', 'sucesso');
         carregarContratos();
-        drawGanttChart(); // Atualiza o gráfico
+        drawGanttChart();
+      } else if (r.status === 409 || r.status === 500) {
+        exibirMensagemContrato(
+          'Não é possível excluir o contrato pois ele está vinculado a um orçamento. Exclua primeiro o orçamento relacionado.',
+          'erro'
+        );
       } else {
-        alert('Erro ao excluir!');
+        exibirMensagemContrato('Erro ao excluir!', 'erro');
       }
     });
 };

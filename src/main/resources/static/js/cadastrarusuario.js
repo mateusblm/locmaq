@@ -1,5 +1,11 @@
-function showSuccessPopup() {
-    alert("Usuario cadastrado com sucesso!");
+function exibirMensagemUsuario(msg, tipo) {
+    const div = document.getElementById('mensagem-usuario');
+    div.innerText = msg;
+    div.style.display = 'block';
+    div.style.background = tipo === 'sucesso' ? '#e6f9ec' : '#fdeaea';
+    div.style.color = tipo === 'sucesso' ? '#207245' : '#c00';
+    div.style.border = tipo === 'sucesso' ? '1px solid #b2e2c5' : '1px solid #f5c2c7';
+    setTimeout(() => { div.style.display = 'none'; }, 4000);
 }
 
 function handleFormSubmit(event) {
@@ -13,11 +19,11 @@ function handleFormSubmit(event) {
     })
     .then(response => {
         if (response.ok) {
-            showSuccessPopup();
+            exibirMensagemUsuario('Usuario cadastrado com sucesso!', 'sucesso');
             form.reset();
             carregarUsuarios();
         } else {
-            alert("Erro ao cadastrar o usuario.");
+            exibirMensagemUsuario('Erro ao cadastrar o usuario.', 'erro');
         }
     });
 }
