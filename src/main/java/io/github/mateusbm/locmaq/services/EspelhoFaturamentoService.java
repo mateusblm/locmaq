@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class EspelhoFaturamentoService {
 
-    @Autowired
-    private ContratoLocacaoRepository contratoRepo;
+    private final ContratoLocacaoRepository contratoRepo;
+    private final OrcamentoRepository orcamentoRepo;
 
-    @Autowired
-    private OrcamentoRepository orcamentoRepo;
+    public EspelhoFaturamentoService(ContratoLocacaoRepository contratoRepo, OrcamentoRepository orcamentoRepo) {
+        this.contratoRepo = contratoRepo;
+        this.orcamentoRepo = orcamentoRepo;
+    }
 
     public List<EspelhoFaturamentoDTO> gerarEspelho() {
         return contratoRepo.findAll().stream().map(contrato -> {

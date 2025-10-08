@@ -9,7 +9,6 @@ import io.github.mateusbm.locmaq.models.StatusOrcamento;
 import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.ContratoLocacaoRepository;
 import io.github.mateusbm.locmaq.repositories.OrcamentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,18 +19,19 @@ import java.util.Optional;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final BoletimMedicaoRepository boletimMedicaoRepository;
+    private final ContratoLocacaoRepository contratoLocacaoRepository;
+    private final OrcamentoRepository orcamentoRepository;
 
-    @Autowired
-    private BoletimMedicaoRepository boletimMedicaoRepository;
-
-    @Autowired
-    private ContratoLocacaoRepository contratoLocacaoRepository;
-
-    @Autowired
-    private OrcamentoRepository orcamentoRepository;
-
+    public EmailService(JavaMailSender mailSender, BoletimMedicaoRepository boletimMedicaoRepository, ContratoLocacaoRepository contratoLocacaoRepository
+    , OrcamentoRepository orcamentoRepository) {
+        this.mailSender = mailSender;
+        this.boletimMedicaoRepository = boletimMedicaoRepository;
+        this.contratoLocacaoRepository = contratoLocacaoRepository;
+        this.orcamentoRepository = orcamentoRepository;
+    }
+    
     public boolean isEmailValido(String email) {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }

@@ -2,7 +2,6 @@ package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.models.ActionLog;
 import io.github.mateusbm.locmaq.repositories.ActionLogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,8 +9,11 @@ import java.time.LocalDateTime;
 @Service
 public class ActionLogService {
 
-    @Autowired
-    private ActionLogRepository actionLogRepository;
+    private final ActionLogRepository actionLogRepository;
+
+    public ActionLogService(ActionLogRepository actionLogRepository) {
+        this.actionLogRepository = actionLogRepository;
+    }
 
     public void logAction(String action, String user, String details) {
         ActionLog log = new ActionLog();

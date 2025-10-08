@@ -5,7 +5,6 @@ import io.github.mateusbm.locmaq.dto.DonoBuscaDTO;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +14,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class DonoService {
-    @Autowired
-    private DonoRepository donoRepository;
-    @Autowired
-    private ActionLogService actionLogService;
 
-    @Autowired
-    private EquipamentoRepository equipamentoRepository; 
+    private final DonoRepository donoRepository;
+    private final ActionLogService actionLogService;
+    private final EquipamentoRepository equipamentoRepository;
 
+    public DonoService(DonoRepository donoRepository, ActionLogService actionLogService, EquipamentoRepository equipamentoRepository) {
+        this.donoRepository = donoRepository;
+        this.actionLogService = actionLogService;
+        this.equipamentoRepository = equipamentoRepository;
+    }
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

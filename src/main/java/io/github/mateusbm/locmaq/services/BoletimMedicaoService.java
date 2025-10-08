@@ -7,7 +7,6 @@ import io.github.mateusbm.locmaq.models.EquipamentoBoletimMedicao;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +17,20 @@ import java.util.List;
 
 @Service
 public class BoletimMedicaoService {
-    @Autowired
-    private BoletimMedicaoRepository repo;
-    @Autowired
-    private EquipamentoRepository equipamentoRepository;
-    @Autowired
-    private ActionLogService actionLogService;
+    
+    private final BoletimMedicaoRepository repo;
+    private final EquipamentoRepository equipamentoRepository;
+    private final ActionLogService actionLogService;
+
+    public BoletimMedicaoService(
+            BoletimMedicaoRepository repo,
+            EquipamentoRepository equipamentoRepository,
+            ActionLogService actionLogService
+    ) {
+        this.repo = repo;
+        this.equipamentoRepository = equipamentoRepository;
+        this.actionLogService = actionLogService;
+    }
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

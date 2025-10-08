@@ -4,7 +4,6 @@ import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.dto.ClienteBuscaDTO;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,13 @@ import java.util.stream.Collectors;
 @Service
 public class ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
+    private final ActionLogService actionLogService;
 
-    @Autowired
-    private ActionLogService actionLogService;
+    public ClienteService(ClienteRepository clienteRepository, ActionLogService actionLogService) {
+        this.clienteRepository = clienteRepository;
+        this.actionLogService = actionLogService;
+    }
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

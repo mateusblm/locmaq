@@ -10,7 +10,6 @@ import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.repositories.ContratoLocacaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +18,25 @@ import java.util.List;
 @Service
 public class ContratoLocacaoService {
 
-    @Autowired
-    private ContratoLocacaoRepository contratoRepo;
-    @Autowired
-    private UsuarioRepository usuarioRepo;
-    @Autowired
-    private ClienteRepository clienteRepo;
-    @Autowired
-    private EquipamentoRepository equipamentoRepo;
-    @Autowired
-    private ActionLogService actionLogService;
+    private final ContratoLocacaoRepository contratoRepo;
+    private final UsuarioRepository usuarioRepo;
+    private final ClienteRepository clienteRepo;
+    private final EquipamentoRepository equipamentoRepo;
+    private final ActionLogService actionLogService;
+
+    public ContratoLocacaoService(
+            ContratoLocacaoRepository contratoRepo,
+            UsuarioRepository usuarioRepo,
+            ClienteRepository clienteRepo,
+            EquipamentoRepository equipamentoRepo,
+            ActionLogService actionLogService
+    ) {
+        this.contratoRepo = contratoRepo;
+        this.usuarioRepo = usuarioRepo;
+        this.clienteRepo = clienteRepo;
+        this.equipamentoRepo = equipamentoRepo;
+        this.actionLogService = actionLogService;
+    }
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

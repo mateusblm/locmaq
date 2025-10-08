@@ -7,7 +7,6 @@ import io.github.mateusbm.locmaq.dto.EquipamentoDTO;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +16,21 @@ import java.util.Optional;
 @Service
 public class EquipamentoService {
 
-    @Autowired
-    private EquipamentoRepository equipamentoRepository;
+    private final EquipamentoRepository equipamentoRepository;
+    private final ClienteRepository clienteRepository;
+    private final DonoRepository donoRepository;
+    private final ActionLogService actionLogService;
 
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private DonoRepository donoRepository;
-
-    @Autowired
-    private ActionLogService actionLogService;
+    public EquipamentoService(
+            EquipamentoRepository equipamentoRepository,
+            ClienteRepository clienteRepository,
+            DonoRepository donoRepository,
+            ActionLogService actionLogService) {
+        this.equipamentoRepository = equipamentoRepository;
+        this.clienteRepository = clienteRepository;
+        this.donoRepository = donoRepository;
+        this.actionLogService = actionLogService;
+    }
 
     private String getUsuarioAutenticado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

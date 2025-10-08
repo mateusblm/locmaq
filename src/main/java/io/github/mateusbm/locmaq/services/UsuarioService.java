@@ -3,7 +3,6 @@ package io.github.mateusbm.locmaq.services;
 import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +11,15 @@ import java.util.List;
 
 @Service
 public class UsuarioService {
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
-    private ActionLogService actionLogService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UsuarioRepository usuarioRepository;
+    private final ActionLogService actionLogService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, ActionLogService actionLogService, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.actionLogService = actionLogService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public boolean existeUsuarioPorNome(String nome) {
         return usuarioRepository.findByNome(nome) != null;
