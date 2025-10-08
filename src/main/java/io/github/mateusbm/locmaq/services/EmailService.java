@@ -33,71 +33,82 @@ public class EmailService {
         this.orcamentoRepository = orcamentoRepository;
     }
 
-    public void enviarRelatorioCompleto(String nome, String emailDestino, Long boletimId, Long contratoId, String mensagemAdicional, String papel) {
+    public void enviarRelatorioCompleto(String emailDestino, Long boletimId, Long contratoId, String mensagemAdicional, String papel) {
+        StringBuilder corpo;
+        String assunto;
+        ContratoLocacao contrato = contratoLocacaoRepository.findById(contratoId).orElseThrow();
+        BoletimMedicaoDTO boletimDTO = BoletimMedicaoDTO.fromEntity(boletimMedicaoRepository.findById(boletimId).orElseThrow());
+
         if (ValidadorUtil.isEmailValido(emailDestino)) {
             throw new IllegalArgumentException("E-mail informado é inválido.");
         }
 
-        BoletimMedicao boletim = boletimMedicaoRepository.findById(boletimId).orElseThrow();
-        ContratoLocacao contrato = contratoLocacaoRepository.findById(contratoId).orElseThrow();
-        BoletimMedicaoDTO boletimDTO = BoletimMedicaoDTO.fromEntity(boletim);
-
-        String assunto;
-        StringBuilder corpo = new StringBuilder();
-
         if ("PROPRIETARIO".equalsIgnoreCase(papel)) {
             assunto = "Relatório de Repasse ao Proprietário";
-            // Busca orçamento DONO
-            Optional<Orcamento> orcamentoOpt = orcamentoRepository
-                    .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
-                            contratoId,
-                            io.github.mateusbm.locmaq.models.TipoOrcamento.DONO,
-                            List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
-                    );
-            corpo.append("Olá ").append(nome).append(",\n\n")
-                    .append("Segue o relatório de repasse referente ao seu equipamento alugado:\n\n")
-                    .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
-                    .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
-                    .append("Boletim de Medição:\n")
-                    .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
-                    .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
-                    .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
-
-            if (orcamentoOpt.isPresent()) {
-                Orcamento orc = orcamentoOpt.get();
-                corpo.append("Detalhes do Repasse:\n")
-                        .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
-                        .append("- Valor Total a Receber: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
-            } else {
-                corpo.append("Não há orçamento de repasse aprovado ou pendente para este contrato.\n\n");
-            }
+            corpo = this.criarRelatorioProprietario(contrato, boletimDTO, mensagemAdicional);
         } else {
-            assunto = "Relatório de Locação de Equipamento";
-            // Busca orçamento CLIENTE
-            Optional<Orcamento> orcamentoOpt = orcamentoRepository
-                    .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
-                            contratoId,
-                            io.github.mateusbm.locmaq.models.TipoOrcamento.CLIENTE,
-                            List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
-                    );
-            corpo.append("Olá ").append(nome).append(",\n\n")
-                    .append("Segue o relatório detalhado da sua locação:\n\n")
-                    .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
-                    .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
-                    .append("Boletim de Medição:\n")
-                    .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
-                    .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
-                    .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
+            assunto = "Relatório de Repasse ao Cliente";
+            corpo = this.criarRelatorioCliente(contrato, boletimDTO, mensagemAdicional);
+        }
 
-            if (orcamentoOpt.isPresent()) {
-                Orcamento orc = orcamentoOpt.get();
-                corpo.append("Detalhes do Orçamento:\n")
-                        .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
-                        .append("- Desconto: R$ ").append(String.format("%.2f", orc.getDesconto())).append("\n")
-                        .append("- Valor Total do Aluguel: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
-            } else {
-                corpo.append("Não há orçamento aprovado ou pendente para este contrato.\n\n");
-            }
+        enviarEmail(emailDestino, assunto, corpo);
+    }
+
+    public StringBuilder criarRelatorioProprietario(ContratoLocacao contrato, BoletimMedicaoDTO boletimDTO, String mensagemAdicional) {
+        StringBuilder corpo = new StringBuilder();
+        Long contratoId = contrato.getId();
+        String nome = contrato.getEquipamento().getDono().getNome();
+        Optional<Orcamento> orcamentoOpt = buscarOrcamento(contratoId);
+
+        corpo.append("Olá ").append(nome).append(",\n\n")
+                .append("Segue o relatório de repasse referente ao seu equipamento alugado:\n\n")
+                .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
+                .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
+                .append("Boletim de Medição:\n")
+                .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
+                .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
+                .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
+
+        if (orcamentoOpt.isPresent()) {
+            Orcamento orc = orcamentoOpt.get();
+            corpo.append("Detalhes do Repasse:\n")
+                    .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
+                    .append("- Valor Total a Receber: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
+        } else {
+                corpo.append("Não há orçamento de repasse aprovado ou pendente para este contrato.\n\n");
+        }
+
+        if (mensagemAdicional != null && !mensagemAdicional.isEmpty()) {
+            corpo.append("\nMensagem adicional:\n").append(mensagemAdicional).append("\n");
+        }
+        corpo.append("\nAtenciosamente,\nEquipe de Locação");
+
+        return corpo;
+    }
+
+    public StringBuilder criarRelatorioCliente(ContratoLocacao contrato, BoletimMedicaoDTO boletimDTO, String mensagemAdicional) {
+        StringBuilder corpo = new StringBuilder();
+        Long contratoId = contrato.getId();
+        String nome = contrato.getCliente().getNome();
+        Optional<Orcamento> orcamentoOpt = buscarOrcamento(contratoId);
+
+        corpo.append("Olá ").append(nome).append(",\n\n")
+                .append("Segue o relatório detalhado da sua locação:\n\n")
+                .append("Equipamento: ").append(contrato.getEquipamento().getNome()).append("\n")
+                .append("Período do Contrato: ").append(contrato.getDataInicio()).append(" a ").append(contrato.getDataFim()).append("\n\n")
+                .append("Boletim de Medição:\n")
+                .append("Período: ").append(boletimDTO.getDataInicio()).append(" a ").append(boletimDTO.getDataFim()).append("\n")
+                .append("Situação: ").append(boletimDTO.getSituacao()).append("\n")
+                .append("Planejador Responsável: ").append(boletimDTO.getPlanejadorNome()).append("\n\n");
+
+        if (orcamentoOpt.isPresent()) {
+            Orcamento orc = orcamentoOpt.get();
+            corpo.append("Detalhes do Orçamento:\n")
+                    .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
+                    .append("- Desconto: R$ ").append(String.format("%.2f", orc.getDesconto())).append("\n")
+                    .append("- Valor Total do Aluguel: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
+        } else {
+            corpo.append("Não há orçamento aprovado ou pendente para este contrato.\n\n");
         }
 
         if (mensagemAdicional != null && !mensagemAdicional.isEmpty()) {
@@ -105,12 +116,23 @@ public class EmailService {
         }
 
         corpo.append("\nAtenciosamente,\nEquipe de Locação");
+        return corpo;
+    }
 
+    public void enviarEmail(String emailDestino, String assunto, StringBuilder corpo) { 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(emailDestino);
         message.setSubject(assunto);
         message.setText(corpo.toString());
-
         mailSender.send(message);
+    }
+
+    public Optional<Orcamento> buscarOrcamento(Long contratoId) { 
+        return orcamentoRepository
+                .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
+                        contratoId,
+                        io.github.mateusbm.locmaq.models.TipoOrcamento.DONO,
+                        List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
+                );
     }
 }
