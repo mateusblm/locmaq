@@ -10,6 +10,7 @@ import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.ContratoLocacaoRepository;
 import io.github.mateusbm.locmaq.repositories.OrcamentoRepository;
 import org.springframework.mail.SimpleMailMessage;
+import io.github.mateusbm.locmaq.utils.ValidadorUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +32,9 @@ public class EmailService {
         this.contratoLocacaoRepository = contratoLocacaoRepository;
         this.orcamentoRepository = orcamentoRepository;
     }
-    
-    public boolean isEmailValido(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    }
 
     public void enviarRelatorioCompleto(String nome, String emailDestino, Long boletimId, Long contratoId, String mensagemAdicional, String papel) {
-        if (!isEmailValido(emailDestino)) {
+        if (ValidadorUtil.isEmailValido(emailDestino)) {
             throw new IllegalArgumentException("E-mail informado é inválido.");
         }
 
