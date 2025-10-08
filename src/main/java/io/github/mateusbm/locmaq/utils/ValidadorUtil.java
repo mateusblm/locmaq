@@ -72,7 +72,8 @@ public class ValidadorUtil {
         return numeroConta != null && numeroConta.matches("\\d{6}-\\d{1}");
     }
 
-    public static void validarDesconto(Orcamento orcamento, ContratoLocacao contrato) {
+    public static void validarDesconto(Orcamento orcamento) {
+        ContratoLocacao contrato = orcamento.getContrato();
         if(orcamento.getDesconto() > orcamento.calcularValorCliente(contrato) - (orcamento.calcularValorCliente(contrato) * orcamento.getTaxaLucro() / 100.0)) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "O desconto não pode ser maior que o valor total do aluguel menos a taxa de lucro (R$ " +

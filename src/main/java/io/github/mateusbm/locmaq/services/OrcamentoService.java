@@ -19,7 +19,7 @@ public class OrcamentoService {
     }
 
     public Orcamento salvar(Orcamento orcamento) {
-        validarDesconto(orcamento);
+        ValidadorUtil.validarDesconto(orcamento);
         return repository.save(orcamento);
     }
 
@@ -51,10 +51,10 @@ public class OrcamentoService {
     }
 
     public void criarOrcamentosDuplos(Orcamento orcamento, ContratoLocacao contrato) {
-        ValidadorUtil.validarDesconto(orcamento, contrato);
+        ValidadorUtil.validarDesconto(orcamento);
         Orcamento cliente = criarOrcamentoCliente(orcamento, contrato);
         Orcamento dono = criarOrcamentoDono(orcamento, contrato);
-
+        
         repository.save(dono);
         repository.save(cliente);
     }
@@ -85,15 +85,5 @@ public class OrcamentoService {
         dono.setTipoOrcamento(TipoOrcamento.DONO);
         dono.setTaxaLucro(orcamento.getTaxaLucro());
         return dono;
-    }
-
-    private void validarDesconto(Orcamento orcamento) {
-        double taxaLucro = orcamento.getTaxaLucro();
-        double valorCliente = orcamento.getContrato().getValorTotal() * orcamento.getDiasTrabalhados();
-        if (orcamento.getDesconto() > valorCliente - (valorCliente * taxaLucro / 100.0)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "O desconto não pode ser maior que o valor total do aluguel menos a taxa de lucro (R$ " +
-                            String.format("%.2f", valorCliente - (valorCliente * taxaLucro / 100.0)) + ").");
-        }
     }
 }
