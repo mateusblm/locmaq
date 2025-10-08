@@ -21,7 +21,7 @@ public class DonoService {
     private ActionLogService actionLogService;
 
     @Autowired
-    private EquipamentoRepository equipamentoRepository; // crie esse repository se não existir
+    private EquipamentoRepository equipamentoRepository; 
 
 
     private String getUsuarioAutenticado() {

@@ -31,14 +31,12 @@ public class EspelhoFaturamentoService {
             dto.setInicioLocacao(contrato.getDataInicio());
             dto.setFimLocacao(contrato.getDataFim());
 
-            // Busca orçamento CLIENTE
             Optional<Orcamento> orcClienteOpt = orcamentoRepo
                     .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
                             contrato.getId(),
                             TipoOrcamento.CLIENTE,
                             List.of(StatusOrcamento.APROVADO, StatusOrcamento.PENDENTE)
                     );
-            // Busca orçamento DONO
             Optional<Orcamento> orcDonoOpt = orcamentoRepo
                     .findFirstByContratoIdAndTipoOrcamentoAndStatusInOrderByDataCriacaoDesc(
                             contrato.getId(),
