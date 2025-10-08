@@ -35,4 +35,14 @@ public class Orcamento {
     private TipoOrcamento tipoOrcamento; // CLIENTE ou DONO
 
     private double taxaLucro; // Usado para CLIENTE
+
+
+    public Double calcularValorCliente(ContratoLocacao contratoLocacao) {
+        return contratoLocacao.getValorTotal() * diasTrabalhados;
+    }
+
+    public Double calcularValorDono(ContratoLocacao contratoLocacao) {
+        Double valorCliente = calcularValorCliente(contratoLocacao);
+        return valorCliente - desconto - (valorCliente * taxaLucro / 100.0);
+    }
 }

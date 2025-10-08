@@ -1,5 +1,11 @@
 package io.github.mateusbm.locmaq.utils;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import io.github.mateusbm.locmaq.models.ContratoLocacao;
+import io.github.mateusbm.locmaq.models.Orcamento;
+
 public class ValidadorUtil {
 
     public static boolean isCpfOuCnpjValido(String documento) {
@@ -64,5 +70,13 @@ public class ValidadorUtil {
 
     public static boolean isNumeroContaValido(String numeroConta) {
         return numeroConta != null && numeroConta.matches("\\d{6}-\\d{1}");
+    }
+
+    public static void validarDesconto(Orcamento orcamento, ContratoLocacao contrato) {
+        if(orcamento.getDesconto() > orcamento.calcularValorCliente(contrato) - (orcamento.calcularValorCliente(contrato) * orcamento.getTaxaLucro() / 100.0)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "O desconto não pode ser maior que o valor total do aluguel menos a taxa de lucro (R$ " +
+                            String.format("%.2f", orcamento.calcularValorCliente(contrato) - (orcamento.calcularValorCliente(contrato) * orcamento.getTaxaLucro() / 100.0)) + ").");
+        }
     }
 }
