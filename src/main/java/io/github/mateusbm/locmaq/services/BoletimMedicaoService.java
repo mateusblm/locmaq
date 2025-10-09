@@ -7,6 +7,8 @@ import io.github.mateusbm.locmaq.models.EquipamentoBoletimMedicao;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
+import io.github.mateusbm.locmaq.state.BoletimStateFactory;
+import io.github.mateusbm.locmaq.state.RascunhoState;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +22,16 @@ public class BoletimMedicaoService {
     
     private final BoletimMedicaoRepository repo;
     private final EquipamentoRepository equipamentoRepository;
-    private final ActionLogService actionLogService;
+    private final ActionLogService actionLogService; 
 
     public BoletimMedicaoService(
             BoletimMedicaoRepository repo,
             EquipamentoRepository equipamentoRepository,
-            ActionLogService actionLogService
+            ActionLogService actionLogService 
     ) {
         this.repo = repo;
         this.equipamentoRepository = equipamentoRepository;
-        this.actionLogService = actionLogService;
+        this.actionLogService = actionLogService; 
     }
 
     private String getUsuarioAutenticado() {
@@ -52,7 +54,9 @@ public class BoletimMedicaoService {
         List<EquipamentoBoletimMedicao> equipamentos = new ArrayList<>();
         if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
             for (var eqDTO : dto.getEquipamentos()) {
-                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId()).orElseThrow();
+                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId())
+                        .orElseThrow(() -> new EntityNotFoundException("Equipamento com ID " + eqDTO.getEquipamentoId() + " não encontrado."));
+                
                 Double valorMedido = eqDTO.getValorMedido();
                 if (valorMedido == null || Double.isNaN(valorMedido)) valorMedido = 0.0;
                 EquipamentoBoletimMedicao ebm = eqDTO.toEntity(eq);
@@ -68,13 +72,16 @@ public class BoletimMedicaoService {
         boletim.setEquipamentos(equipamentos);
 
         if (boletim.getDataMedicao() == null) boletim.setDataMedicao(LocalDate.now());
+        
+        // Padrão State: Define o estado inicial (Contexto)
+        boletim.setSituacao(RascunhoState.SITUACAO_NOME); 
+        
         BoletimMedicao saved = repo.save(boletim);
+        
         actionLogService.logAction(
                 "Cadastro de boletim de medição",
                 getUsuarioAutenticado(),
-                "Boletim ID: " + saved.getId() +
-                        ", Período: " + saved.getDataInicio() + " a " + saved.getDataFim() +
-                        ", Situação: " + saved.getSituacao()
+                "Boletim ID: " + saved.getId() + ", Situação: " + saved.getSituacao()
         );
         return saved;
     }
@@ -86,18 +93,21 @@ public class BoletimMedicaoService {
 
         BoletimMedicao boletim = buscarPorId(id);
 
+        // Padrão State Delega a verificação de permissão para o objeto de Estado.
+        // Se o estado atual não permitir, uma exceção é lançada.
+        BoletimStateFactory.getState(boletim.getSituacao()).editar(boletim); 
+
         boletim.setDataInicio(dto.getDataInicio());
         boletim.setDataFim(dto.getDataFim());
         boletim.setPlanejador(planejador);
-        boletim.setSituacao(dto.getSituacao());
 
-        // Remove todos os equipamentos antigos
         boletim.getEquipamentos().clear();
 
-        // Adiciona os novos equipamentos diretamente na lista já limpa
         if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
             for (var eqDTO : dto.getEquipamentos()) {
-                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId()).orElseThrow();
+                Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId())
+                        .orElseThrow(() -> new EntityNotFoundException("Equipamento com ID " + eqDTO.getEquipamentoId() + " não encontrado."));
+                
                 Double valorMedido = eqDTO.getValorMedido();
                 if (valorMedido == null || Double.isNaN(valorMedido)) valorMedido = 0.0;
                 EquipamentoBoletimMedicao ebm = eqDTO.toEntity(eq);
@@ -108,26 +118,43 @@ public class BoletimMedicaoService {
         }
 
         BoletimMedicao saved = repo.save(boletim);
+        
         actionLogService.logAction(
                 "Edição de boletim de medição",
                 getUsuarioAutenticado(),
-                "Boletim ID: " + saved.getId()
+                "Boletim ID: " + saved.getId() + ", Situação: " + saved.getSituacao()
         );
         return saved;
     }
 
     public BoletimMedicao assinarBoletim(Long id) {
         BoletimMedicao b = buscarPorId(id);
-        b.setAssinado(true);
-        b.setSituacao("ASSINADO");
+        
+        // Padrão State Executa a transição.
+        BoletimStateFactory.getState(b.getSituacao()).assinar(b);
+        
         BoletimMedicao saved = repo.save(b);
-        actionLogService.logAction("Assinatura de boletim de medição", getUsuarioAutenticado(), "Boletim ID: " + saved.getId());
+        
+        actionLogService.logAction(
+                "Assinatura de boletim de medição", 
+                getUsuarioAutenticado(), 
+                "Boletim ID: " + saved.getId()
+        );
         return saved;
     }
 
     public void remover(Long id) {
         BoletimMedicao b = buscarPorId(id);
+        
+        // Padrão State Verifica se a remoção é permitida.
+        BoletimStateFactory.getState(b.getSituacao()).remover(b);
+        
         repo.delete(b);
-        actionLogService.logAction("Remoção de boletim de medição", getUsuarioAutenticado(), "Boletim ID: " + id);
+        
+        actionLogService.logAction(
+                "Remoção de boletim de medição", 
+                getUsuarioAutenticado(), 
+                "Boletim ID: " + id + ", Situação Anterior: " + b.getSituacao()
+        );
     }
 }
