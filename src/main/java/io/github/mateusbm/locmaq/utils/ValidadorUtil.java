@@ -80,4 +80,8 @@ public class ValidadorUtil {
                             String.format("%.2f", orcamento.calcularValorCliente(contrato) - (orcamento.calcularValorCliente(contrato) * orcamento.getTaxaLucro() / 100.0)) + ").");
         }
     }
+
+    public static boolean isEmailValido(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
 }
