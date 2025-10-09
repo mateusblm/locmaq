@@ -1,8 +1,10 @@
 package io.github.mateusbm.locmaq.services;
 
+import io.github.mateusbm.locmaq.events.LogAction;
 import io.github.mateusbm.locmaq.models.TipoUsuario;
 import io.github.mateusbm.locmaq.models.Usuario;
 import io.github.mateusbm.locmaq.repositories.UsuarioRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +14,12 @@ import java.util.List;
 @Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    private final ActionLogService actionLogService;
+    private final ApplicationEventPublisher eventPublisher; 
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, ActionLogService actionLogService, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, ApplicationEventPublisher eventPublisher, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
-        this.actionLogService = actionLogService;
+        this.eventPublisher = eventPublisher;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -29,9 +31,12 @@ public class UsuarioService {
     public void cadastrarUsuario(String nome, String senha, TipoUsuario tipoUsuario, String gestorNome) {
         Usuario novoUsuario = new Usuario(nome, passwordEncoder.encode(senha), tipoUsuario);
         Usuario saved = usuarioRepository.save(novoUsuario);
-        actionLogService.logAction("Cadastro de usuário",
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Cadastro de usuário",
                 gestorNome,
-                "Usuário ID: " + saved.getId() + ", Nome: " + saved.getNome() + ", Tipo: " + saved.getTipoUsuario());
+                "Usuário ID: " + saved.getId() + ", Nome: " + saved.getNome() + ", Tipo: " + saved.getTipoUsuario()
+        ));
     }
 
     public Usuario buscarPorId(Long id) {
@@ -54,6 +59,12 @@ public class UsuarioService {
     public void ativarUsuario(Long id, boolean ativo) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
         usuario.setAtivo(ativo);
-        usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        
+        eventPublisher.publishEvent(new LogAction(
+                (ativo ? "Ativação" : "Desativação") + " de usuário",
+                saved.getNome(), 
+                "Usuário ID: " + id + ", Situação: " + (ativo ? "ATIVO" : "INATIVO")
+        ));
     }
 }

@@ -1,10 +1,12 @@
 package io.github.mateusbm.locmaq.services;
 
-import io.github.mateusbm.locmaq.models.Dono;
 import io.github.mateusbm.locmaq.dto.DonoBuscaDTO;
+import io.github.mateusbm.locmaq.events.LogAction; 
+import io.github.mateusbm.locmaq.models.Dono;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
+import org.springframework.context.ApplicationEventPublisher; 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +18,12 @@ import java.util.stream.Collectors;
 public class DonoService {
 
     private final DonoRepository donoRepository;
-    private final ActionLogService actionLogService;
+    private final ApplicationEventPublisher eventPublisher; 
     private final EquipamentoRepository equipamentoRepository;
 
-    public DonoService(DonoRepository donoRepository, ActionLogService actionLogService, EquipamentoRepository equipamentoRepository) {
+    public DonoService(DonoRepository donoRepository, ApplicationEventPublisher eventPublisher, EquipamentoRepository equipamentoRepository) {
         this.donoRepository = donoRepository;
-        this.actionLogService = actionLogService;
+        this.eventPublisher = eventPublisher;
         this.equipamentoRepository = equipamentoRepository;
     }
 
@@ -57,8 +59,12 @@ public class DonoService {
             throw new IllegalArgumentException("Número da conta inválido");
         }
         Dono saved = donoRepository.save(dono);
-        actionLogService.logAction("Cadastro de proprietário", getUsuarioAutenticado(),
-                "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome());
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Cadastro de proprietário", 
+                getUsuarioAutenticado(),
+                "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
         return saved;
     }
 
@@ -93,8 +99,12 @@ public class DonoService {
         dono.setAgencia(novo.getAgencia());
         dono.setNumeroConta(novo.getNumeroConta());
         Dono saved = donoRepository.save(dono);
-        actionLogService.logAction("Edição de proprietário", getUsuarioAutenticado(),
-                "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome());
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Edição de proprietário", 
+                getUsuarioAutenticado(),
+                "Proprietário ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
         return saved;
     }
 
@@ -104,8 +114,12 @@ public class DonoService {
             throw new IllegalArgumentException("Não é possível remover o proprietário: existem equipamentos vinculados a ele.");
         }
         donoRepository.deleteById(id);
-        actionLogService.logAction("Remoção de proprietário", getUsuarioAutenticado(),
-                "Proprietário ID: " + id);
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Remoção de proprietário", 
+                getUsuarioAutenticado(),
+                "Proprietário ID: " + id
+        ));
     }
 
     public List<DonoBuscaDTO> buscarPorNomeDTO(String nome) {

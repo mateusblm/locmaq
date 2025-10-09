@@ -1,6 +1,7 @@
 package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;
+import io.github.mateusbm.locmaq.events.LogAction; // Import do Evento
 import io.github.mateusbm.locmaq.models.BoletimMedicao;
 import io.github.mateusbm.locmaq.models.Equipamento;
 import io.github.mateusbm.locmaq.models.EquipamentoBoletimMedicao;
@@ -9,6 +10,7 @@ import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
 import io.github.mateusbm.locmaq.state.BoletimStateFactory;
 import io.github.mateusbm.locmaq.state.RascunhoState;
+import org.springframework.context.ApplicationEventPublisher; // Novo Import
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +24,16 @@ public class BoletimMedicaoService {
     
     private final BoletimMedicaoRepository repo;
     private final EquipamentoRepository equipamentoRepository;
-    private final ActionLogService actionLogService; 
+    private final ApplicationEventPublisher eventPublisher; 
 
     public BoletimMedicaoService(
             BoletimMedicaoRepository repo,
             EquipamentoRepository equipamentoRepository,
-            ActionLogService actionLogService 
+            ApplicationEventPublisher eventPublisher 
     ) {
         this.repo = repo;
         this.equipamentoRepository = equipamentoRepository;
-        this.actionLogService = actionLogService; 
+        this.eventPublisher = eventPublisher;
     }
 
     private String getUsuarioAutenticado() {
@@ -73,16 +75,15 @@ public class BoletimMedicaoService {
 
         if (boletim.getDataMedicao() == null) boletim.setDataMedicao(LocalDate.now());
         
-        // Padrão State: Define o estado inicial (Contexto)
         boletim.setSituacao(RascunhoState.SITUACAO_NOME); 
         
         BoletimMedicao saved = repo.save(boletim);
         
-        actionLogService.logAction(
+        eventPublisher.publishEvent(new LogAction(
                 "Cadastro de boletim de medição",
                 getUsuarioAutenticado(),
                 "Boletim ID: " + saved.getId() + ", Situação: " + saved.getSituacao()
-        );
+        ));
         return saved;
     }
 
@@ -93,8 +94,6 @@ public class BoletimMedicaoService {
 
         BoletimMedicao boletim = buscarPorId(id);
 
-        // Padrão State Delega a verificação de permissão para o objeto de Estado.
-        // Se o estado atual não permitir, uma exceção é lançada.
         BoletimStateFactory.getState(boletim.getSituacao()).editar(boletim); 
 
         boletim.setDataInicio(dto.getDataInicio());
@@ -102,7 +101,6 @@ public class BoletimMedicaoService {
         boletim.setPlanejador(planejador);
 
         boletim.getEquipamentos().clear();
-
         if (dto.getEquipamentos() != null && !dto.getEquipamentos().isEmpty()) {
             for (var eqDTO : dto.getEquipamentos()) {
                 Equipamento eq = equipamentoRepository.findById(eqDTO.getEquipamentoId())
@@ -119,42 +117,40 @@ public class BoletimMedicaoService {
 
         BoletimMedicao saved = repo.save(boletim);
         
-        actionLogService.logAction(
+        eventPublisher.publishEvent(new LogAction(
                 "Edição de boletim de medição",
                 getUsuarioAutenticado(),
                 "Boletim ID: " + saved.getId() + ", Situação: " + saved.getSituacao()
-        );
+        ));
         return saved;
     }
 
     public BoletimMedicao assinarBoletim(Long id) {
         BoletimMedicao b = buscarPorId(id);
         
-        // Padrão State Executa a transição.
         BoletimStateFactory.getState(b.getSituacao()).assinar(b);
         
         BoletimMedicao saved = repo.save(b);
         
-        actionLogService.logAction(
+        eventPublisher.publishEvent(new LogAction(
                 "Assinatura de boletim de medição", 
                 getUsuarioAutenticado(), 
                 "Boletim ID: " + saved.getId()
-        );
+        ));
         return saved;
     }
 
     public void remover(Long id) {
         BoletimMedicao b = buscarPorId(id);
         
-        // Padrão State Verifica se a remoção é permitida.
         BoletimStateFactory.getState(b.getSituacao()).remover(b);
         
         repo.delete(b);
         
-        actionLogService.logAction(
+        eventPublisher.publishEvent(new LogAction(
                 "Remoção de boletim de medição", 
                 getUsuarioAutenticado(), 
                 "Boletim ID: " + id + ", Situação Anterior: " + b.getSituacao()
-        );
+        ));
     }
 }

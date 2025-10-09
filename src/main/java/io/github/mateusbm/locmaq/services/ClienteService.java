@@ -1,9 +1,11 @@
 package io.github.mateusbm.locmaq.services;
 
-import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.dto.ClienteBuscaDTO;
+import io.github.mateusbm.locmaq.events.LogAction; 
+import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +17,11 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
-    private final ActionLogService actionLogService;
+    private final ApplicationEventPublisher eventPublisher; 
 
-    public ClienteService(ClienteRepository clienteRepository, ActionLogService actionLogService) {
+    public ClienteService(ClienteRepository clienteRepository, ApplicationEventPublisher eventPublisher) {
         this.clienteRepository = clienteRepository;
-        this.actionLogService = actionLogService;
+        this.eventPublisher = eventPublisher;
     }
 
     private String getUsuarioAutenticado() {
@@ -44,8 +46,12 @@ public class ClienteService {
             throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
         }
         Cliente saved = clienteRepository.save(cliente);
-        actionLogService.logAction("Cadastro de cliente", getUsuarioAutenticado(),
-                "Cliente ID: " + saved.getId() + ", Nome: " + saved.getNome());
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Cadastro de cliente",
+                getUsuarioAutenticado(),
+                "Cliente ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
         return saved;
     }
 
@@ -74,14 +80,23 @@ public class ClienteService {
         cliente.setEmail(atualizacao.getEmail());
         cliente.setTelefone(atualizacao.getTelefone());
         Cliente saved = clienteRepository.save(cliente);
-        actionLogService.logAction("Atualização de cliente", getUsuarioAutenticado(),
-                "Cliente ID: " + saved.getId() + ", Nome: " + saved.getNome());
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Atualização de cliente",
+                getUsuarioAutenticado(),
+                "Cliente ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
         return saved;
     }
 
     public void removerCliente(Long id) {
         clienteRepository.deleteById(id);
-        actionLogService.logAction("Remoção de cliente", getUsuarioAutenticado(), "Cliente ID: " + id);
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Remoção de cliente", 
+                getUsuarioAutenticado(), 
+                "Cliente ID: " + id
+        ));
     }
 
     public List<ClienteBuscaDTO> buscarPorNomeDTO(String nome) {

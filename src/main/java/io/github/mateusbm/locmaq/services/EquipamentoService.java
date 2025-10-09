@@ -1,12 +1,14 @@
 package io.github.mateusbm.locmaq.services;
 
+import io.github.mateusbm.locmaq.dto.EquipamentoDTO;
+import io.github.mateusbm.locmaq.events.LogAction; 
 import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.models.Dono;
 import io.github.mateusbm.locmaq.models.Equipamento;
-import io.github.mateusbm.locmaq.dto.EquipamentoDTO;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
 import io.github.mateusbm.locmaq.repositories.DonoRepository;
 import io.github.mateusbm.locmaq.repositories.EquipamentoRepository;
+import org.springframework.context.ApplicationEventPublisher; 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +21,17 @@ public class EquipamentoService {
     private final EquipamentoRepository equipamentoRepository;
     private final ClienteRepository clienteRepository;
     private final DonoRepository donoRepository;
-    private final ActionLogService actionLogService;
+    private final ApplicationEventPublisher eventPublisher; 
 
     public EquipamentoService(
             EquipamentoRepository equipamentoRepository,
             ClienteRepository clienteRepository,
             DonoRepository donoRepository,
-            ActionLogService actionLogService) {
+            ApplicationEventPublisher eventPublisher) {
         this.equipamentoRepository = equipamentoRepository;
         this.clienteRepository = clienteRepository;
         this.donoRepository = donoRepository;
-        this.actionLogService = actionLogService;
+        this.eventPublisher = eventPublisher;
     }
 
     private String getUsuarioAutenticado() {
@@ -59,9 +61,12 @@ public class EquipamentoService {
         equipamento.setDono(donoOpt.get());
 
         Equipamento saved = equipamentoRepository.save(equipamento);
-        actionLogService.logAction("Cadastro de equipamento",
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Cadastro de equipamento",
                 getUsuarioAutenticado(),
-                "Equipamento ID: " + saved.getId() + ", Nome: " + saved.getNome());
+                "Equipamento ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
     }
 
     public List<Equipamento> listarEquipamentos() {
@@ -73,7 +78,6 @@ public class EquipamentoService {
     }
 
     public Equipamento editarEquipamento(Long id, EquipamentoDTO dto) {
-        // Verifica se já existe outro equipamento com o mesmo nome
         Optional<Equipamento> existente = equipamentoRepository.findByNome(dto.getNome());
         if (existente.isPresent() && !existente.get().getId().equals(id)) {
             throw new RuntimeException("Já existe um equipamento cadastrado com este nome.");
@@ -97,15 +101,23 @@ public class EquipamentoService {
             equipamento.setDono(dono);
         }
         Equipamento saved = equipamentoRepository.save(equipamento);
-        actionLogService.logAction("Edição de equipamento",
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Edição de equipamento",
                 getUsuarioAutenticado(),
-                "Equipamento ID: " + saved.getId() + ", Nome: " + saved.getNome());
+                "Equipamento ID: " + saved.getId() + ", Nome: " + saved.getNome()
+        ));
         return saved;
     }
 
     public void removerEquipamento(Long id) {
         equipamentoRepository.deleteById(id);
-        actionLogService.logAction("Remoção de equipamento", getUsuarioAutenticado(), "Equipamento ID: " + id);
+        
+        eventPublisher.publishEvent(new LogAction(
+                "Remoção de equipamento", 
+                getUsuarioAutenticado(), 
+                "Equipamento ID: " + id
+        ));
     }
 
     public boolean verificarDisponibilidade(Long id) {
