@@ -42,21 +42,36 @@ public class BoletimMedicaoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BoletimMedicaoDTO> editar(@PathVariable Long id, @RequestBody BoletimMedicaoDTO dto) {
-        BoletimMedicao atualizado = facade.editarBoletim(id, dto);
-        
-        return ResponseEntity.ok(BoletimMedicaoDTO.fromEntity(atualizado));
+    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody BoletimMedicaoDTO dto) {
+        try {
+            BoletimMedicao atualizado = facade.editarBoletim(id, dto);
+            return ResponseEntity.ok(BoletimMedicaoDTO.fromEntity(atualizado));
+        } catch (IllegalStateException e) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                 .body(e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/assinar")
-    public ResponseEntity<BoletimMedicaoDTO> assinar(@PathVariable Long id) {
-        BoletimMedicaoDTO dto = BoletimMedicaoDTO.fromEntity(facade.assinarBoletim(id));
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<?> assinar(@PathVariable Long id) {
+        try {
+            BoletimMedicaoDTO dto = BoletimMedicaoDTO.fromEntity(facade.assinarBoletim(id));
+            return ResponseEntity.ok(dto);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                 .body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        facade.remover(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> remover(@PathVariable Long id) {
+        try {
+            facade.remover(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                 .body(e.getMessage());
+        }
     }
 }

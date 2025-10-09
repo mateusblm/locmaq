@@ -37,10 +37,6 @@ public class BoletimMedicaoFacade {
     }
 
     public BoletimMedicao editarBoletim(Long id, BoletimMedicaoDTO dto) {
-        BoletimMedicao boletimExistente = boletimService.buscarPorId(id);
-        if (Boolean.TRUE.equals(boletimExistente.getAssinado())) {
-            throw new IllegalStateException("Não é permitido editar um boletim de medição já assinado.");
-        }
         Usuario planejador = buscarPlanejador(dto.getPlanejadorId());
         return boletimService.editar(id, dto, planejador);
     }
