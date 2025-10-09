@@ -18,7 +18,6 @@ public class EmailController {
         Map<String, Object> resp = new HashMap<>();
         try {
             emailService.enviarRelatorioCompleto(
-                    (String) dados.get("nome"),
                     (String) dados.get("email"),
                     Long.valueOf(dados.get("boletimId").toString()),
                     Long.valueOf(dados.get("contratoId").toString()),
