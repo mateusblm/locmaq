@@ -1,33 +1,34 @@
 package io.github.mateusbm.locmaq.services;
 
 import io.github.mateusbm.locmaq.dto.BoletimMedicaoDTO;
-import io.github.mateusbm.locmaq.dto.EquipamentoBoletimMedicaoDTO;
-import io.github.mateusbm.locmaq.models.BoletimMedicao;
+import io.github.mateusbm.locmaq.bridge.MessageSender; // Novo Import da Ponte
 import io.github.mateusbm.locmaq.models.ContratoLocacao;
 import io.github.mateusbm.locmaq.models.Orcamento;
 import io.github.mateusbm.locmaq.models.StatusOrcamento;
 import io.github.mateusbm.locmaq.repositories.BoletimMedicaoRepository;
 import io.github.mateusbm.locmaq.repositories.ContratoLocacaoRepository;
 import io.github.mateusbm.locmaq.repositories.OrcamentoRepository;
-import org.springframework.mail.SimpleMailMessage;
 import io.github.mateusbm.locmaq.utils.ValidadorUtil;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EmailService {
+public class RelatorioService {
 
-    private final JavaMailSender mailSender;
+    private final MessageSender messageSender; // Ponte (Bridge)
     private final BoletimMedicaoRepository boletimMedicaoRepository;
     private final ContratoLocacaoRepository contratoLocacaoRepository;
     private final OrcamentoRepository orcamentoRepository;
 
-    public EmailService(JavaMailSender mailSender, BoletimMedicaoRepository boletimMedicaoRepository, ContratoLocacaoRepository contratoLocacaoRepository
-    , OrcamentoRepository orcamentoRepository) {
-        this.mailSender = mailSender;
+    public RelatorioService(
+        MessageSender messageSender, // Injeção da implementação (EmailSender)
+        BoletimMedicaoRepository boletimMedicaoRepository, 
+        ContratoLocacaoRepository contratoLocacaoRepository, 
+        OrcamentoRepository orcamentoRepository
+    ) {
+        this.messageSender = messageSender;
         this.boletimMedicaoRepository = boletimMedicaoRepository;
         this.contratoLocacaoRepository = contratoLocacaoRepository;
         this.orcamentoRepository = orcamentoRepository;
@@ -51,7 +52,8 @@ public class EmailService {
             corpo = this.criarRelatorioCliente(contrato, boletimDTO, mensagemAdicional);
         }
 
-        enviarEmail(emailDestino, assunto, corpo);
+        // Usa a Implementação (Ponte) para enviar, sem saber se é E-mail, SMS, etc.
+        messageSender.send(emailDestino, assunto, corpo.toString()); 
     }
 
     public StringBuilder criarRelatorioProprietario(ContratoLocacao contrato, BoletimMedicaoDTO boletimDTO, String mensagemAdicional) {
@@ -75,7 +77,7 @@ public class EmailService {
                     .append("- Dias Trabalhados: ").append(orc.getDiasTrabalhados()).append("\n")
                     .append("- Valor Total a Receber: R$ ").append(String.format("%.2f", orc.getValorTotal())).append("\n\n");
         } else {
-                corpo.append("Não há orçamento de repasse aprovado ou pendente para este contrato.\n\n");
+            corpo.append("Não há orçamento de repasse aprovado ou pendente para este contrato.\n\n");
         }
 
         if (mensagemAdicional != null && !mensagemAdicional.isEmpty()) {
@@ -117,14 +119,6 @@ public class EmailService {
 
         corpo.append("\nAtenciosamente,\nEquipe de Locação");
         return corpo;
-    }
-
-    public void enviarEmail(String emailDestino, String assunto, StringBuilder corpo) { 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(emailDestino);
-        message.setSubject(assunto);
-        message.setText(corpo.toString());
-        mailSender.send(message);
     }
 
     public Optional<Orcamento> buscarOrcamento(Long contratoId) { 
