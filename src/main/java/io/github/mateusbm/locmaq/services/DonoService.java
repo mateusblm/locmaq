@@ -1,5 +1,6 @@
 package io.github.mateusbm.locmaq.services;
 
+import io.github.mateusbm.locmaq.adapter.DocumentValidator; // Import do Target (Adapter Pattern)
 import io.github.mateusbm.locmaq.dto.DonoBuscaDTO;
 import io.github.mateusbm.locmaq.events.LogAction; 
 import io.github.mateusbm.locmaq.models.Dono;
@@ -20,11 +21,18 @@ public class DonoService {
     private final DonoRepository donoRepository;
     private final ApplicationEventPublisher eventPublisher; 
     private final EquipamentoRepository equipamentoRepository;
+    private final DocumentValidator documentValidator; // Novo: Injeta o Adapter/Target
 
-    public DonoService(DonoRepository donoRepository, ApplicationEventPublisher eventPublisher, EquipamentoRepository equipamentoRepository) {
+    public DonoService(
+        DonoRepository donoRepository, 
+        ApplicationEventPublisher eventPublisher, 
+        EquipamentoRepository equipamentoRepository,
+        DocumentValidator documentValidator // Injeção
+    ) {
         this.donoRepository = donoRepository;
         this.eventPublisher = eventPublisher;
         this.equipamentoRepository = equipamentoRepository;
+        this.documentValidator = documentValidator;
     }
 
     private String getUsuarioAutenticado() {
@@ -40,18 +48,8 @@ public class DonoService {
     }
 
     public Dono salvar(Dono dono) {
-        String doc = dono.getCnpj().replaceAll("\\D", "");
-        if (doc.length() == 11) {
-            if (!ValidadorUtil.isCpfValido(doc)) {
-                throw new IllegalArgumentException("CPF inválido");
-            }
-        } else if (doc.length() == 14) {
-            if (!ValidadorUtil.isCnpjValido(doc)) {
-                throw new IllegalArgumentException("CNPJ inválido");
-            }
-        } else {
-            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
-        }
+        documentValidator.validateCpfCnpj(dono.getCnpj()); 
+
         if (!ValidadorUtil.isAgenciaValida(dono.getAgencia())) {
             throw new IllegalArgumentException("Agência inválida");
         }
@@ -69,18 +67,8 @@ public class DonoService {
     }
 
     public Dono editar(Long id, Dono novo) {
-        String doc = novo.getCnpj().replaceAll("\\D", "");
-        if (doc.length() == 11) {
-            if (!ValidadorUtil.isCpfValido(doc)) {
-                throw new IllegalArgumentException("CPF inválido");
-            }
-        } else if (doc.length() == 14) {
-            if (!ValidadorUtil.isCnpjValido(doc)) {
-                throw new IllegalArgumentException("CNPJ inválido");
-            }
-        } else {
-            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
-        }
+        documentValidator.validateCpfCnpj(novo.getCnpj()); 
+        
         if (!ValidadorUtil.isAgenciaValida(novo.getAgencia())) {
             throw new IllegalArgumentException("Agência inválida");
         }

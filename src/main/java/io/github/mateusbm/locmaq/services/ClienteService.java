@@ -1,10 +1,10 @@
 package io.github.mateusbm.locmaq.services;
 
+import io.github.mateusbm.locmaq.adapter.DocumentValidator;
 import io.github.mateusbm.locmaq.dto.ClienteBuscaDTO;
 import io.github.mateusbm.locmaq.events.LogAction; 
 import io.github.mateusbm.locmaq.models.Cliente;
 import io.github.mateusbm.locmaq.repositories.ClienteRepository;
-import io.github.mateusbm.locmaq.utils.ValidadorUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,12 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ApplicationEventPublisher eventPublisher; 
+    private final DocumentValidator documentValidator; 
 
-    public ClienteService(ClienteRepository clienteRepository, ApplicationEventPublisher eventPublisher) {
+    public ClienteService(ClienteRepository clienteRepository, ApplicationEventPublisher eventPublisher, DocumentValidator documentValidator) {
         this.clienteRepository = clienteRepository;
         this.eventPublisher = eventPublisher;
+        this.documentValidator = documentValidator; 
     }
 
     private String getUsuarioAutenticado() {
@@ -33,18 +35,8 @@ public class ClienteService {
     }
 
     public Cliente cadastrarCliente(Cliente cliente) {
-        String doc = cliente.getCnpj().replaceAll("\\D", "");
-        if (doc.length() == 11) {
-            if (!ValidadorUtil.isCpfValido(doc)) {
-                throw new IllegalArgumentException("CPF inválido");
-            }
-        } else if (doc.length() == 14) {
-            if (!ValidadorUtil.isCnpjValido(doc)) {
-                throw new IllegalArgumentException("CNPJ inválido");
-            }
-        } else {
-            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
-        }
+        documentValidator.validateCpfCnpj(cliente.getCnpj());
+        
         Cliente saved = clienteRepository.save(cliente);
         
         eventPublisher.publishEvent(new LogAction(
@@ -60,18 +52,8 @@ public class ClienteService {
     }
 
     public Cliente atualizarCliente(Long id, Cliente atualizacao) {
-        String doc = atualizacao.getCnpj().replaceAll("\\D", "");
-        if (doc.length() == 11) {
-            if (!ValidadorUtil.isCpfValido(doc)) {
-                throw new IllegalArgumentException("CPF inválido");
-            }
-        } else if (doc.length() == 14) {
-            if (!ValidadorUtil.isCnpjValido(doc)) {
-                throw new IllegalArgumentException("CNPJ inválido");
-            }
-        } else {
-            throw new IllegalArgumentException("CPF/CNPJ deve ter 11 ou 14 dígitos");
-        }
+        documentValidator.validateCpfCnpj(atualizacao.getCnpj());
+
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         cliente.setNome(atualizacao.getNome());
