@@ -11,10 +11,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "boletim_medicao")
 public class BoletimMedicao {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

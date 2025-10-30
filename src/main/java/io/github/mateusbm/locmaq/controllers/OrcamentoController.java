@@ -35,6 +35,7 @@ public class OrcamentoController {
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Ocorreu um erro ao criar o orçamento. Por favor, tente novamente.");
         }

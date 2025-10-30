@@ -21,6 +21,8 @@ public class Orcamento {
 
     private int diasTrabalhados;
     private double desconto;
+
+    @Column(name = "valor_total", nullable = false)
     private double valorTotal;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +40,9 @@ public class Orcamento {
 
 
     public Double calcularValorCliente(ContratoLocacao contratoLocacao) {
-        return contratoLocacao.getValorTotal() * diasTrabalhados;
+        Double valorContrato = contrato.getValorTotal();
+        double valorBase = (valorContrato != null) ? valorContrato : 0.0;
+        return valorBase * diasTrabalhados;
     }
 
     public Double calcularValorDono(ContratoLocacao contratoLocacao) {

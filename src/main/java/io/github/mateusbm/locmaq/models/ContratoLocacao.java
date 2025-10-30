@@ -8,10 +8,10 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "contrato_locacao")
 public class ContratoLocacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,4 +41,5 @@ public class ContratoLocacao {
     public ContratoLocacao() {
 
     }
+
 }

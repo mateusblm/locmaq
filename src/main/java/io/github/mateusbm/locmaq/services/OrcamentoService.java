@@ -19,7 +19,6 @@ public class OrcamentoService {
     }
 
     public Orcamento salvar(Orcamento orcamento) {
-        ValidadorUtil.validarDesconto(orcamento);
         return repository.save(orcamento);
     }
 
@@ -51,10 +50,11 @@ public class OrcamentoService {
     }
 
     public void criarOrcamentosDuplos(Orcamento orcamento, ContratoLocacao contrato) {
-        ValidadorUtil.validarDesconto(orcamento);
         Orcamento cliente = criarOrcamentoCliente(orcamento, contrato);
         Orcamento dono = criarOrcamentoDono(orcamento, contrato);
-        
+        ValidadorUtil.validarDesconto(cliente, contrato);
+        ValidadorUtil.validarDesconto(dono, contrato);
+
         repository.save(dono);
         repository.save(cliente);
     }
