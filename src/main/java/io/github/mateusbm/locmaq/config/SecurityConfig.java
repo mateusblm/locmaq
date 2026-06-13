@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/index.html", "/css/**", "/js/**", "/imgs/**", "/html/**", "/resources/**").permitAll()
+                        .requestMatchers("/api/rfid/read").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

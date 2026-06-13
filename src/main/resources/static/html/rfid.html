@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>RFID - LocMac</title>
+    <link rel="stylesheet" href="../css/padrao.css">
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">LocMac</div>
+    <nav class="nav-links"></nav>
+    <div class="user-info">
+        <span id="user-role"></span>
+        <img src="../imgs/images.png" class="user-image">
+        <a href="../html/usuario.html"><span id="user-name"></span></a>
+        <a href="/logout" class="logout-btn">Sair</a>
+    </div>
+</header>
+<main>
+    <h2 id="form-title">Cadastrar Tag RFID</h2>
+    <form id="rfidForm">
+        <input type="hidden" id="id" name="id">
+
+        <label for="uid">UID:</label>
+        <input type="text" id="uid" name="uid" placeholder="A1B2C3D4" required>
+
+        <label for="descricao">Descricao:</label>
+        <input type="text" id="descricao" name="descricao">
+
+        <label for="equipamento">Equipamento associado:</label>
+        <select id="equipamento" name="equipamento"></select>
+
+        <label for="ativo">Ativa?</label>
+        <select id="ativo" name="ativo">
+            <option value="true">Sim</option>
+            <option value="false">Nao</option>
+        </select>
+
+        <div id="alerta-erro" style="display:none;color:#fff;background:#d9534f;padding:10px 16px;border-radius:6px;margin:10px 0;text-align:center;font-weight:bold;"></div>
+
+        <div style="text-align:right;">
+            <button id="submit-btn" type="submit" style="margin-top:12px;">Salvar</button>
+            <button id="reset-btn" type="reset" style="margin-top:12px;">Limpar</button>
+        </div>
+    </form>
+
+    <section style="margin-top:40px;">
+        <h3>Tags RFID cadastradas</h3>
+        <table id="rfidTagTable">
+            <thead>
+            <tr>
+                <th>UID</th>
+                <th>Descricao</th>
+                <th>Ativa?</th>
+                <th>Equipamento</th>
+                <th>Criada em</th>
+                <th>Acoes</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+    <section style="margin-top:40px;">
+        <h3>Ultimas leituras RFID</h3>
+        <table id="rfidLeituraTable">
+            <thead>
+            <tr>
+                <th>Data/Hora</th>
+                <th>UID</th>
+                <th>Origem</th>
+                <th>Autorizada?</th>
+                <th>Mensagem</th>
+                <th>Equipamento</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</main>
+<script src="../js/menu.js"></script>
+<script src="../js/rfid.js"></script>
+</body>
+</html>

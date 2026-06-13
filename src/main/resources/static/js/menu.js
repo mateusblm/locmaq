@@ -24,6 +24,7 @@ const menusPorPerfil = {
     { href: "/html/cadastrarusuario.html", label: "Gerenciar Usuario" },
     { href: "/html/assinar_boletim_medicao.html", label: "Aprovar Boletim" },
     { href: "/html/cadastrocliente.html", label: "Gerenciar Clientes" },
+    { href: "/html/rfid.html", label: "RFID" },
     { href: "/html/ver_logs.html", label: "Logs do sistema" }
   ],
   PLANEJADOR: [
@@ -35,6 +36,7 @@ const menusPorPerfil = {
   LOGISTICA: [
     { href: "/html/logistica.html", label: "Painel Logística" },
     { href: "/html/equipamento.html", label: "Gerenciar Equipamentos" },
+    { href: "/html/rfid.html", label: "RFID" },
     { href: "/html/contratolocacao.html", label: "Contratos de Locação" }
   ]
 };
