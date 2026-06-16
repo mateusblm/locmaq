@@ -39,14 +39,32 @@ public class RfidService {
         }
 
         String origem = dto.getOrigem() == null ? null : dto.getOrigem().trim();
+        String tipo = dto.getTipo() == null ? "EQUIPAMENTO" : dto.getTipo().trim().toUpperCase();
         Optional<RfidTag> tagOpt = rfidTagRepository.findByUidAndAtivoTrue(uid);
-        boolean autorizado = tagOpt.isPresent();
-        String mensagem = autorizado ? "Tag reconhecida" : "Tag nao cadastrada";
         Equipamento equipamento = tagOpt.map(RfidTag::getEquipamento).orElse(null);
+        boolean autorizado = equipamento != null;
+        String movimento = null;
+        String mensagem;
+
+        if (equipamento == null) {
+            mensagem = "Tag nao cadastrada";
+        } else if (equipamento.isDisponibilidade()) {
+            movimento = "SAIDA";
+            mensagem = "Saida registrada";
+            equipamento.setDisponibilidade(false);
+            equipamentoRepository.save(equipamento);
+        } else {
+            movimento = "ENTRADA";
+            mensagem = "Entrada registrada";
+            equipamento.setDisponibilidade(true);
+            equipamentoRepository.save(equipamento);
+        }
 
         RfidLeitura leitura = new RfidLeitura();
         leitura.setUid(uid);
         leitura.setOrigem(origem);
+        leitura.setTipo(tipo);
+        leitura.setMovimento(movimento);
         leitura.setAutorizado(autorizado);
         leitura.setMensagem(mensagem);
         leitura.setEquipamento(equipamento);
@@ -56,7 +74,9 @@ public class RfidService {
                 autorizado,
                 mensagem,
                 uid,
-                equipamento != null ? equipamento.getNome() : null
+                equipamento != null ? equipamento.getNome() : null,
+                movimento,
+                equipamento != null ? statusEquipamento(equipamento) : null
         );
     }
 
@@ -110,6 +130,12 @@ public class RfidService {
                 .toList();
     }
 
+    public List<RfidLeituraAdminDTO> listarHistoricoMovimentos() {
+        return rfidLeituraRepository.findTop100ByOrderByDataHoraDesc().stream()
+                .map(this::toLeituraAdmin)
+                .toList();
+    }
+
     private void preencherTag(RfidTag tag, RfidTagRequestDTO dto) {
         tag.setDescricao(dto.getDescricao());
         tag.setAtivo(dto.getAtivo() == null ? true : dto.getAtivo());
@@ -140,6 +166,7 @@ public class RfidService {
                 tag.getAtivo(),
                 equipamento != null ? equipamento.getId() : null,
                 equipamento != null ? equipamento.getNome() : null,
+                equipamento != null ? statusEquipamento(equipamento) : null,
                 tag.getCreatedAt()
         );
     }
@@ -150,10 +177,17 @@ public class RfidService {
                 leitura.getId(),
                 leitura.getUid(),
                 leitura.getOrigem(),
+                leitura.getTipo(),
+                leitura.getMovimento(),
                 leitura.getAutorizado(),
                 leitura.getMensagem(),
                 leitura.getDataHora(),
-                equipamento != null ? equipamento.getNome() : null
+                equipamento != null ? equipamento.getNome() : null,
+                equipamento != null ? statusEquipamento(equipamento) : null
         );
+    }
+
+    private String statusEquipamento(Equipamento equipamento) {
+        return equipamento.isDisponibilidade() ? "NO_ESTOQUE" : "FORA_EM_USO";
     }
 }

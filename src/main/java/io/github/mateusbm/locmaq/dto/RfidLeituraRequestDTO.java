@@ -8,4 +8,5 @@ import lombok.Setter;
 public class RfidLeituraRequestDTO {
     private String uid;
     private String origem;
+    private String tipo;
 }

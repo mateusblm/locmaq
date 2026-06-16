@@ -16,5 +16,6 @@ public class RfidTagResponseDTO {
     private Boolean ativo;
     private Long equipamentoId;
     private String equipamento;
+    private String statusEquipamento;
     private LocalDateTime createdAt;
 }

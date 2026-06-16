@@ -14,4 +14,6 @@ public class RfidLeituraResponseDTO {
     private String mensagem;
     private String uid;
     private String equipamento;
+    private String movimento;
+    private String statusAtual;
 }

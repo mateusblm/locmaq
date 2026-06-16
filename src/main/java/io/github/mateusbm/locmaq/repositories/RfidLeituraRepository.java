@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RfidLeituraRepository extends JpaRepository<RfidLeitura, Long> {
     List<RfidLeitura> findTop20ByOrderByDataHoraDesc();
+    List<RfidLeitura> findTop100ByOrderByDataHoraDesc();
 }

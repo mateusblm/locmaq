@@ -32,6 +32,12 @@ public class RfidLeitura {
     @Column(length = 100)
     private String origem;
 
+    @Column(length = 50)
+    private String tipo;
+
+    @Column(length = 20)
+    private String movimento;
+
     @Column(nullable = false)
     private Boolean autorizado;
 

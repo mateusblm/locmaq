@@ -6,6 +6,7 @@ window.onload = () => {
     carregarEquipamentos();
     carregarTags();
     carregarLeituras();
+    carregarHistorico();
 
     document.getElementById('rfidForm').onsubmit = handleFormSubmit;
     document.getElementById('reset-btn').onclick = handleFormReset;
@@ -41,12 +42,18 @@ function carregarLeituras() {
         .then(leituras => montarTabelaLeituras(leituras));
 }
 
+function carregarHistorico() {
+    fetch(`${apiBase}/rfid/historico`)
+        .then(response => response.json())
+        .then(leituras => montarTabelaHistorico(leituras));
+}
+
 function montarTabelaTags(tags) {
     const tbody = document.querySelector('#rfidTagTable tbody');
     tbody.innerHTML = '';
 
     if (tags.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">Nenhuma tag RFID cadastrada.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Nenhuma tag RFID cadastrada.</td></tr>';
         return;
     }
 
@@ -57,6 +64,7 @@ function montarTabelaTags(tags) {
             <td>${tag.descricao || '-'}</td>
             <td>${tag.ativo ? 'Sim' : 'Nao'}</td>
             <td>${tag.equipamento || '-'}</td>
+            <td>${formatarStatus(tag.statusEquipamento)}</td>
             <td>${formatarData(tag.createdAt)}</td>
             <td>
                 <button class="action-btn" title="Editar" onclick="editarTag(${tag.id})">&#9998;</button>
@@ -72,7 +80,7 @@ function montarTabelaLeituras(leituras) {
     tbody.innerHTML = '';
 
     if (leituras.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6">Nenhuma leitura RFID registrada.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9">Nenhuma leitura RFID registrada.</td></tr>';
         return;
     }
 
@@ -82,9 +90,37 @@ function montarTabelaLeituras(leituras) {
             <td>${formatarData(leitura.dataHora)}</td>
             <td>${leitura.uid}</td>
             <td>${leitura.origem || '-'}</td>
+            <td>${leitura.tipo || '-'}</td>
+            <td>${formatarMovimento(leitura.movimento)}</td>
             <td>${leitura.autorizado ? 'Sim' : 'Nao'}</td>
             <td>${leitura.mensagem || '-'}</td>
             <td>${leitura.equipamento || '-'}</td>
+            <td>${formatarStatus(leitura.statusAtual)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function montarTabelaHistorico(leituras) {
+    const tbody = document.querySelector('#rfidHistoricoTable tbody');
+    tbody.innerHTML = '';
+
+    if (leituras.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8">Nenhum movimento RFID registrado.</td></tr>';
+        return;
+    }
+
+    leituras.forEach(leitura => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${formatarData(leitura.dataHora)}</td>
+            <td>${leitura.uid}</td>
+            <td>${leitura.equipamento || '-'}</td>
+            <td>${formatarMovimento(leitura.movimento)}</td>
+            <td>${leitura.origem || '-'}</td>
+            <td>${leitura.autorizado ? 'Sim' : 'Nao'}</td>
+            <td>${leitura.mensagem || '-'}</td>
+            <td>${formatarStatus(leitura.statusAtual)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -129,6 +165,8 @@ function handleFormSubmit(e) {
             exibirAlerta('Tag RFID salva com sucesso!', true);
             handleFormReset();
             carregarTags();
+            carregarLeituras();
+            carregarHistorico();
             return;
         }
 
@@ -175,6 +213,8 @@ window.excluirTag = function(id) {
             if (response.ok) {
                 exibirAlerta('Tag RFID excluida!', true);
                 carregarTags();
+                carregarLeituras();
+                carregarHistorico();
                 if (editingId === id) {
                     handleFormReset();
                 }
@@ -206,6 +246,26 @@ function formatarData(valor) {
         return '-';
     }
     return new Date(valor).toLocaleString('pt-BR');
+}
+
+function formatarMovimento(valor) {
+    if (valor === 'SAIDA') {
+        return 'Saida';
+    }
+    if (valor === 'ENTRADA') {
+        return 'Entrada';
+    }
+    return '-';
+}
+
+function formatarStatus(valor) {
+    if (valor === 'NO_ESTOQUE') {
+        return 'No estoque';
+    }
+    if (valor === 'FORA_EM_USO') {
+        return 'Fora / em uso';
+    }
+    return '-';
 }
 
 function exibirAlerta(msg, positivo = false) {

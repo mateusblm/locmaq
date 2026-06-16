@@ -75,6 +75,11 @@ public class RfidController {
         return ResponseEntity.ok(rfidService.listarUltimasLeituras());
     }
 
+    @GetMapping("/historico")
+    public ResponseEntity<?> listarHistoricoMovimentos() {
+        return ResponseEntity.ok(rfidService.listarHistoricoMovimentos());
+    }
+
     static class ErroResponse {
         private String mensagem;
 
