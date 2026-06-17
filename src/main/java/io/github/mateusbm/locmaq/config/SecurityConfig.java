@@ -21,6 +21,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/html/monitoramento.html").hasAnyRole("GESTOR", "LOGISTICA")
+                        .requestMatchers("/api/camera/**").hasAnyRole("GESTOR", "LOGISTICA")
                         .requestMatchers("/index.html", "/css/**", "/js/**", "/imgs/**", "/html/**", "/resources/**").permitAll()
                         .requestMatchers("/api/rfid/read").permitAll()
                         .anyRequest().authenticated()
