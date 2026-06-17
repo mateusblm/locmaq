@@ -57,7 +57,7 @@ public class CameraService {
     }
 
     private ResultadoComando executarSystemctl(String acao) {
-        List<String> comando = List.of("sudo", "systemctl", acao, "motion");
+        List<String> comando = List.of("systemctl", acao, "motion");
         ProcessBuilder processBuilder = new ProcessBuilder(comando);
         processBuilder.redirectErrorStream(true);
 
