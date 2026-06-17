@@ -8,8 +8,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname || 'localhost';
     const baseUrl = `http://${host}:8081`;
     const urls = {
-        principal: `${baseUrl}/0/stream`,
-        fallback: baseUrl
+        principal: baseUrl,
+        fallback: `${baseUrl}/0/stream`
     };
 
     const stream = document.getElementById('cameraStream');
@@ -29,8 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function carregarStream(url) {
         streamAtual = url;
-        const separador = url.includes('?') ? '&' : '?';
-        stream.src = `${url}${separador}t=${Date.now()}`;
+        stream.src = url;
         abrirCameraLink.href = url;
     }
 
