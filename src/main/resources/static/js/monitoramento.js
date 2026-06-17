@@ -8,13 +8,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const host = window.location.hostname || 'localhost';
     const baseUrl = `http://${host}:8081`;
     const urls = {
-        principal: baseUrl,
-        fallback: `${baseUrl}/0/stream`
+        principal: `${baseUrl}/0/stream`,
+        fallback: baseUrl
     };
 
-    const frame = document.getElementById('cameraFrame');
+    const stream = document.getElementById('cameraStream');
     const abrirCameraLink = document.getElementById('abrirCameraLink');
-    const cameraUrlInfo = document.getElementById('cameraUrlInfo');
     const streamPrincipalBtn = document.getElementById('streamPrincipalBtn');
     const streamFallbackBtn = document.getElementById('streamFallbackBtn');
     const ligarCameraBtn = document.getElementById('ligarCameraBtn');
@@ -26,11 +25,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const cameraOutput = document.getElementById('cameraOutput');
     const cameraDesligadaAviso = document.getElementById('cameraDesligadaAviso');
     const botoesAcao = [ligarCameraBtn, desligarCameraBtn, reiniciarCameraBtn, atualizarStatusBtn];
+    let streamAtual = urls.principal;
 
     function carregarStream(url) {
-        frame.src = url;
+        streamAtual = url;
+        const separador = url.includes('?') ? '&' : '?';
+        stream.src = `${url}${separador}t=${Date.now()}`;
         abrirCameraLink.href = url;
-        cameraUrlInfo.textContent = `Origem do stream: ${url}`;
+    }
+
+    function recarregarStream() {
+        stream.removeAttribute('src');
+        setTimeout(() => carregarStream(streamAtual), 300);
     }
 
     function setCarregando(carregando) {
@@ -46,7 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
         cameraStatusTexto.style.color = ativa ? '#2e7d32' : '#b71c1c';
         cameraMensagem.textContent = data.mensagem || '';
         cameraDesligadaAviso.style.display = ativa ? 'none' : 'block';
-        frame.style.display = ativa ? 'block' : 'none';
+        stream.style.display = ativa ? 'block' : 'none';
 
         if (data.output) {
             cameraOutput.style.display = 'block';
@@ -56,8 +62,10 @@ window.addEventListener('DOMContentLoaded', () => {
             cameraOutput.textContent = '';
         }
 
-        if (ativa && !frame.src) {
-            carregarStream(urls.principal);
+        if (ativa) {
+            recarregarStream();
+        } else {
+            stream.removeAttribute('src');
         }
     }
 
