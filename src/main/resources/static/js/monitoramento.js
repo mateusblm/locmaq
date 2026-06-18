@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
         fallback: `${baseUrl}/0/stream`
     };
 
-    const frame = document.getElementById('cameraFrame');
+    const stream = document.getElementById('cameraStream');
     const abrirCameraLink = document.getElementById('abrirCameraLink');
     const streamPrincipalBtn = document.getElementById('streamPrincipalBtn');
     const streamFallbackBtn = document.getElementById('streamFallbackBtn');
@@ -29,12 +29,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function carregarStream(url) {
         streamAtual = url;
-        frame.src = url;
+        stream.src = url;
         abrirCameraLink.href = url;
     }
 
     function recarregarStream(delay = 800) {
-        frame.src = 'about:blank';
+        stream.removeAttribute('src');
         setTimeout(() => carregarStream(streamAtual), delay);
     }
 
@@ -51,7 +51,7 @@ window.addEventListener('DOMContentLoaded', () => {
         cameraStatusTexto.style.color = ativa ? '#2e7d32' : '#b71c1c';
         cameraMensagem.textContent = data.mensagem || '';
         cameraDesligadaAviso.style.display = ativa ? 'none' : 'block';
-        frame.style.display = ativa ? 'block' : 'none';
+        stream.style.display = ativa ? 'block' : 'none';
 
         if (data.output) {
             cameraOutput.style.display = 'block';
@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (ativa) {
             recarregarStream();
         } else {
-            frame.src = 'about:blank';
+            stream.removeAttribute('src');
         }
     }
 
