@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
         fallback: `${baseUrl}/0/stream`
     };
 
-    const stream = document.getElementById('cameraStream');
+    const frame = document.getElementById('cameraFrame');
     const abrirCameraLink = document.getElementById('abrirCameraLink');
     const streamPrincipalBtn = document.getElementById('streamPrincipalBtn');
     const streamFallbackBtn = document.getElementById('streamFallbackBtn');
@@ -29,13 +29,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function carregarStream(url) {
         streamAtual = url;
-        stream.src = url;
+        frame.src = url;
         abrirCameraLink.href = url;
     }
 
-    function recarregarStream() {
-        stream.removeAttribute('src');
-        setTimeout(() => carregarStream(streamAtual), 300);
+    function recarregarStream(delay = 800) {
+        frame.src = 'about:blank';
+        setTimeout(() => carregarStream(streamAtual), delay);
     }
 
     function setCarregando(carregando) {
@@ -51,7 +51,7 @@ window.addEventListener('DOMContentLoaded', () => {
         cameraStatusTexto.style.color = ativa ? '#2e7d32' : '#b71c1c';
         cameraMensagem.textContent = data.mensagem || '';
         cameraDesligadaAviso.style.display = ativa ? 'none' : 'block';
-        stream.style.display = ativa ? 'block' : 'none';
+        frame.style.display = ativa ? 'block' : 'none';
 
         if (data.output) {
             cameraOutput.style.display = 'block';
@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (ativa) {
             recarregarStream();
         } else {
-            stream.removeAttribute('src');
+            frame.src = 'about:blank';
         }
     }
 
@@ -88,7 +88,12 @@ window.addEventListener('DOMContentLoaded', () => {
         setCarregando(true);
         return fetch(`/api/camera/${acao}`, { method: 'POST' })
             .then(response => response.ok ? response.json() : Promise.reject())
-            .then(aplicarStatus)
+            .then(data => {
+                aplicarStatus(data);
+                if (acao === 'start' || acao === 'restart') {
+                    recarregarStream(1800);
+                }
+            })
             .catch(tratarErro)
             .finally(() => setCarregando(false));
     }
